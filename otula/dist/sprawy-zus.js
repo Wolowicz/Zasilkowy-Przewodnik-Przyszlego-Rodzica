@@ -112,7 +112,7 @@ function sprawdzSprawePage() {
   const kat = window.ZUS_SPRAWY_ENC?.kategorie || {};
   const stat = window.ZUS_SPRAWY_ENC?.statystyki;
   return `<div class="page-intro"><div class="small-label">Zestaw testowy ZUS</div><h1 tabindex="-1">Sprawdź sprawę</h1>
-    <p>Wybierz oryginalny PDF z zestawu. Otula rozpozna sprawę, pokaże odczytane informacje i wskaże, co jeszcze trzeba potwierdzić w dokumentach.</p></div>
+    <p>Wybierz PDF z zestawu ZUS, aby zobaczyć odczytane fakty i kwestie do potwierdzenia.</p></div>
     <ol class="sprawa-kroki" aria-label="Etapy"><li class="${SPRAWY.file ? 'done' : 'now'}"><b>1</b>Wgraj</li><li class="${SPRAWY.result ? 'done' : SPRAWY.file ? 'now' : ''}"><b>2</b>Rozpoznaj</li><li class="${SPRAWY.result ? 'now' : ''}"><b>3</b>Porównaj</li></ol>
     ${SPRAWY.file ? '' : `<label class="sprawa-drop" id="sprawa-drop">${icon('file', 34)}<strong>Przeciągnij tutaj plik PDF</strong><span>albo</span><span class="button primary">Wybierz plik</span>
       <input type="file" id="sprawa-plik" accept="application/pdf,.pdf"><small>${icon('lock', 14)} Plik zostaje na tym urządzeniu</small></label>`}

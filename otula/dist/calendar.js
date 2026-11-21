@@ -49,7 +49,7 @@ function calendarMonthGrid(events) {
 function calendarPage() {
   const events=calendarEvents(),month=calendarMonth||calendarDate(today()).slice(0,7),filtered=events.filter(e=>calendarDay?e.date===calendarDay:e.date.startsWith(month));
   const canExport=events.some(e=>!e.preview&&!e.done&&e.date>=calendarDate(today()));
-  return `${pageHeading('Kalendarz rodzica','Moje terminy','Dokumenty, spotkania i własne sprawy. Wybierz dzień albo dodaj termin dla tego dziecka.')}
+  return `${pageHeading('Kalendarz rodzica','Moje terminy','Zaplanuj dokumenty, spotkania i własne sprawy dla tego dziecka.')}
   <div class="date-panel"><label class="field"><span id="date-label">${dateLabel()}</span><input id="date-input" type="date" min="1000-01-01" max="9999-12-31" value="${state.date}"></label><p>Etap: <b>${GUIDE.stages[state.stage]}</b> · <a href="#sytuacja">zmień</a></p></div>
   <div class="cal-actions"><button class="button primary" data-cal-action="new">${icon('plus',18)} Dodaj termin</button>${canExport?'<button class="button secondary" data-cal-action="export">Eksportuj nadchodzące terminy</button>':''}<a class="text-button" href="#formularze">Formularze ZUS</a></div>
   <div class="calendar-layout">${calendarMonthGrid(events)}<section class="cal-agenda" aria-live="polite"><div class="cal-agenda-heading"><h2>${calendarDay?fmt(parseDate(calendarDay)):'W tym miesiącu'}</h2>${calendarDay?'<button class="text-button" data-cal-action="all-month">Cały miesiąc</button>':''}</div>

@@ -1,5 +1,13 @@
 # Historia zmian
 
+## 2026-11-21 — audyt stylu 12 ekranów i dokończenie wersji konkursowej
+
+- Spójna paleta tokenów we wszystkich arkuszach, czytelne pola i podpisy, pełne przyciski powrotu oraz kreator kalkulatora z czterema krokami i wyborem segmentowym. Krótkie wprowadzenia i pojedyncze oznaczenie symulacji.
+- Audyt #start, #plan, #terminy, #kalkulator, #sprawdz-sprawe, #e-uslugi, #uprawnienia, #parametry, #formularze, #wsparcie, #poradnik i #raport na 320, 390 i 1440 px: 36 zrzutów, brak poziomego przewijania. Na najmniejszym ekranie ilustracje i długie nagłówki mają osobne wiersze.
+- Dokończono przegląd zmian przejętych przez ac6dee5: B1/B2/B4/B5/B9, daty i sumy dla rodziców, parametry z walidacją i localStorage, szyfrowane opracowania 86 unikalnych spraw. Zakres walidacji i nadal nierozstrzygnięte przypadki opisano w docs/WALIDACJA-ZUS.md.
+- Przygotowanie do jury: osobna notatka objaśniająca pełny brief i regulamin, kryteria oraz trudne pytania, z odróżnieniem testów autorskich od porównania kwot ZUS.
+- Nowa propozycja scalenia „Mojej sytuacji” z Centrum e-usług oraz zmiana kolejności menu pozostają do kolejnego etapu zgodnie z prośbą właścicielki.
+
 ## 2026-11-21 (wieczór) — symulacje e-usług, sprawy z zestawu ZUS i czytelność
 
 - Centrum e-usług (`#e-uslugi`) z pełnym przebiegiem symulacji: logowanie mObywatel z kodem, pobieranie danych z ZUS, zaświadczenie o zadłużeniu na dzień powstania prawa, e-ZLA, wiadomość eZUS, wnioski o urlopy i ZAM, odpis aktu urodzenia; trzy fikcyjne osoby. Zastępuje dawne „Dane pokazowe ZUS” (stary adres przekierowuje).

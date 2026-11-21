@@ -27,10 +27,10 @@ function euBadge() { return '<span class="eu-sym">Symulacja</span>'; }
 
 function euLogowanie() {
   if (EU.etap === 'kod') return `<section class="eu-okno eu-mob" aria-labelledby="eu-mob-t"><div class="eu-okno-pasek">mObywatel</div>
-    <div class="eu-okno-tresc"><h2 id="eu-mob-t" tabindex="-1">Potwierdź logowanie</h2><p>Otwórz aplikację mObywatel i sprawdź, czy kod jest taki sam.</p>
+    <div class="eu-okno-tresc"><h2 id="eu-mob-t" tabindex="-1">Potwierdź logowanie</h2><p>Sprawdź kod i przejdź dalej w pokazowym logowaniu.</p>
     <div class="eu-kod" aria-label="Kod weryfikacyjny">${EU.kod}</div>
     <div class="case-actions"><button class="button primary" data-eu="potwierdz">Potwierdzam w telefonie</button><button class="button secondary" data-eu="anuluj">Anuluj</button></div></div></section>`;
-  if (EU.etap === 'laczenie') return `<section class="eu-okno"><div class="eu-okno-tresc eu-ladowanie" role="status"><span class="eu-spinner"></span><h2>Łączenie z ZUS…</h2><p>Weryfikujemy tożsamość i otwieramy profil na PUE/eZUS.</p></div></section>`;
+  if (EU.etap === 'laczenie') return `<section class="eu-okno"><div class="eu-okno-tresc eu-ladowanie" role="status"><span class="eu-spinner"></span><h2>Otwieranie profilu…</h2><p>Przygotowujemy przykładowy profil do tego pokazu.</p></div></section>`;
   return `<section class="eu-okno"><div class="eu-okno-pasek">Logowanie</div><div class="eu-okno-tresc">
     <h2 tabindex="-1">Zaloguj się, aby zobaczyć swoje dane</h2>
     <fieldset class="eu-osoby"><legend>Wybierz fikcyjną osobę do pokazu</legend>${Object.entries(EU_OSOBY).map(([k, o]) =>

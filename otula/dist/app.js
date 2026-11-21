@@ -461,7 +461,7 @@ function planPage() {
   if (planFilter === 'open') items = unfinished();
   if (planFilter === 'done') items = items.filter(item => state.done.includes(item.id));
   const filters = [['all', 'Wszystkie'], ['open', 'Do zrobienia'], ['done', 'Gotowe']];
-  return `${pageHeading('Twój rytm, Twoja rodzina', 'Ścieżka rodzica', 'Wybierz mały krok na teraz. W każdej sprawie czekają dokumenty, instrukcja i możliwość zaplanowania własnego terminu.')}
+  return `${pageHeading('Twój rytm, Twoja rodzina', 'Ścieżka rodzica', 'Wybierz sprawę i sprawdź dokumenty, kolejne kroki oraz termin.')}
     <div class="dashboard-grid inner-grid"><section>${profileSummary()}
     <div class="filters" role="group" aria-label="Pokaż kroki">${filters.map(([key, label]) => filterButton('filter-plan', key, label, planFilter)).join('')}</div>
     ${items.length ? parentPath(items) : empty('Brak kroków w tym widoku.', 'Wybierz inny filtr, aby zobaczyć pozostałe sprawy.')}
@@ -509,7 +509,7 @@ function libraryResults() {
     <strong>${item.title}</strong><span class="catalog-copy">${item.short}</span><span class="catalog-foot">${item.institution} ${icon('arrow', 17)}</span></a>`).join('') : empty('Brak pasujących spraw.', 'Zmień etap, kategorię lub wpisz inne słowo, np. „ZUS”.')}</div>`;
 }
 function library() {
-  return `${pageHeading('Przewodnik rodzica', 'Biblioteka spraw', 'Wyszukaj świadczenie lub formalność. Każda karta prowadzi do informacji właściwej instytucji.')}
+  return `${pageHeading('Przewodnik rodzica', 'Biblioteka spraw', 'Znajdź świadczenie lub formalność wraz z instrukcją i źródłem.')}
     <label class="search-box">${icon('search')}<input id="query" type="search" autocomplete="off" aria-label="Szukaj sprawy" placeholder="Szukaj sprawy, dokumentu lub instytucji…"></label>
     <strong>Etap</strong><div class="filters" role="group" aria-label="Etap">${Object.entries({all:'Wszystkie', ...GUIDE.stages}).map(([key,label]) => filterButton('library-stage',key,label,libraryStage)).join('')}</div>
     <strong>Kategoria</strong><div class="filters" role="group" aria-label="Kategoria">${filterButton('filter-library', 'all', 'Wszystkie', category)}${Object.entries(GUIDE.categories).map(([key, cat]) => filterButton('filter-library', key, cat.name, category)).join('')}</div>
@@ -544,7 +544,7 @@ function support(r) {
   supportId = item.id;
   const menu = Object.fromEntries(GUIDE.cases.map(c => [c.id, c.title]));
   const touch = matchMedia('(pointer: coarse)').matches;
-  return `${r.id ? backLink(r) : ''}${pageHeading('Blisko siebie', 'Karta wsparcia', 'Wybierz jedną sprawę, a Otula przygotuje uprzejmą prośbę do bliskiej osoby. Ty decydujesz, komu i jak ją wyślesz.')}
+  return `${r.id ? backLink(r) : ''}${pageHeading('Blisko siebie', 'Karta wsparcia', 'Przygotuj uprzejmą prośbę i zdecyduj, komu ją wyślesz.')}
     <div class="support-layout"><section class="support-form" aria-label="Ustawienia prośby">
       <label for="support-select">1. W czym potrzebujesz pomocy?</label><select id="support-select">${options(menu, supportId)}</select>
       <fieldset><legend>2. Kto pisze?</legend>${radios('sender', { mama: 'Mama <small>„mogłabym”</small>', tata: 'Tata <small>„mógłbym”</small>', neutral: 'Neutralnie <small>„czy mogę”</small>' }, supportSender())}</fieldset>
@@ -602,6 +602,7 @@ function render(focus = false) {
   const pages = { termin:calendarEditor, formularze:formsPage, kalkulator:calculatorPage, 'e-uslugi':eUslugiPage, 'sprawdz-sprawe':sprawdzSprawePage, parametry:zusParametersPage, uprawnienia:zusCompactGuidePage, narzedzia:toolsPage, slowniczek:glossaryPage, rodzina:childrenPage, raport:reportPage, poradnik:handbook, pomoc:helpPage, powitanie: arrival, dzieci: arrival, praca: arrival, start, plan: planPage, terminy: deadlinesPage, biblioteka: library, wsparcie: support, sytuacja: situation, 'o-przewodniku': about, dane: dataPage };
   main.innerHTML = r.page === 'sprawa' ? backLink(r) + casePage(r.id) : pages[r.page](r);
   if (['plan','terminy','sytuacja','wsparcie'].includes(r.page)) main.insertAdjacentHTML('afterbegin',childSwitch());
+  if (!document.body.classList.contains('arriving') && !main.querySelector('.back-link') && (r.page !== 'start' || previousHash())) main.insertAdjacentHTML('afterbegin',backLink(r));
   if (r.page === 'biblioteka') main.insertAdjacentHTML('afterbegin','<div class="library-tools"><a href="#slowniczek">Słowniczek</a><a href="#pomoc">Zapytaj AI</a></div>');
   if (r.page === 'biblioteka') document.querySelector('#query').value = query;
   if (focus) main.querySelector('h1')?.focus({ preventScroll: true });

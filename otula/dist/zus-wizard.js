@@ -22,6 +22,16 @@ calculatorPage = function (r) {
   }
   const fields = Array.from(form.querySelectorAll(':scope > fieldset.zus-fields'));
   fields.forEach((field, i) => { field.dataset.wizardPanel = String(i); field.hidden = i !== 0; });
+  // Keep the full explanations accessible without crowding the current step.
+  for (const note of form.querySelectorAll('p.zus-field-note')) {
+    if (note.textContent.length < 200) continue;
+    const details = document.createElement('details');
+    details.className = 'zus-field-note';
+    const summary = document.createElement('summary');
+    summary.textContent = note.textContent.startsWith('W profilu') ? 'Którą datę podać?' : note.textContent.startsWith('Dla pełnego etatu') ? 'Minimum podstawy i wymiar pracy' : 'Jak ustalić dane do tego kroku?';
+    note.before(details); details.append(summary, note); note.classList.remove('zus-field-note');
+  }
+
   const review = form.querySelector('.zus-review');
   if (review) { review.dataset.wizardPanel = '2'; review.hidden = true; }
   const submit = form.querySelector('[type="submit"]');
@@ -201,7 +211,7 @@ function zusCompactGuidePage(r) {
     ['Utrata dziecka lub przejęcie opieki','Pomoc dopasowana do sytuacji','Po utracie ciąży lub dziecka sprawdź skrócony okres świadczenia. Choroba lub śmierć matki mogą umożliwić przejęcie opieki przez uprawnioną osobę.','Zakres dokumentów zależy od zdarzenia. Przygotuj potwierdzenia i uzgodnij okres z płatnikiem. Możesz też skorzystać z Karty wsparcia dla bliskich.','documents','Dokumenty w szczególnych sytuacjach'],
     ['Co wpływa na wypłatę?','Ubezpieczenie · podstawa · terminy','Znaczenie mają zmiany etatu, przerwy, składniki wynagrodzenia i zadłużenie przy działalności. Termin wyboru 81,5% to najpóźniej 21 dni po zdarzeniu.','Sprawdź dokumenty płatnika, stan składek i wykorzystane okresy obojga rodziców. Aktualne formularze znajdziesz w Centrum e-usług i Bibliotece spraw.','amount','Stawki i wyrównanie']
   ];
-  return backLink(r) + pageHeading('Świadczenia w ciąży','Najważniejsze, na spokojnie','Wybierz swoją sytuację. Kluczowe fakty są poniżej, a szczegóły i źródło możesz rozwinąć.') +
+  return backLink(r) + pageHeading('Świadczenia w ciąży','Najważniejsze, na spokojnie','Wybierz swoją sytuację i rozwiń potrzebne dokumenty oraz źródła.') +
     `<div class="zus-guide-cards">${cards.map(([title,fact,body,docs,source,sourceLabel])=>`<article><p class="zus-guide-fact">${fact}</p><h2>${title}</h2><p>${body}</p><details><summary>Dokumenty i następny krok</summary><p>${docs}</p><div class="source-box">${zusSource(source,sourceLabel)}</div></details></article>`).join('')}</div>
     <section class="zus-guide-help"><div><p class="home-kicker">Nie musisz być z tym sama ani sam</p><h2>Wsparcie bliskich i organizacji</h2><p>Pomoc po stracie, dla rodziców wcześniaków i informacje o prawach okołoporodowych.</p></div><div><a class="button primary" href="#wsparcie">Przygotuj Kartę wsparcia ${icon('arrow',16)}</a><details><summary>Organizacje i kontakty</summary><div class="source-box"><a href="https://ronicpoludzku.com/" target="_blank" rel="noopener noreferrer">Ronić po Ludzku</a><a href="https://wczesniak.pl/tak-pomagamy/" target="_blank" rel="noopener noreferrer">Wcześniak Rodzice-Rodzicom</a><a href="https://rodzicpoludzku.pl/o-nas/kontakt/" target="_blank" rel="noopener noreferrer">Rodzić po Ludzku</a></div></details></div></section>`;
 }
