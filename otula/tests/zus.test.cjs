@@ -5,6 +5,7 @@ vm.createContext(context);vm.runInContext(fs.readFileSync(path.join(__dirname,'.
 const defaults={kind:'birth',count:1,special:false,insurance:'yes',insuranceB:'yes',baseA:5000,baseB:6000,shareA:32,fractionA:0,fractionB:0,rate:'standard',eventDate:'2026-11-01',childDob:'2026-11-01',deferred:false,payer:'employer',exception:'none',workA:'employee',workB:'employee',coverageEnd:'',debt:'clear',applicationDate:'2026-11-15'};
 let checks=0;
 function calc(data={}){checks++;context.input={...defaults,...data};return vm.runInContext('zusCalculation(input)',context)}
+context.zusMoney=n=>n.toFixed(2)+' PLN';
 let r=calc();assert.equal(r.issues.length,0);assert.equal(r.maternity,20);assert.equal(r.parental,41);assert.equal(r.segments.length,3);assert.equal(r.segments[0].days,140);assert.equal(r.segments[1].days,224);assert.equal(r.segments[2].days,63);assert.equal(r.segments[2].daily,140);
 r=calc({fractionA:.5});assert.equal(r.segments[1].days,448);assert.equal(r.segments[1].daily,58.33);
 r=calc({rate:'combined'});assert.equal(r.segments[0].rate,81.5);assert.equal(r.segments[1].rate,81.5);assert.equal(r.segments[2].rate,70);
@@ -68,6 +69,32 @@ assert.ok(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,parentalWeeks:
 assert.ok(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,maternityWeeks:[20,31,30,35,37]}).length',context));
 assert.ok(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,validTo:"2025-12-31"}).length',context));
 const storage=new Map();context.localStorage={getItem:key=>storage.get(key)??null,setItem:(key,value)=>storage.set(key,value),removeItem:key=>storage.delete(key)};
+const hospital={exception:'hospital',gestationWeeks:27,birthWeight:900,hospitalFrom:'2026-11-01',hospitalUntil:'2026-11-09',hospitalConfirmed:true};
+r=calc({workA:'business',debt:'amount',debtAmountA:48.06});assert.equal(r.issues.length,0);
+r=calc({workA:'business',debt:'amount',debtAmountA:48.07});assert.ok(r.issues.some(s=>s.includes('przekracza próg')));
+r=calc({workA:'business',debt:'amount',debtAmountA:''});assert.ok(r.issues.length,'unknown amount is not zero');
+r=calc({workA:'business',debt:'clear',debtAmountA:200});assert.ok(r.issues.length,'conflicting high debt is not silently ignored');
+r=calc({workB:'business',debtB:'amount',debtAmountB:49.5});assert.equal(r.issues.length,0,'second parent threshold uses their entitlement start year2027');
+r=calc({workB:'business',debtB:'amount',debtAmountB:49.51});assert.ok(r.issues.length);
+r=calc(hospital);assert.equal(r.issues.length,0);assert.equal(r.supplementary.weeks,2);assert.equal(r.supplementary.days,8);assert.equal(r.segments[1].kind,'supplementary');assert.equal(r.segments[1].rate,100);assert.equal(r.segments[1].from,'2027-03-21');assert.equal(r.segments[1].until,'2027-04-03');assert.equal(r.segments[2].from,'2027-04-04');
+r=calc({...hospital,rate:'combined',firstYearParental:'yes'});assert.equal(r.issues.length,0);assert.equal(r.segments[0].rate,81.5);assert.equal(r.segments[1].rate,100);
+r=calc({...hospital,gestationWeeks:30,birthWeight:1000,hospitalUntil:'2027-02-20'});assert.equal(r.supplementary.weeks,15);
+r=calc({...hospital,gestationWeeks:28,birthWeight:1001,hospitalUntil:'2027-02-20'});assert.equal(r.supplementary.weeks,8);
+r=calc({...hospital,hospitalExtra:'2026-11-05 / 2026-11-12\n2026-11-20 / 2026-11-21'});assert.equal(r.supplementary.days,13);assert.equal(r.supplementary.weeks,2,'overlapping stays count once; rounding follows the sum');
+r=calc({...hospital,gestationWeeks:37,birthWeight:3200,hospitalUntil:'2026-11-07'});assert.equal(r.issues.length,0);assert.equal(r.supplementary.days,2);assert.equal(r.supplementary.weeks,1);
+r=calc({...hospital,gestationWeeks:37,birthWeight:3200,hospitalUntil:'2026-11-06'});assert.equal(r.supplementary.weeks,0,'one qualifying day is insufficient');
+r=calc({...hospital,gestationWeeks:37,birthWeight:3200,hospitalFrom:'2026-11-30',hospitalUntil:'2026-12-02'});assert.equal(r.supplementary.weeks,0,'first stay beginning day29 is not qualifying');
+r=calc({...hospital,gestationWeeks:37,birthWeight:3200,hospitalFrom:'2026-11-29',hospitalUntil:'2026-11-30'});assert.equal(r.supplementary.weeks,1,'day28 and29 qualify');
+r=calc({...hospital,kind:'adoption',childDob:'2026-10-25'});assert.equal(r.issues.length,0);assert.equal(r.supplementary.weeks,2);
+for(const data of [{hospitalConfirmed:false},{hospitalUntil:'2026-10-31'},{gestationWeeks:''},{birthWeight:0},{hospitalExtra:'bad input'},{parentalStartA:'2027-03-21'}])assert.ok(calc({...hospital,...data}).issues.length);
+// Synthetic age boundaries: guaranteed maternity minimum is independent of the uncertain parental end date.
+r=calc({kind:'adoption',childDob:'2012-11-05',eventDate:'2026-11-01',shareA:0,shareB:0});assert.equal(r.issues.length,0);assert.equal(r.maternityDays,63);assert.equal(r.parental,38);assert.equal(r.segments[0].until,'2027-01-02');
+r=calc({kind:'adoption',childDob:'2012-11-05',eventDate:'2026-11-01',shareA:0,shareB:0,special:true});assert.equal(r.parental,62);
+r=calc({kind:'foster',childDob:'2019-11-05',eventDate:'2026-11-01',shareA:0,shareB:0});assert.equal(r.issues.length,0);assert.equal(r.maternityDays,63);assert.equal(r.parental,38);
+r=calc({kind:'foster',childDob:'2016-11-05',eventDate:'2026-11-01',deferred:true,shareA:0,shareB:0});assert.equal(r.issues.length,0);assert.equal(r.maternityDays,63);
+r=calc({kind:'adoption',childDob:'2013-02-09',eventDate:'2026-11-01',shareA:0,shareB:0});assert.equal(r.issues.length,0);assert.equal(r.maternityDays,100);assert.equal(r.parental,41);
+r=calc({kind:'adoption',childDob:'2012-11-01',eventDate:'2026-11-01',shareA:0,shareB:0});assert.ok(r.issues.length);
+r=calc({kind:'adoption',childDob:'2012-11-05',eventDate:'2026-11-01',shareA:29,shareB:9});assert.ok(r.issues.some(s=>s.includes('ograniczenie tej symulacji')));assert.equal(r.total,undefined);
 assert.equal(vm.runInContext('zusSetRules({...ZUS_DEFAULT_RULES,minimumWage:5000}).persisted',context),true);
 assert.equal(vm.runInContext('zusLoadRules().minimumWage',context),5000);
 assert.equal(vm.runInContext('zusMinimumBase()',context),4314.5);
