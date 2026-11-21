@@ -1,5 +1,11 @@
 # Architektura i model danych
 
+## Główna ścieżka rodzica
+
+Router kieruje start do `#moja-sprawa`. Moduł `wywiad-reguly.js` wybiera pytania, odrzuca odpowiedzi z nieaktualnych odgałęzień i na tych samych danych wyznacza karty świadczeń. W module `wywiad-ui.js` pytanie, wynik i przygotowanie druku mają własne adresy hash. Adresy nie zawierają odpowiedzi rodziny. Klucz `otula-wywiad-v1` przechowuje odpowiedzi tylko po wybraniu zapisu. Wcześniejszy profil może podpowiedzieć rolę, etap, datę i zatrudnienie po wyborze importu.
+
+Moduły `wniosek-pdf.js` i `chorobowe-pdf.js` wykorzystują lokalne wzory ZAM i ZAS-53. Wprowadzane do druków identyfikatory i rachunek pozostają w pamięci otwartego formularza. Podpis elektroniczny oraz wysyłka odbywają się po przejściu do właściwej usługi. Serwer asystenta nie bierze udziału w wywiadzie, ustalaniu kwot ani generowaniu PDF. Szczegóły generatora opisano w [dokumentacji ZAM](ZAM-PDF.md).
+
 Otula składa się z frontendu statycznego oraz osobnego serwera odpowiedzi AI. Konto, baza rodzin i połączenia urzędowe nie są częścią obecnej architektury. Dane pokazowe są lokalną symulacją.
 
 ```mermaid

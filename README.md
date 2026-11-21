@@ -2,11 +2,11 @@
 
 # Zasiłkowy Przewodnik Przyszłego Rodzica
 
-**Otula — rodzina ma plan, bliscy wiedzą, jak pomóc.**
+**Otula pomaga rodzicowi ustalić, o jakie świadczenie może wystąpić i jak przygotować wniosek.**
 
-Przewodnik po zasiłkach, dokumentach i pierwszych miesiącach rodzicielstwa w formie responsywnej aplikacji webowej na komputer i telefon. Łączy plan dla każdego dziecka, kalkulator zasiłku, kalendarz, podręcznik, asystenta ze źródłami oraz autorską **Kartę wsparcia**: gotową, uprzejmą prośbę o pomoc w konkretnej sprawie.
+Po otwarciu aplikacji rodzic odpowiada na pytania o swoją sytuację. Może sprawdzić częściowy wynik, kwotę, okres oraz dokumenty, których potrzebuje od pracodawcy, lekarza lub urzędu. Druki ZAM i ZAS-53 uzupełnia na urządzeniu i pobiera do podpisu. Główna ścieżka działa bez konta i bez asystenta AI.
 
-Projekt na zadanie ZUS w HackNation 2026. Stan dokumentacji: **21 listopada 2026**. To działający prototyp, z jawnie opisanymi ograniczeniami. Integracje z mObywatelem i ZUS są symulowane. Kalkulator wymaga gotowej podstawy zasiłku; nie wylicza jej z historii wynagrodzeń.
+Projekt na zadanie ZUS w HackNation 2026. Stan dokumentacji **21 listopada 2026**. Wyliczenie kwoty wymaga podstawy zasiłku ustalonej przez płatnika. Złożenie elektroniczne wymaga przejścia do oficjalnego serwisu. W eZUS można wybrać logowanie przez login.gov.pl z mObywatelem. Osobny moduł konkursowy ilustruje integracje na fikcyjnych danych.
 
 ## Obejrzyj w 3 minuty
 
@@ -19,7 +19,7 @@ Projekt na zadanie ZUS w HackNation 2026. Stan dokumentacji: **21 listopada 2026
 | Źródło slajdów i notatki | [Samodzielny HTML](otula/materialy/Otula-slajdy-i-notatki.html) — pobierz i otwórz w przeglądarce |
 | Aktualne ekrany: 12 tras × 3 szerokości | [Galeria](docs/EKRANY.md) |
 
-Materiały pokazują aktualny interfejs i fikcyjne dane. Źródła oraz sposób odtworzenia PDF i filmu opisuje [katalog materiałów dla jury](otula/materialy/jury/README.md). [Przygotowanie do rozmowy z ZUS i jury](docs/ROZMOWA-Z-JURY.md) objaśnia oba dokumenty konkursowe, kryteria i otwarte pytania.
+Film, slajdy i galeria pokazują wcześniejszą wersję konkursową z fikcyjnymi danymi. Najnowszy wywiad jest dostępny w aplikacji. Źródła oraz sposób odtworzenia PDF i filmu opisuje [katalog materiałów dla jury](otula/materialy/jury/README.md). [Przygotowanie do rozmowy z ZUS i jury](docs/ROZMOWA-Z-JURY.md) objaśnia oba dokumenty konkursowe, kryteria i otwarte pytania.
 
 Repozytorium jest **prywatne**. Linki do jego plików wymagają dostępu nadanego przez właścicielkę. Publiczne demo nie daje dostępu do kodu. Nie dodano jurorów automatycznie.
 

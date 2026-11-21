@@ -1,5 +1,12 @@
 # Historia zmian
 
+## 2026-11-21 — od pytań rodzica do wniosku
+
+- Start otwiera jeden wywiad. Rodzic może odpowiedzieć „Nie wiem jeszcze”, obejrzeć częściowy wynik i wrócić do konkretnej odpowiedzi. Zmiana sytuacji usuwa odpowiedzi, które przestały jej dotyczyć.
+- Wynik pokazuje powód dopasowania, okres, możliwą kwotę lub brakujące dane oraz listę dokumentów ze wskazaniem osoby lub instytucji, która je przygotowuje.
+- Urzędowe ZAM i ZAS-53 można uzupełnić i pobrać do podpisu na urządzeniu. Sprawy elektroniczne mają odnośniki do usług urzędowych. Logowanie z mObywatelem odbywa się u dostawcy tożsamości.
+- W głównej ścieżce ukryto asystenta AI i podręcznik. Odpowiedzi z wywiadu są zapisywane na urządzeniu na życzenie rodzica. Pola identyfikacyjne z wniosków pozostają w pamięci formularza.
+
 ## 2026-11-21 — prostsza ścieżka rodzica i wspólne dane
 
 - Start odpowiada „Co możesz otrzymać?” i pokazuje trzy dopasowane świadczenia; dalej prowadzi do kwoty, dokumentów i terminów. Dodatkowe materiały i przykłady przeniesiono do „Więcej możliwości”. Zachowano Kartę wsparcia.

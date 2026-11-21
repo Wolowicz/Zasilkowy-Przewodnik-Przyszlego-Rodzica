@@ -10,6 +10,7 @@ const tabs = {
   wsparcie: ['Karta wsparcia', 'Wsparcie', 'mail']
 };
 const titles = {
+  'moja-sprawa':'Moja sprawa',
   termin:'Termin', formularze:'Formularze ZUS',
   kalkulator:'Kalkulator zasiłków', 'konto-demo':'Centrum e-usług', 'e-uslugi':'Centrum e-usług', 'sprawdz-sprawe':'Sprawdź sprawę ZUS', parametry:'Parametry kalkulatora', uprawnienia:'Jakie świadczenia?',
   narzedzia:'Więcej możliwości', rodzina:'Moja rodzina', raport:'Raport rodzinny', poradnik:'Podręcznik rodzica', pomoc:'Zapytaj AI', slowniczek:'Słowniczek urzędowy',
@@ -585,8 +586,37 @@ function dataPage(r) {
 }
 
 /* ---------- render ---------- */
+function legacyInterviewDefaults() {
+  if (!state.onboarded) return {};
+  const role = {mama:'mother', tata:'father', bliska:'supporter'}[state.role];
+  const defaults = {role, event:state.stage === 'birth' ? 'birth' : 'pregnancy'};
+  if (['employee','contract','business'].includes(state.work)) defaults.work = state.work;
+  if (state.date) defaults.eventDate = state.date;
+  return defaults;
+}
+
+function renderInterview(r) {
+  document.body.classList.add('arriving');
+  sidebar.replaceChildren();
+  mobileNavigation.hidden = true;
+  mobileNavigation.replaceChildren();
+  document.querySelector('#topbar').replaceChildren();
+  document.querySelector('.footer').replaceChildren();
+  main.innerHTML = `<div class="arrival-brand"><div class="arrival-signature">${brand()}<span class="brand-subtitle">Świadczenia dla rodziców</span></div></div><div id="interview-content"></div>`;
+  document.title = titles[r.page] + ' · Otula';
+  window.OtulaWywiad.render(main.querySelector('#interview-content'), legacyInterviewDefaults());
+}
+
 function render(focus = false) {
   const r = route();
+  if (['start','powitanie','dzieci','praca','sytuacja','pomoc','poradnik'].includes(r.page)) {
+    history.replaceState(history.state, '', '#moja-sprawa');
+    r.page = 'moja-sprawa';
+  }
+  if (r.page === 'moja-sprawa') {
+    renderInterview(r);
+    return;
+  }
   document.body.classList.toggle('arriving', (r.page === 'start' && !state.onboarded) || ['powitanie','dzieci','praca'].includes(r.page));
   frame(r);
   const pages = { termin:calendarEditor, formularze:formsPage, kalkulator:calculatorPage, 'e-uslugi':eUslugiPage, 'sprawdz-sprawe':sprawdzSprawePage, parametry:zusParametersPage, uprawnienia:zusCompactGuidePage, narzedzia:toolsPage, slowniczek:glossaryPage, rodzina:childrenPage, raport:reportPage, poradnik:handbook, pomoc:helpPage, powitanie: arrival, dzieci: arrival, praca: arrival, start, plan: planPage, terminy: deadlinesPage, biblioteka: library, wsparcie: support, sytuacja: situation, 'o-przewodniku': about, dane: dataPage };
@@ -694,6 +724,7 @@ document.addEventListener('click', event => {
     case 'reset-ask': resetAsk = true; render(); main.querySelector('[data-action="reset-cancel"]')?.focus(); break;
     case 'reset-cancel': resetAsk = false; render(); main.querySelector('[data-action="reset-ask"]')?.focus(); break;
     case 'reset':
+      window.OtulaWywiad?.clear?.();
       try { localStorage.removeItem(storageKey); sessionStorage.removeItem(trailKey); trail=[]; position=0; } catch { announce('Przeglądarka nie pozwala usunąć zapisu. Sprawdź ustawienia pamięci witryny.'); break; }
       state = newState(); calendarMonth='';calendarDay='';calendarDraftCase='';calendarDelete=''; zusResetDrafts(); zusDemo=''; zusRules=structuredClone(ZUS_DEFAULT_RULES); resetAsk = false; supportId = ''; query = ''; category = 'all'; planFilter = 'all';
       location.hash = 'start'; render(true); announce('Usunięto zapisane dane.'); break;

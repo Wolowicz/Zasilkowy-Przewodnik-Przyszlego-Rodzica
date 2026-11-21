@@ -1,0 +1,69 @@
+/* Wywiad: istniejące komponenty i tokeny, STYL-I-DESIGN rozdział 14. */
+.wywiad-page { max-width:980px; min-width:0; }
+.wywiad-page :is(button,a,span,p,dt,dd,h1,h2,h3) { overflow-wrap:anywhere; }
+.wywiad-page [hidden] { display:none!important; }
+.wywiad-welcome { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:24px; align-items:center; background:var(--peach); padding:clamp(20px,3vw,32px); }
+.wywiad-welcome h1 { margin:12px 0 16px; line-height:1.1; }
+.wywiad-welcome .button { margin-top:24px; }
+.wywiad-welcome img { display:block; width:100%; height:auto; aspect-ratio:1/1; object-fit:contain; border-radius:22px; }
+.wywiad-welcome-steps { margin-block:24px!important; }
+.wywiad-progress { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.wywiad-progress .chip { padding:10px 12px; display:flex; align-items:center; justify-content:center; text-align:center; border:1px solid var(--line); color:var(--muted); font-size:14px; }
+.wywiad-progress [aria-current] { color:var(--berry); border-color:var(--berry); }
+.wywiad-progress-note { margin-top:12px; color:var(--muted); font-size:14px; }
+.wywiad-question { background:#fff; margin:20px 0; padding:clamp(20px,3vw,32px); }
+.wywiad-question h1 { margin:10px 0 16px; line-height:1.15; }
+.wywiad-help { color:var(--muted); font-size:15px; line-height:1.5!important; }
+.wywiad-choices { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; margin:24px 0; }
+.wywiad-choice { display:flex; justify-content:space-between; gap:16px; width:100%; min-height:56px!important; text-align:left; padding:14px 20px; font-size:16px!important; color:var(--ink); }
+.wywiad-choice.active { border-color:var(--berry); }
+.wywiad-choice-mark { width:24px; height:24px; flex:none; border:1px solid var(--line); border-radius:50%; display:grid; place-items:center; font-size:16px; }
+.wywiad-choice.active .wywiad-choice-mark { color:#fff; background:var(--berry); border-color:var(--berry); }
+.wywiad-input { display:grid; gap:8px; margin:24px 0; max-width:480px!important; }
+.wywiad-page .wywiad-input input { font-family:inherit; border-radius:15px; }
+.wywiad-actions,.wywiad-page .case-actions { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+.wywiad-actions { border-top:1px solid var(--line); padding-top:20px; margin-top:20px; }
+.wywiad-error { color:var(--error-ink); font-size:15px; }
+.wywiad-error:empty,.wywiad-message:empty { display:none; }
+.wywiad-message { color:var(--berry); font-size:14px; margin:16px 0; }
+.wywiad-storage .case-actions { margin-top:16px; }
+.wywiad-page .page-intro .chip { margin-top:16px; display:inline-flex; padding:6px 12px; }
+.wywiad-card-heading { display:grid; gap:14px; margin-bottom:12px; }
+.wywiad-card-heading .chip { padding:6px 12px; justify-self:start; }
+.wywiad-card-heading h2 { margin:0; }
+.wywiad-facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:20px 0; }
+.wywiad-facts>div { border-radius:16px; background:var(--rose); padding:16px; }
+.wywiad-facts>div:nth-child(2) { background:var(--peach); }
+.wywiad-facts dt { font-size:14px; margin-bottom:8px; color:var(--muted); }
+.wywiad-facts dd { margin:0; font-size:18px; line-height:1.4; font-weight:750; }
+.wywiad-documents { list-style:none; padding:0!important; display:grid; gap:16px; }
+.wywiad-documents li { margin:0!important; display:grid; gap:10px; border-bottom:1px solid var(--line); padding-bottom:16px; }
+.wywiad-documents li:last-child { border-bottom:0; }
+.wywiad-documents .chip { justify-self:start; padding:5px 10px; font-size:14px; }
+.wywiad-documents strong { font-size:16px; }
+.wywiad-next { display:grid; gap:12px; }
+.wywiad-next:empty { display:none; }
+.wywiad-next .text-button,.wywiad-documents .text-button { white-space:normal; }
+.wywiad-handoff .zus-segments h3 { font-family:inherit; font-size:20px; }
+.wywiad-handoff .zus-segments section { gap:14px; }
+.wywiad-handoff .button { justify-self:start; }
+.wywiad-handoff-note { margin-top:20px; }
+.wywiad-answers { margin:0; }
+.wywiad-answers>div { border-bottom:1px solid var(--line); padding:12px 0; }
+.wywiad-answers dt { font-weight:700; font-size:15px; }
+.wywiad-answers dd { margin:8px 0 0; display:flex; justify-content:space-between; align-items:center; gap:16px; }
+.wywiad-page .button { white-space:normal; text-align:center; }
+@media(max-width:700px) {
+ .arriving .wywiad-page { margin-inline:16px; }
+ .wywiad-welcome { grid-template-columns:minmax(0,1fr); }
+ .wywiad-welcome img { display:none; }
+ .wywiad-progress { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .wywiad-facts { grid-template-columns:minmax(0,1fr); }
+ .wywiad-question { padding:20px 16px; }
+ .wywiad-actions { align-items:stretch; flex-direction:column; }
+ .wywiad-actions .button { width:100%; }
+ .wywiad-choice { padding:12px 16px; }
+ .wywiad-page .case-actions { align-items:flex-start; }
+ .wywiad-page .text-button { white-space:normal; text-align:left; }
+}
+@media(prefers-reduced-motion:reduce) { .wywiad-page * { scroll-behavior:auto; } }

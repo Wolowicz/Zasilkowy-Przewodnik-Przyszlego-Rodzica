@@ -117,3 +117,11 @@ Subtelny: 150–200 ms, `ease`, tylko przejścia koloru, cienia i przesunięć o
 Start pokazuje najpierw maksymalnie trzy dopasowane świadczenia (istniejąca siatka `.zus-guide-cards`, karty `.home-progress` i status `.chip`). Każda karta zawiera nazwę, krótki warunek i następny krok. Nie używamy statusu „przysługuje” na podstawie samej roli lub umowy. Główne działanie prowadzi do własnego wyliczenia; przykłady demonstracyjne są opcjonalne. Centrum e-usług jest przed kalkulatorem, a edycja sytuacji jest częścią tego samego procesu, bez drugiej pozycji menu.
 
 Na szerokim ekranie trzy karty mieszczą się w jednym rzędzie; na telefonie układają się pionowo. Ich nagłówki mają 25 px. Pod nimi jest jedno główne działanie „Oblicz zasiłek macierzyński”, a następnie termin i dwa najbliższe kroki. Nie dodajemy tu reklamy funkcji ani rozbudowanej sekcji poradnika. Przykłady, parametry i dodatkowe materiały są dostępne w „Więcej możliwości”.
+
+## 14. Wywiad o świadczeniach
+
+`#moja-sprawa` prowadzi przez jedno pytanie naraz, w czterech grupach: rodzina, ubezpieczenie, okresy i kwota. Używa istniejących kart `.zus-result`, przycisków `.button`, opcji `.filter` i statusów `.chip`; `wywiad.css` określa jedynie układ i rozmiary w tych samych tokenach. Pytanie ma krótkie objaśnienie, wyraźne opcje, „Wróć” i „Nie wiem — pomiń”. Nie zaznaczamy odpowiedzi domyślnie. Daty zatwierdza przycisk, bez przebudowy pola podczas wpisywania roku.
+
+Wynik pokazuje oddzielnie świadczenia, kwotę lub brak danych do kwoty oraz dokumenty z osobą odpowiedzialną. Szczegóły można rozwinąć; podstawowe informacje i następny krok pozostają widoczne. Zmiana odpowiedzi usuwa niepasujące odpowiedzi zależne. Trasy pytań, wyniku i przygotowania dokumentu zachowują systemowe cofanie. Dane osobowe wniosku nie należą do zapisu odpowiedzi; zapis na urządzeniu wymaga świadomego działania użytkownika.
+
+Powitanie wywiadu ma jedną brzoskwiniową kartę i jedno główne działanie; na komputerze istniejąca ilustracja ciężarnej pozostaje dekoracją obok tekstu, na małym telefonie pierwszeństwo ma tekst i przycisk. Ukończony wywiad otwiera wynik; rozpoczęty pozwala kontynuować od brakującej odpowiedzi.
