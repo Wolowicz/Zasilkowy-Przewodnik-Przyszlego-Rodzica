@@ -57,7 +57,7 @@ To kontrola zapisanych ekranów z fikcyjnymi danymi, nie automatyczny test wszys
 
 ## Publiczny asystent AI
 
-21.11.2026 sprawdzono publiczną odpowiedź na pytanie o dokumenty do becikowego: tryb AI zawierał odpowiedź, urzędowe odnośniki i cytaty. Konfiguracja pokazu korzysta z `google/gemini-2.5-flash-lite` przez OpenRouter; szczegóły i zakres potwierdzenia są w [ASYSTENT-AI.md](ASYSTENT-AI.md). To pojedynczy test działania, nie ocena każdej tezy lub całej macierzy pytań. Lokalny test API bez klucza pozostaje osobną kontrolą trybu zastępczego.
+21.11.2026 sprawdzano publiczne odpowiedzi oraz tryb źródeł przy błędach modelu. Konfiguracja pokazu korzysta z `google/gemini-2.5-flash-lite` przez OpenRouter; dokładny stan potwierdzenia jest w [ASYSTENT-AI.md](ASYSTENT-AI.md). Testy automatyczne obejmują kontrakt JSON, niepoprawną i uciętą odpowiedź oraz referencje; nie są oceną merytoryczną całej macierzy pytań. Lokalny test API bez klucza pozostaje osobną kontrolą trybu zastępczego.
 
 ## Aktualne materiały dla jury
 

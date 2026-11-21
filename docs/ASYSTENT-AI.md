@@ -11,8 +11,8 @@ Na komputerze przycisk „Zapytaj Otulę” otwiera panel obok aktualnej sprawy.
 3. Kontekst i dopasowanie rozróżniają formalności od tematów zdrowia/opieki. Rozpoznane objawy alarmowe mają osobną odpowiedź ogólną.
 4. Wykorzystywane są karty, podręcznik, wyszukiwanie stron urzędowych oraz dobrane publikacje medyczne. Źródła są ograniczone do dozwolonych domen i sprawdzane przy przekierowaniach.
 5. Serwer odczytuje fragmenty stron; przy błędach może użyć odpowiednio świeżej kopii. Pamięć tekstów ma limit wieku 72 godzin w tej ścieżce. Daty indeksu publikacji i daty kart są odrębne.
-6. Do modelu trafia pytanie, kontekst kart i numerowane fragmenty. Model ma zwrócić maksymalnie cztery tezy z numerami źródła i fragmentu.
-7. Serwer weryfikuje format i istnienie referencji, a interfejs pokazuje odpowiedź, cytat i link. To kontrola odwołań, nie dowód merytorycznej poprawności każdej tezy.
+6. Do modelu trafia pytanie, kontekst kart i numerowane fragmenty. Wymagany jest ścisły `json_schema` z maksymalnie czterema tezami i numerami źródła oraz fragmentu. Dostawca musi obsługiwać zadeklarowane parametry.
+7. Serwer wymaga kompletnej odpowiedzi (`finish_reason: stop`), weryfikuje format i istnienie referencji, a interfejs pokazuje odpowiedź, cytat i link. To kontrola odwołań, nie dowód merytorycznej poprawności każdej tezy.
 
 Treść pytania, stron i kart jest traktowana jako dane, nie instrukcje zmieniające działanie systemu. Prompt nie pozwala na indywidualne rozstrzyganie uprawnień, diagnozy ani dawkowanie leków. Ograniczenia promptu i filtrów nie zastępują testów bezpieczeństwa.
 
@@ -42,13 +42,13 @@ Statusy API: 200 dla odpowiedzi i trybów zastępczych, 204 dla dozwolonego OPTI
 
 ## Dostawcy i modele
 
-Konfiguracja kodu próbuje `openrouter/free`, a następnie `google/gemma-4-26b-a4b-it:free`, zależnie od rodzaju błędu. Temperatura 0, limit odpowiedzi 1400 tokenów, budżet czasu modelu do około 50 sekund. Nazwy opisują stan implementacji, nie gwarantują dostępności ani stałych warunków bezpłatnego użycia. Sprawdź dostępność, limity i warunki dostawcy przed pokazem lub wdrożeniem. Model wybrany przez automatyczny router może się zmieniać.
+Konfiguracja kodu próbuje `openrouter/free`, a następnie `google/gemma-4-26b-a4b-it:free`, zależnie od rodzaju błędu. Temperatura 0, limit odpowiedzi 2400 tokenów, budżet czasu modelu do około 50 sekund. Nazwy opisują stan implementacji, nie gwarantują dostępności ani stałych warunków bezpłatnego użycia. Sprawdź dostępność, limity i warunki dostawcy przed pokazem lub wdrożeniem. Model wybrany przez automatyczny router może się zmieniać.
 
-Błędy uprawnień/rozliczeń nie powodują ujawnienia sekretu w odpowiedzi. Niedostępność modelu uruchamia źródła lub fragmenty. Nie sprawdzono w tym imporcie odpowiedzi płatnego/produkcyjnego modelu nowym kluczem; test lokalny działa bez niego.
+Błędy uprawnień/rozliczeń nie powodują ujawnienia sekretu w odpowiedzi. Niedostępność modelu uruchamia źródła lub fragmenty. Test lokalny działa bez klucza. Stan prób produkcyjnych opisuje sekcja konfiguracji pokazu poniżej.
 
 ## Granice ochrony
 
-Opcjonalne zmienne serwera `OPENROUTER_MODEL` i `OPENROUTER_FALLBACK_MODEL` pozwalają wybrać modele bez zmiany kodu. Brak tych zmiennych zachowuje powyższe domyślne wartości. Ta aktualizacja nie zmienia sekretu ani modelu w środowisku produkcyjnym. Testy konfiguracji i kontroli referencji są w `otula/tests/assistant.test.cjs` i uruchamia je `npm test`.
+Opcjonalne zmienne serwera `OPENROUTER_MODEL` i `OPENROUTER_FALLBACK_MODEL` pozwalają wybrać modele bez zmiany kodu. Brak tych zmiennych zachowuje powyższe domyślne wartości. Aktualny wybór produkcyjny opisuje sekcja konfiguracji pokazu; sekret pozostaje wyłącznie po stronie serwera. Testy konfiguracji i kontroli referencji są w `otula/tests/assistant.test.cjs` i uruchamia je `npm test`.
 
 - Lista originów obejmuje domeny demonstracji. Dopuszczony jest także origin `null` dla anonimowej wersji plikowej bez cookie i Authorization. To kompromis demonstracyjny, nie uwierzytelnienie.
 - Limit 8 pytań na 60 sekund działa w pamięci instancji według nagłówka IP dostarczanego przez platformę lub wspólnego klucza. Nie jest globalnym, trwałym limitem kosztów.
@@ -65,4 +65,7 @@ Po zmianie katalogu uruchom synchronizację, a po zmianie źródeł sprawdź tra
 
 Za zgodą właścicielki w środowisku produkcyjnym ustawiono `OPENROUTER_MODEL` i `OPENROUTER_FALLBACK_MODEL` na `google/gemini-2.5-flash-lite`. Klucz pozostał niezmieniony w sekrecie Sites. Domyślne modele bezpłatne w kodzie nadal służą jako konfiguracja nieustawionego środowiska; nie opisują aktualnego wyboru produkcyjnego.
 
-Zmiana nastąpiła po limicie darmowego modelu; test publiczny pytania o dokumenty do becikowego zakończył się odpowiedzią AI z odnośnikami i cytatami gov.pl. Budżet zatwierdzony na testy wynosi maksymalnie 5 zł; nie jest to limit rachunku ani całego publicznego ruchu. Limit odpowiedzi pozostaje 1400 tokenów; nie zapisujemy tutaj sekretu, danych konta ani prywatnych pytań. Cena w chwili sprawdzenia: 0,10 USD / mln tokenów wejścia i 0,40 USD / mln wyjścia, według [OpenRouter](https://openrouter.ai/google/gemini-2.5-flash-lite). Aktualną dostępność i ceny należy sprawdzić przed dłuższym użyciem.
+Zmiana nastąpiła po limicie darmowego modelu. Wcześniejsza poprawna odpowiedź ze źródłami pochodziła z testu przed potwierdzeniem aktywnego modelu, więc nie stanowi dowodu działania wariantu płatnego. Po przełączeniu wykryto niepoprawny JSON; poprawkę kontraktu i diagnostyki wdrożono osobno. Budżet zatwierdzony na testy wynosi maksymalnie 5 zł; nie jest to limit rachunku ani całego publicznego ruchu. Limit odpowiedzi wynosi 2400 tokenów; nie zapisujemy tutaj sekretu, danych konta ani prywatnych pytań. Cena w chwili sprawdzenia: 0,10 USD / mln tokenów wejścia i 0,40 USD / mln wyjścia, według [OpenRouter](https://openrouter.ai/google/gemini-2.5-flash-lite). Aktualną dostępność i ceny należy sprawdzić przed dłuższym użyciem.
+
+
+Po wdrożeniu ścisłego schematu 21.11.2026 o 20:42 (Europe/Warsaw) publiczny asystent zwrócił poprawny tryb `ai` dla pytania „Co przygotować do becikowego?”. W interfejsie sprawdzono odpowiedź, odnośniki gov.pl i rozwijany cytat. To potwierdzenie działania konkretnego zapytania, nie niezależna walidacja każdej tezy ani gwarancja dostępności. Testy po zmianie kodu: `npm test` i `npm run build:assistant` — PASS.
