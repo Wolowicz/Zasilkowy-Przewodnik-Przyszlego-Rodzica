@@ -1,15 +1,18 @@
-# Instrukcja dla rodziców i bliskich
+# Jak sprawdzić swoją sprawę w Otuli
 
-Otula pomaga uporządkować informacje i przygotować plan. Dane rodziny zapisuje na urządzeniu. Nie składa wniosków do urzędów i nie rozstrzyga o prawie do świadczenia.
+## Od sytuacji do wniosku
 
-## Pierwsze uruchomienie
+1. Na ekranie **Co się u Was dzieje?** wybierz, czyją sprawę sprawdzasz. Otwórz kafelek pasujący do sytuacji. Możesz też wpisać w wyszukiwarce np. „poronienie”, „dług” albo „wezwanie”.
+2. Odpowiadaj na jedno pytanie naraz. Przycisk **?** wyjaśnia pojęcia. Gdy brakuje dokumentu lub daty, wybierz **Nie wiem jeszcze**. Podgląd wyniku jest dostępny także w trakcie wywiadu.
+3. Jeśli równolegle załatwiasz drugą sprawę, skorzystaj z **Dodaj drugą sytuację**. Przy pobycie dzieci w szpitalu wpisz pobyty oddzielnie. Do wywiadu wystarczają numery dzieci.
+4. Przy świadczeniu sprawdź okres, możliwą kwotę, brakujące dowody i osobę, która je przygotowuje. Kwoty brutto opierają się na podstawie dla konkretnego rodzica. Zsumowane kwoty mogą obejmować tylko część świadczeń. Własne terminy i wykorzystane okresy można poprawić.
+5. Aby przygotować wniosek, wybierz druk przy świadczeniu. Sprawdź dane w PDF przed podpisaniem. Papierowe wnioski urlopowe przekazujesz pracodawcy. Przy składaniu elektronicznym podpis i wysyłka odbywają się w serwisie właściwej instytucji. W eZUS można wybrać login.gov.pl z mObywatelem.
+6. Oznacz etap sprawy, np. **Wysłano** lub **Do uzupełnienia**. Robisz to samodzielnie. Jeśli pismo podaje termin, otwórz kafelek pisma i dodaj przypomnienie do swojego kalendarza. Przy decyzji przeczytaj pouczenie na otrzymanym dokumencie.
+7. Wybierz zapis na urządzeniu, jeśli chcesz wrócić do tych odpowiedzi po zamknięciu strony. Na wspólnym telefonie możesz zakończyć bez zapisywania lub usunąć zapis. Dane wpisane wyłącznie do przygotowania PDF pozostają w formularzu do czasu opuszczenia widoku.
 
-1. Wybierz rolę: mama, tata lub „Wspieram bliską osobę”. Rola wpływa na proponowaną ścieżkę i sposób zwracania się do Ciebie.
-2. Dodaj dziecko. Imię jest opcjonalne; możesz użyć własnego określenia. Wybierz „Ciąża” lub „Po narodzinach” i datę. W ciąży chodzi o przewidywany termin porodu, po porodzie o rzeczywistą datę urodzenia.
-3. Jeśli masz więcej dzieci, dodaj następne. Każde ma osobne daty, postęp i wydarzenia.
-4. Wybierz sytuację zatrudnienia. To pomaga dobrać informacje, ale samo w sobie nie potwierdza uprawnienia.
+## Wcześniejsze narzędzia Otuli
 
-Późniejsze zmiany wprowadzisz przez „Moja sytuacja” i „Moja rodzina”. Po porodzie zmień etap i wpisz rzeczywistą datę; termin przewidywany nie powinien zastępować daty urodzenia w formalnościach.
+Poniższe opisy dotyczą dodatkowych widoków poprzedniej wersji przewodnika, dostępnych pod swoimi adresami. Nowa ścieżka sprawy zaczyna się na kafelkach.
 
 ## Plan i sprawy
 

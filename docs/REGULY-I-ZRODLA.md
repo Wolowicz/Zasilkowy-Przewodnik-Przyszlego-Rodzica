@@ -4,6 +4,16 @@ Ten dokument opisuje **implementację prototypu**, a nie wiążącą interpretac
 
 ## Dane kalkulatora
 
+### Wywiad i wersje parametrów
+
+Z formularza sytuacji można przejść do `#kalkulator/wywiad`. Podstawa pozostaje przypisana do konkretnego rodzica. Datę przewidywaną traktujemy jako plan. Kolejne pobyty różnych dzieci zachowują osobne identyfikatory. Symulacja pracownicza wymaga potwierdzenia wymiaru etatu. Zmiana warunków lub niejasny podział stawki po wcześniej wykorzystanej części mogą wymagać osobnego rozliczenia u płatnika.
+
+Liczba części rodzicielskiego jest wspólna. Wariant kalkulatora rezerwuje jedną nową część na każdego rodzica, który planuje dodatni okres. Dni wcześniejszych części przypisujemy osobom, po czym sprawdzamy pulę rodziny oraz zastrzeżoną część drugiego rodzica. Pokrywające się dni tej samej osoby wymagają poprawienia planu. Źródła: [Kodeks pracy, art. 182¹a–182¹d](https://eli.gov.pl/eli/DU/1974/141/ogl), [MRPiPS o rodzicielskim](https://www.gov.pl/web/rodzina/urlop-rodzicielski) oraz [ustawa zasiłkowa, w tym art. 30a, 31, 45 i 61](https://api.sejm.gov.pl/eli/acts/DU/2026/854/text/U/D20260854Lj.pdf).
+
+Panel zapisuje lokalnie okres obowiązywania własnego zestawu parametrów demonstracyjnych, w tym limit części. W kalkulatorze zestaw wybiera data zdarzenia, a próg długu zależy od roku powstania prawa. Własny okres obowiązywania oznacza zakres symulacji zespołu. Reguły poza zakresem pochodzą z ustawień standardowych. Dla roku bez zarejestrowanej płacy minimalnej próg długu pozostaje nieznany. Mechanika panelu nie odtwarza historii wszystkich zmian ustawowych w trakcie jednego urlopu.
+
+Szczegóły rozgałęzień pytań i źródła ich przesłanek opisują [źródła wywiadu](ZRODLA-WYWIADU.md). Wywiad stosuje ustawowe stawki w oszacowaniu, a własne warianty stawek i wymiarów sprawdza się w kalkulatorze. Stan sprawdzenia 21 listopada 2026 r.
+
 Użytkownik podaje rodzaj zdarzenia, liczbę dzieci z jednego porodu/przyjęcia, daty, ubezpieczenie obojga rodziców, gotowe podstawy zasiłku, podział tygodni, wariant stawki i stały wymiar pracy. Liczba wszystkich dzieci w rodzinie nie jest liczbą dzieci urodzonych jednocześnie.
 
 Podstawa jest już ustaloną wartością wejściową. Kalkulator nie przelicza wynagrodzenia netto, historii wypłat, potrąceń, nieobecności ani zbiegu tytułów. Przykładowe wartości formularza nie pochodzą z konta ZUS. Przed wyliczeniem użytkownik potwierdza sprawdzenie ubezpieczenia, podstawy i dat w teczce. Nieustalone ubezpieczenie drugiego rodzica nie jest traktowane jak brak jego uprawnień. Szkice należą do wybranego dziecka i są unieważniane po zmianie powiązanej sytuacji.

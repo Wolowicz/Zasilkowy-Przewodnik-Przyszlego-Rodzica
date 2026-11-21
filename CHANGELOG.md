@@ -1,5 +1,14 @@
 # Historia zmian
 
+## 2026-11-21 — sytuacje rodziny, sprawy urzędowe i pisma do podpisu
+
+- Ekran „Co się u Was dzieje?” dobiera kafelki do roli. Wyszukiwanie obejmuje synonimy i bibliotekę spraw. Druga powiązana sytuacja uzupełnia ten sam wywiad.
+- Wywiad zapisuje oddzielnie podstawy rodziców, części rodzicielskiego, okresy pracy i pobyty dzieci w szpitalu. Wynik pokazuje kwotę lub braki, powody możliwej przeszkody, odpowiedzialnych za dokumenty oraz ręczny status.
+- Pismo z ZUS ma osobną ścieżkę, odliczanie do wpisanego terminu i plik kalendarza z przypomnieniem. Po stracie można przerwać pytania, przygotować prośbę do kadr i otworzyć informacje o wsparciu.
+- Dodano pięć pism do pracodawcy, w tym wniosek o rodzicielski z łączeniem z pracą i pismo po stracie. Dotychczasowe ZAM i ZAS-53 nadal powstają lokalnie. Słowniczek otwiera się przy pytaniu, także jako dolny panel na telefonie.
+- Potwierdzone odpowiedzi z wywiadu przechodzą do własnego wariantu kalkulatora. Zakres dat i limit części podlegają sprawdzeniu w panelu parametrów. Zapis odpowiedzi jest dobrowolny i współdzieli dotychczasowy profil.
+- Sprawdzono syntetyczne scenariusze reguł, generowanie PDF, migrację zapisu i przypomnienia. Instrukcja, mapa briefu a–j i ograniczenia walidacji są w dokumentacji projektu.
+
 ## 2026-11-21 — od pytań rodzica do wniosku
 
 - Start otwiera jeden wywiad. Rodzic może odpowiedzieć „Nie wiem jeszcze”, obejrzeć częściowy wynik i wrócić do konkretnej odpowiedzi. Zmiana sytuacji usuwa odpowiedzi, które przestały jej dotyczyć.

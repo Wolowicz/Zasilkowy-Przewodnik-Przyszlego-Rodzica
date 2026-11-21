@@ -4,6 +4,12 @@ Stan przeglądu: **21.11.2026**. Zakres: lokalnie dostarczone materiały organiz
 
 ## Aktualny stan po rozszerzeniu katalogu
 
+### Nowy wywiad sytuacyjny
+
+Kontrola techniczna obejmuje syntetyczne rodziny, pytania zależne od odpowiedzi, rozróżnienie ról i podstaw, liczenie okresów i wspólnej liczby części oraz przejście od odpowiedzi do właściwego druku. Ręcznego oznaczenia „Przyznano” ani uzupełnienia formularza nie wykorzystuje się jako dowodu wypłaty. Do walidacji interfejsu służą [zrzuty i widoki testowe](../otula/materialy/zrzuty-final/).
+
+Do uzgodnienia z mentorem pozostają zwłaszcza kwalifikacja granicznych dni hospitalizacji i wieloraczków, wnioski przy zmianie etatu podczas wydłużonego rodzicielskiego, daty i stawki przy historycznych częściach obojga rodziców oraz postępowanie z nakładającymi się tytułami ubezpieczenia. Zestawy testowe potwierdzają zachowanie aplikacji na podanych warunkach. Niezależne porównanie faktycznych kwot i okresów wymaga wzorcowych rozstrzygnięć z ustaloną podstawą i historią wypłat.
+
 **86 rozpoznawanych spraw nie oznacza 86 zweryfikowanych wyliczeń.** Zestaw ma 87 PDF, ale dwa mają identyczny SHA-256. Po usunięciu jednej kopii pozostaje 86 unikalnych dokumentacji, łącznie 2008 stron. Lokalny OCR jest dostępny dla całego zestawu; jego dostępność nie oznacza, że każda strona została bezbłędnie odczytana lub sprawdzona wizualnie.
 
 | Miara | Wynik | Co dokładnie potwierdza |

@@ -4,6 +4,25 @@
 
 Stan: 21.11.2026. Materiały przedstawiają działający prototyp i odróżniają go od planowanych funkcji. Projekt nie jest oficjalną usługą ZUS.
 
+## Co pokazać w bieżącej wersji
+
+Otwórz kafelek sytuacji na telefonie lub komputerze. Po kilku odpowiedziach pokaż wynik częściowy. Uzupełnij podstawę i okres, rozwiń dokumenty, a następnie przejdź do druku, zaświadczenia od płatnika lub usługi online. Drugi scenariusz pokazu to pismo z terminem i przypomnieniem w kalendarzu. Do pokazu użyj wyłącznie danych fikcyjnych.
+
+| Punkt briefu | Co może sprawdzić jury | Granica działania |
+| --- | --- | --- |
+| a. Ciąża | Chorobowe, możliwe dalsze świadczenie rehabilitacyjne i utrata pracy w ciąży | Orzeczenie i ustalenie prawa należą do właściwej instytucji |
+| b. Oboje rodzice | Zdarzenie, liczba dzieci, okresy i podstawa rodzica, dodatkowy okres po szpitalu oraz „Za życiem” | Nieznana podstawa oznacza brak kwoty dla tej osoby |
+| c. Łączenie pracy z rodzicielskim | Odcinki pracy w wywiadzie, symulacja stałego wymiaru pracy | Zmienny etat i praca w części wydłużonej wymagają sprawdzenia odcinków |
+| d. Podział opieki | Historia części, indywidualne pule, plan i daty dla rodziców | Równoległy czas opieki obciąża pule obu osób |
+| e. Adopcja i piecza niezawodowa | Tryb przyjęcia, wiek, dokument sądu i okresy | Datę przyjęcia odróżnia się od daty urodzenia |
+| f. Indywidualna podstawa | Kalkulator własny i odrębny tryb sprawdzenia lokalnego dokumentu | Gotowa podstawa od płatnika, brak niezależnego potwierdzenia kwot na dostarczonym zestawie |
+| g. Dokumenty i adresat | ZAM, ZAS-53, pisma urlopowe, eZUS i pracodawca | Wydruk jest do podpisu. Otula nie przekazuje do instytucji danych z formularza |
+| h. Ryzyko utraty prawa lub zmiany kwoty | Pytania o ubezpieczenie, decyzję, dług, przerwy i wykorzystane części | Wskazówka co ustalić z płatnikiem, bez rozstrzygania postępowania |
+| i. Pomoc w szczególnej sytuacji | Łagodna ścieżka po stracie i odsyłacze do organizacji | Dostępność i zakres konkretnej usługi potwierdza organizacja |
+| j. Kalkulacja dla przyjmujących dziecko | Wspólny kalkulator z wariantem adopcji i niezawodowej pieczy | Sprawy na granicy wieku lub w pieczy zawodowej wymagają indywidualnej oceny |
+
+**AI i integracje.** Pytania, reguły, wyliczenia i wydruki wykonuje kod w przeglądarce. Główna ścieżka nie wywołuje modelu AI. Osobny asystent poprzedniej wersji korzysta z OpenRouter. Przy tworzeniu projektu wykorzystano Codex, Claude i ImageGen. Centrum e-usług demonstruje pobieranie danych na fikcyjnych profilach. Prawdziwy link do eZUS otwiera osobny serwis.
+
 ## Problem i wartość
 
 Rodzic potrzebuje odpowiedzi na trzy pytania: co dotyczy mojej sytuacji, co przygotować i co zrobić teraz. Informacje są rozproszone między instytucjami, dokumentami i poradnikami. Zmęczenie oraz obowiązki przy dziecku utrudniają przełożenie informacji na działanie. To założenie projektowe, nie wynik własnego badania ilościowego.
@@ -13,10 +32,10 @@ Otula prowadzi od sytuacji rodziny przez sprawę i dokumenty do terminu oraz pom
 ## Pakiet oceny
 
 - [Demo](https://otula-dla-rodziny.etherealdaffodil4.chatgpt.site/).
-- [10 slajdów PDF](../otula/dist/Otula-prezentacja.pdf) i [notatki prelegenta](../otula/materialy/Otula-slajdy-i-notatki.html) — aktualne ekrany i dane fikcyjne.
+- [10 slajdów PDF](../otula/dist/Otula-prezentacja.pdf) i [notatki prelegenta](../otula/materialy/Otula-slajdy-i-notatki.html) — wcześniejsza demonstracja konkursowa z danymi fikcyjnymi.
 - [Film 1:42, Full HD, 60 kl./s](../otula/dist/Otula-demo.mp4), [odtwarzacz online](https://otula-dla-rodziny.etherealdaffodil4.chatgpt.site/Otula-demo.html) i [źródła montażu](../otula/materialy/jury/README.md).
 - Frontend w `otula/dist`, pełny serwer AI w `otula-asystent`, testy i dokumentacja w tym repozytorium.
-- [36 aktualnych zrzutów](EKRANY.md), [scenariusz do 3 minut](SCENARIUSZ-DEMO.md), [briefing z dokumentów i trudne pytania jury](ROZMOWA-Z-JURY.md).
+- [36 wcześniejszych zrzutów](EKRANY.md), [scenariusz do 3 minut](SCENARIUSZ-DEMO.md), [briefing z dokumentów i trudne pytania jury](ROZMOWA-Z-JURY.md).
 
 Repozytorium jest prywatne. Właścicielka powinna nadać dostęp wskazanym przez organizatora kontom jury i sprawdzić go przed zgłoszeniem. Utworzenie repozytorium nie jest zgłoszeniem konkursowym.
 

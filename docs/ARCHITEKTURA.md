@@ -2,7 +2,9 @@
 
 ## Główna ścieżka rodzica
 
-Router kieruje start do `#moja-sprawa`. Moduł `wywiad-reguly.js` wybiera pytania, odrzuca odpowiedzi z nieaktualnych odgałęzień i na tych samych danych wyznacza karty świadczeń. W module `wywiad-ui.js` pytanie, wynik i przygotowanie druku mają własne adresy hash. Adresy nie zawierają odpowiedzi rodziny. Klucz `otula-wywiad-v1` przechowuje odpowiedzi tylko po wybraniu zapisu. Wcześniejszy profil może podpowiedzieć rolę, etap, datę i zatrudnienie po wyborze importu.
+Od wersji sytuacyjnej `wywiad-model.js` przechowuje zaznaczenia, okresy, dane pisma i ręczne statusy w polu `wywiad` dotychczasowego profilu `otula-plan-v1`. Wcześniejszy zapis wywiadu v1 podlega migracji. Funkcja zapisu starszych ekranów zachowuje najnowsze pole wywiadu. Czasowe warianty kalkulatora otwarte z wyniku działają w pamięci i można świadomie przenieść potwierdzoną podstawę oraz podział do tej samej sprawy. Słownik i generatory pism do pracodawcy działają po stronie przeglądarki.
+
+Router kieruje start do `#moja-sprawa`. Moduł `wywiad-reguly.js` wybiera pytania, odrzuca odpowiedzi z nieaktualnych odgałęzień i na tych samych danych wyznacza karty świadczeń. W module `wywiad-ui.js` pytanie, wynik i przygotowanie druku mają własne adresy hash. Adresy nie zawierają odpowiedzi rodziny. Nowe odpowiedzi są zapisywane w profilu tylko na życzenie użytkownika. Wcześniejszy profil może podpowiedzieć rolę, etap, datę i zatrudnienie po wyborze importu.
 
 Moduły `wniosek-pdf.js` i `chorobowe-pdf.js` wykorzystują lokalne wzory ZAM i ZAS-53. Wprowadzane do druków identyfikatory i rachunek pozostają w pamięci otwartego formularza. Podpis elektroniczny oraz wysyłka odbywają się po przejściu do właściwej usługi. Serwer asystenta nie bierze udziału w wywiadzie, ustalaniu kwot ani generowaniu PDF. Szczegóły generatora opisano w [dokumentacji ZAM](ZAM-PDF.md).
 
