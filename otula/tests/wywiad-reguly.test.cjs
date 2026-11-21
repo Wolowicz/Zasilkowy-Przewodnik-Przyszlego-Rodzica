@@ -48,7 +48,7 @@ test('no day of parental in first year triggers maternity adjustment to 100',()=
 });
 test('contradictory first-year declaration blocks proposed parental period',()=>assert.equal(get('parental',{plan:'combined',applicationDate:'2026-01-20',firstYearParental:'yes',parentalStart:'2027-01-11'}).estimate,undefined));
 test('shared pool includes previously used weeks',()=>{
-  const x=get('parental',{previousParental:'yes',usedOwnWeeks:10,usedOtherWeeks:0,parentalWeeks:23});
+  const x=get('parental',{previousParental:'yes',parentalParts:[{parent:'self',from:'2026-05-30',to:'2026-08-07'}],parentalStart:'2026-08-08',parentalWeeks:23});
   assert.equal(x.estimate,undefined); assert.match(x.missing.join(' '),/pulę/);
 });
 test('unknown second-parent usage is not zero',()=>assert.equal(get('parental',{otherPlannedWeeks:'unknown'}).estimate,undefined));
@@ -219,5 +219,143 @@ test('browser integration reuses the existing calculator rounding/hospital core'
   const integrated=ctx.window.OtulaWywiadReguly.assess({...base,...preterm});
   assert.ok(calledDaily>0);assert.equal(calledHospital,1);
   assert.equal(integrated.find(x=>x.id==='supplementary').estimate.total,get('supplementary',preterm).estimate.total);
+});
+const confirmedBusiness={...business,voluntaryRegistered:'yes',insuranceStart:'2025-01-01',businessEnded:'no'};
+test('voluntary insurance requires registration and actual coverage date',()=>{
+  assert.ok(get('maternity',{...business}).blockers.some(b=>b.id==='voluntary'));
+  const x=get('maternity',{...confirmedBusiness,insuranceStart:'2026-01-11'});
+  assert.equal(x.estimate,undefined);assert.ok(x.blockers.some(b=>b.id==='coverage-date'&&b.kind==='risk'));
+  assert.equal(get('maternity',confirmedBusiness).estimate.total,28000);
+});
+test('insurance decision is a risk to explain, not an inferred sham contract',()=>{
+  const x=get('maternity',{insuranceDispute:'yes',nonCoverageDecision:'yes',decisionStage:'refusal'});
+  assert.ok(x.blockers.some(b=>b.id==='noncoverage'));assert.equal(x.check.state,'risk');assert.match(x.check.disclaimer,/nie decyzja ZUS/);
+});
+test('suspension and closed business have distinct risk identifiers',()=>{
+  assert.ok(get('maternity',{...confirmedBusiness,suspended:'yes'}).blockers.some(b=>b.id==='suspension'));
+  assert.ok(get('maternity',{...confirmedBusiness,businessEnded:'yes'}).blockers.some(b=>b.id==='business-ended'));
+});
+test('changed employment fraction needs dated, confirmed new benefit base',()=>{
+  assert.equal(get('maternity',{hoursChanged:'yes',hoursChangedDate:'2025-12-01',changedBaseConfirmed:'unknown'}).estimate,undefined);
+  assert.equal(get('maternity',{hoursChanged:'yes',hoursChangedDate:'2025-12-01',changedBaseConfirmed:'yes'}).estimate.total,28000);
+});
+test('debt threshold is read for the entitlement date, not copied from a case',()=>{
+  const old=globalThis.zusInterviewParameters;let received;
+  globalThis.zusInterviewParameters=at=>{received=at;return {partsLimit:5,debtThreshold:50};};
+  try{
+    assert.ok(get('maternity',{...confirmedBusiness,debt:'owing',debtAmount:51}).blockers.some(b=>b.id==='debt'));
+    assert.equal(get('maternity',{...confirmedBusiness,debt:'owing',debtAmount:49}).estimate.total,28000);
+    assert.equal(received,'2026-01-10');
+  }finally{if(old)globalThis.zusInterviewParameters=old;else delete globalThis.zusInterviewParameters;}
+});
+test('full repayment without its date remains incomplete; instalments are not settlement',()=>{
+  assert.ok(get('maternity',{...confirmedBusiness,debt:'paid',debtResolved:'yes'}).blockers.some(b=>b.id==='debt-payment'));
+  assert.equal(get('maternity',{...confirmedBusiness,debt:'paid',debtResolved:'yes',debtPaidDate:'2026-01-20'}).estimate.total,28000);
+  assert.ok(get('maternity',{...confirmedBusiness,debt:'instalments'}).blockers.some(b=>b.id==='debt'&&b.kind==='risk'));
+});
+const history=Array.from({length:5},(_,i)=>({parent:i%2?'other':'self',from:`2026-0${i+1}-11`,to:`2026-0${i+1}-17`}));
+test('a sixth parental part is blocked although many days remain',()=>{
+  const x=get('parental',{previousParental:'yes',parentalParts:history,parentalWeeks:1,otherPlannedWeeks:0,parentalStart:'2026-06-01'});
+  assert.equal(x.estimate,undefined);assert.ok(x.blockers.some(b=>b.id==='parts-limit'));
+});
+test('five parts means joint history of both parents plus both new parts',()=>{
+  const x=get('parental',{previousParental:'yes',parentalParts:history.slice(0,4),parentalWeeks:1,otherPlannedWeeks:1,parentalStart:'2026-06-01'});
+  assert.ok(x.blockers.some(b=>b.id==='parts-limit'));
+});
+test('parallel parts of different parents consume days separately; same-parent overlap is invalid',()=>{
+  const parts=[{parent:'self',from:'2026-05-30',to:'2026-06-05'},{parent:'other',from:'2026-05-30',to:'2026-06-05'}];
+  assert.equal(get('parental',{previousParental:'yes',parentalParts:parts,parentalWeeks:1,otherPlannedWeeks:0,parentalStart:'2026-06-06'}).estimate.total,980);
+  parts[1].parent='self';assert.ok(get('parental',{previousParental:'yes',parentalParts:parts,parentalStart:'2026-06-06'}).blockers.some(b=>b.id==='parts-overlap'));
+});
+test('declared nonparallel plan cannot contain overlapping parent dates',()=>{
+  const x=get('parental',{otherParentalStart:'2026-05-30',parallelParental:'no'});
+  assert.ok(x.blockers.some(b=>b.id==='parallel-dates'));
+});
+const twins={count:2,hospital:'yes',hospitalConfirmed:'yes',childrenClinical:[{child:'1',gestationWeeks:28,birthWeight:1300,zaZyciem:'no'},{child:'2',gestationWeeks:28,birthWeight:900,zaZyciem:'yes'}],hospitalStays:[{child:'1',from:'2026-01-10',to:'2026-01-24'},{child:'2',from:'2026-01-10',to:'2026-01-31'}],parentalStart:'2026-09-05',parentalWeeks:1,otherPlannedWeeks:0};
+test('twins use longest child stay and minimum weight, not sum of sibling stays',()=>{
+  const x=get('supplementary',twins);assert.equal(x.estimate.days,21);assert.equal(x.estimate.total,4200);assert.equal(x.pdfContext.stays[0].child,'2');
+  assert.match(get('za-zyciem',twins).period,/67 tygodni/);
+});
+test('all hospital stays are accepted beyond the old two-stay limit',()=>{
+  const a={...base,...preterm,childrenClinical:[{child:'1',gestationWeeks:28,birthWeight:1400,zaZyciem:'no'}],hospitalStays:[{child:'1',from:'2026-01-11',to:'2026-01-17'},{child:'1',from:'2026-01-18',to:'2026-01-24'},{child:'1',from:'2026-01-25',to:'2026-01-31'}]};
+  assert.equal(engine.assess(a).find(x=>x.id==='supplementary').estimate.days,21);
+});
+test('duplicate child entries do not pretend a complete twin history',()=>{
+  const a={...twins,childrenClinical:twins.childrenClinical.map(c=>({...c,child:'1'}))};
+  assert.equal(get('supplementary',a).estimate,undefined);assert.ok(get('parental',a).blockers.some(b=>b.id==='children-certificate'));
+});
+test('old hospital state migrates locally without inventing additional stays',()=>{
+  const a=engine.prune({...base,...preterm});assert.equal(a.hospitalStays.length,1);assert.equal(a.childrenClinical[0].birthWeight,1400);
+  assert.equal(a.hospitalFrom,undefined);assert.equal(a.birthWeight,undefined);
+});
+test('changing event deletes arrays but preserves chosen situation metadata',()=>{
+  const a=engine.prune({...base,...twins,event:'loss',situation:'loss',extraSituations:['health'],parentalParts:history,workPeriods:[{from:'2026-01-01',to:'2026-02-01',fraction:.5,extended:'no'}]});
+  for(const k of ['hospitalStays','childrenClinical','parentalParts','workPeriods'])assert.equal(a[k],undefined);
+  assert.equal(a.situation,'loss');assert.deepEqual(a.extraSituations,['health']);
+});
+test('record sanitization removes names, identifiers and arbitrary fields',()=>{
+  const a=engine.prune({...base,...twins,childrenClinical:[{...twins.childrenClinical[0],firstName:'DO NOT KEEP',pesel:'00000000000'},{...twins.childrenClinical[1]}]});
+  assert.equal(a.childrenClinical[0].firstName,undefined);assert.equal(a.childrenClinical[0].pesel,undefined);
+});
+test('variable work preserves dates including extended leave without inventing a total',()=>{
+  const a={workDuringParental:'yes',workPeriods:[{from:'2026-05-30',to:'2026-06-30',fraction:.25,extended:'no'},{from:'2027-02-01',to:'2027-02-20',fraction:.5,extended:'yes'}]};
+  const x=get('parental',a);assert.equal(x.estimate,undefined);assert.equal(x.pdfContext.workPeriods.length,2);assert.equal(x.pdfContext.workPeriods[1].extended,'yes');
+});
+test('ordinary transfer tests 14 weeks and resignation independently',()=>{
+  const x=get('transfer',{event:'transfer',transferReason:'return',motherUsedWeeks:13,motherResignation:'no'});
+  assert.ok(x.blockers.some(b=>b.id==='mother14'));assert.ok(x.blockers.some(b=>b.id==='resignation'&&b.kind==='document'));
+});
+test('employer loss during pregnancy asks whether pregnancy existed and another job was provided',()=>{
+  const x=get('pregnancy-after-work',{event:'pregnancy',employmentEnded:'yes',terminationReason:'liquidation',pregnantAtEnd:'unknown',replacementEmployment:'yes'});
+  assert.ok(x.blockers.some(b=>b.id==='pregnancy-end'));assert.ok(x.blockers.some(b=>b.id==='replacement'));
+});
+test('payer size affects recipient and never substitutes for entitlement',()=>{
+  assert.match(get('maternity',{payerSize:'over20'}).recipient,/pracodawca jako płatnik/);
+  assert.match(get('maternity',{payerSize:'upTo20'}).recipient,/ZUS, z dokumentami/);
+});
+test('loss interview does not request sex, name, gestational threshold or diagnosis',()=>{
+  for(const event of ['loss','childDeath']){
+    const list=engine.questions({...base,event,otherSurviving:'yes'});
+    assert.ok(!list.some(q=>['birthWeight','gestationWeeks','childrenClinical','childName','sex','diagnosis'].includes(q.id)));
+    assert.ok(list.find(q=>q.id==='lossDocument').options.some(o=>o.value==='medical'));
+  }
+  const x=get('loss',{event:'loss',otherSurviving:'no',lossDocument:'medical'});assert.ok(x.documents.some(d=>d.code==='LEAVE-LOSS'));assert.match(x.supportRequest,/proszę/);
+});
+test('early child death guarantees at least seven days and late death does not restart 8 weeks',()=>{
+  const a={event:'childDeath',childDob:'2026-01-10',eventDate:'2026-03-05',otherSurviving:'no',lossDocument:'act',maternityAtDeath:'yes'};
+  assert.equal(get('loss',a).pdfContext.periods[0].to,'2026-03-11');
+  const later=get('loss',{...a,eventDate:'2026-04-01'});assert.equal(later.estimate.days,7);assert.equal(later.pdfContext.periods[0].from,'2026-04-01');
+});
+test('surviving twin gives period for surviving children, not repeated loss periods',()=>{
+  const x=get('loss',{event:'loss',otherSurviving:'yes',lossDocument:'medical',lossChildren:[{child:'1',alive:'no',deathDate:'2026-01-10'},{child:'2',alive:'yes'}]});
+  assert.equal(x.estimate.days,140);
+});
+test('different loss dates for multiples require chronological verification',()=>{
+  const x=get('loss',{event:'childDeath',childDob:'2026-01-01',eventDate:'2026-02-01',otherSurviving:'yes',maternityAtDeath:'yes',lossDocument:'act',lossChildren:[{child:'1',alive:'no',deathDate:'2026-01-20'},{child:'2',alive:'yes'}]});
+  assert.equal(x.estimate,undefined);assert.ok(x.blockers.some(b=>b.id==='loss-chronology'));
+});
+test('medical certificate path before the new law requires verification',()=>assert.equal(get('loss',{event:'loss',eventDate:'2025-01-10',otherSurviving:'no',lossDocument:'medical'}).estimate,undefined));
+test('mother health is an accessible information branch, not a medical benefit decision',()=>{
+  const x=get('mother-health',{event:'motherHealth',motherHealthSituation:'hospital'});
+  assert.equal(x.estimate,undefined);assert.equal(x.nextEvent,'transfer');assert.match(x.amount,/Do potwierdzenia/);assert.ok(x.support[0].url.includes('nfz.gov.pl'));
+});
+test('information cards never become fulfilled entitlement from empty missing list',()=>assert.notEqual(get('krus',{work:'krus'}).check.state,'ok'));
+const otherConfirmed={otherParentalStart:'2026-06-01',otherConditionsConfirmed:'yes',otherRatePlan:'standard',otherBaseKnown:'yes',otherBenefitBase:9000,parallelParental:'yes'};
+test('second parent amount uses own base and appears exactly once in family total',()=>{
+  const a={...base,...otherConfirmed},items=engine.assess(a),sum=engine.summarize(a,items);
+  assert.equal(items.find(x=>x.id==='other-parental').estimate.total,13230);
+  assert.equal(sum.byParent.mother,59360);assert.equal(sum.byParent.father,13230);assert.equal(sum.total,72590);
+});
+test('unknown second-parent base leaves a partial sum, not a copied first-parent salary',()=>{
+  const a={...base,...otherConfirmed,otherBaseKnown:'unknown'},sum=engine.summarize(a);
+  assert.equal(sum.total,59360);assert.equal(sum.byParent.father,undefined);assert.equal(sum.partial,true);
+});
+test('own nine weeks remain 70 in combined plan, ambiguous larger part is unpriced',()=>{
+  assert.equal(get('other-parental',{...otherConfirmed,otherRatePlan:'combined'}).estimate.rate,70);
+  assert.equal(get('other-parental',{...otherConfirmed,otherRatePlan:'combined',parentalWeeks:20,otherPlannedWeeks:20}).estimate,undefined);
+});
+test('family sum excludes overlapping paternity and parental for same person',()=>{
+  const a={...base,role:'father',parentalWeeks:9,otherPlannedWeeks:0,parentalStart:'2026-02-01',paternityUsedDays:0,paternityStart:'2026-02-01'};
+  const sum=engine.summarize(a);assert.equal(sum.total,null);assert.match(sum.missing.join(' '),/nakładają/);
 });
 console.log(`Wywiad rodzica: ${checks} scenariuszy — jawne braki, osobne świadczenia, daty, dokumenty i integracja obliczeń OK.`);
