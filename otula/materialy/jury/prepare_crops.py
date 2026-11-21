@@ -5,7 +5,11 @@ import json
 
 SHOTS=Path(__file__).resolve().parent.parent/'zrzuty-final'
 CROPS={
-    'web-support-detail.png': {'source':'web-support.jpg','box':[818,226,1360,645]},
+    'web-start-detail.png': {'source':'web-start.jpg','box':[160,120,1280,605]},
+    'web-support-detail.png': {'source':'web-support-detail-source.jpg','box':[818,205,1360,605]},
+    'web-calculator-result-detail.png': {'source':'web-calculator-result.jpg','box':[313,293,1224,838]},
+    'phone-daily-detail-crop.png': {'source':'phone-daily-detail.jpg','box':[15,354,345,735]},
+    'web-documents-detail.png': {'source':'web-documents.jpg','box':[592,455,1320,867]},
 }
 for name,entry in CROPS.items():
     source=SHOTS/entry['source']

@@ -45,6 +45,8 @@ PDF zapisuje się jako `otula/dist/Otula-prezentacja.pdf`; źródło wraz z nota
 
 Film, plakat i napisy powstają w `otula/materialy/film/render/jury-movie/`. Po pełnym przeglądzie należy skopiować do `otula/dist/` pliki `Otula-demo.mp4`, `Otula-demo-plakat.jpg`, `Otula-demo.vtt`, `Otula-demo.srt`, a następnie uzgodnić rozdziały strony `Otula-demo.html` z `SCENES` w `build_movie.py`. Sam generator nie podmienia opublikowanego filmu.
 
+`python otula/materialy/jury/build_player.py` odtwarza stronę odtwarzacza i rozdziały zgodne z nową osią czasu. Uruchom dopiero po zaakceptowaniu i skopiowaniu nowego MP4.
+
 `--finish --workers 4` pozwala ponowić łączenie i dźwięk z istniejących czterech segmentów. Wolno go użyć wyłącznie wtedy, gdy od renderu nie zmieniły się źródła, zrzuty ani oś czasu. Po zmianie trzeba renderować wszystkie segmenty ponownie.
 
 ## Kontrola jakości

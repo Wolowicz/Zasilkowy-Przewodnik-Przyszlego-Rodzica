@@ -71,10 +71,14 @@ CHORDS = [  # Fmaj7, Dm7, Bbmaj7, Cadd9
     ([57, 60, 64, 65], 41), ([57, 60, 62, 65], 38), ([57, 58, 62, 65], 34), ([55, 60, 62, 64], 36)
 ]
 NBARS = int(np.ceil(DUR / BAR)) + 1
+by_id = {scene['id']: scene for scene in TL['scenes']}
+SUPPORT_START = by_id['wsparcie']['t0']
+SUPPORT_END = by_id['wsparcie']['t1']
+FINAL_START = by_id['final']['t0']
+FINAL_CHORD = DUR - 3.6
 
 
 def section(t):
-    by_id = {scene['id']: scene for scene in TL['scenes']}
     if t < by_id['intro']['t1']: return 'intro'
     if by_id['wsparcie']['t0'] <= t < by_id['wsparcie']['t1']: return 'czulosc'
     if t >= by_id['final']['t0']: return 'final'
@@ -183,14 +187,14 @@ for b in range(NBARS):
     if t0 >= DUR: break
     notes, root = CHORDS[b % 4]
     sec = section(t0 + 0.01)
-    final = t0 >= 84.0
+    final = t0 >= FINAL_START
     # plama (pad)
-    if not (final and t0 >= 86.4):
+    if not (final and t0 >= FINAL_CHORD):
         bright = 0.6 if sec == 'intro' else (0.75 if sec == 'czulosc' else 1.0)
         for m in notes:
             add(pad_note(m, BAR, bright), t0, pan=(m - 60) / 14, gain=0.9 if sec != 'czulosc' else 0.75, verb=0.5)
     # arpeggio (ósemki)
-    if sec in ('intro', 'groove', 'groove2') or (final and t0 < 86.4):
+    if sec in ('intro', 'groove', 'groove2') or (final and t0 < FINAL_CHORD):
         pat = [0, 1, 2, 3, 2, 1, 3, 2]
         for i, pi in enumerate(pat):
             tt = t0 + i * BEAT / 2
@@ -222,10 +226,10 @@ for beat in range(int(DUR / BEAT) + 1):
         if beat % 8 == 7:
             add(hat(True), t + BEAT * 0.75, pan=-0.2, gain=0.8)
     elif sec == 'czulosc':
-        if pos == 0 and t >= 60.0:
+        if pos == 0 and t >= SUPPORT_START + 2.4:
             add(kick(), t, gain=0.35)
         add(hat(), t + BEAT / 2, pan=0.25, gain=0.45)
-    elif sec == 'final' and t < 86.4:
+    elif sec == 'final' and t < FINAL_CHORD:
         if pos == 0:
             add(kick(), t, gain=0.8)
         add(hat(), t + BEAT / 2, pan=0.25, gain=0.6)
@@ -233,25 +237,25 @@ for beat in range(int(DUR / BEAT) + 1):
 # melodia – serce filmu (Karta wsparcia)
 MEL = [(72, 2), (69, 1), (72, 1), (74, 2), (72, 1), (69, 1), (77, 1), (74, 1), (72, 2), (76, 1), (74, 1), (72, 2),
        (72, 2), (69, 1), (72, 1), (74, 2), (77, 1), (76, 1), (74, 1), (72, 1), (69, 2), (67, 2), (69, 2)]
-t = 57.6
+t = SUPPORT_START
 for m, beats in MEL:
-    if t >= 71.4: break
+    if t >= SUPPORT_END - .6: break
     add(bell(m, beats * BEAT), t, pan=0.1, gain=1.0, verb=0.7)
     t += beats * BEAT
 
-# finał: akord i dzwonki na "Masz plan. Masz wsparcie."
+# Finał: akord i dzwonki towarzyszą planszy z adresem demonstracji.
 for m in (53, 57, 60, 64, 65, 69):
-    add(pad_note(m, 3.6, 0.9), 86.4, pan=(m - 60) / 14, gain=1.05, verb=0.6)
-add(bell(72, 2.4), 84.3, gain=0.9, verb=0.7)
-add(bell(77, 2.4), 84.9, gain=0.8, verb=0.7)
-add(bell(81, 3.0), 86.4, gain=0.7, verb=0.8)
-add(bass(41, 3.4), 86.4, gain=0.9)
+    add(pad_note(m, 3.6, 0.9), FINAL_CHORD, pan=(m - 60) / 14, gain=1.05, verb=0.6)
+add(bell(72, 2.4), FINAL_CHORD - 2.1, gain=0.9, verb=0.7)
+add(bell(77, 2.4), FINAL_CHORD - 1.5, gain=0.8, verb=0.7)
+add(bell(81, 3.0), FINAL_CHORD, gain=0.7, verb=0.8)
+add(bass(41, 3.4), FINAL_CHORD, gain=0.9)
 
 # efekty pod montaż
 for s in TL['scenes'][1:]:
     add(whoosh(0.7), s['t0'] - 0.45, pan=0.0, verb=0.3)
-add(riser(1.3), 4.8, verb=0.3)
-add(riser(1.2), 70.8, gain=0.8, verb=0.3)
+add(riser(1.3), by_id['intro']['t1'] - 1.2, verb=0.3)
+add(riser(1.2), SUPPORT_END - 1.2, gain=0.8, verb=0.3)
 for tt in TL['taps']:
     add(tick(2300, 0.03, 0.028), tt, pan=0.2)
 for tt in TL['typing']:
@@ -268,8 +272,8 @@ mixL = highpass(mixL, 28, 2); mixR = highpass(mixR, 28, 2)
 # automatyka: część „czułość” (Karta wsparcia) ok. 3 dB ciszej, finał bez skoku
 tt = np.arange(N) / SR
 auto = np.ones(N)
-auto -= 0.30 * np.clip((tt - 56.2) / 1.2, 0, 1) * np.clip((71.6 - tt) / 0.8, 0, 1)
-auto -= 0.22 * np.clip((tt - 86.2) / 0.4, 0, 1)
+auto -= 0.30 * np.clip((tt - SUPPORT_START + 1.2) / 1.2, 0, 1) * np.clip((SUPPORT_END + .2 - tt) / 0.8, 0, 1)
+auto -= 0.22 * np.clip((tt - FINAL_CHORD + .2) / 0.4, 0, 1)
 mixL *= auto; mixR *= auto
 # wyciszenie końcówki
 fade = np.clip((DUR - tt) / 2.2, 0, 1) ** 1.5

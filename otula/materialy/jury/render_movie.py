@@ -96,9 +96,11 @@ def audio():
 
 def finish(workers):
     listing=OUT/'segments.txt';listing.write_text(''.join(f"file 'segment-{i:02}.mp4'\n" for i in range(workers)),encoding='utf-8')
-    run(['ffmpeg','-v','error','-y','-f','concat','-safe','0','-i',listing,'-an','-vf','setsar=1',
-        '-c:v','libx264','-preset','medium','-crf','18','-profile:v','high','-level:v','4.2','-pix_fmt','yuv420p','-r','60','-g','120','-threads','4',
-        '-color_primaries','bt709','-color_trc','bt709','-colorspace','bt709','-color_range','tv','-t',str(DURATION),OUT/'picture.mp4'])
+    # All segments use the same H.264 settings. Join without a second lossy
+    # encode so small interface text retains the quality of the source frames.
+    run(['ffmpeg','-v','error','-y','-f','concat','-safe','0','-i',listing,'-map','0:v:0','-an',
+        '-c:v','copy','-bsf:v','h264_metadata=colour_primaries=1:transfer_characteristics=1:matrix_coefficients=1',
+        '-t',str(DURATION),OUT/'picture.mp4'])
     audio()
     run(['ffmpeg','-v','error','-y','-i',OUT/'picture.mp4','-i',OUT/'music-normalized.wav','-map','0:v:0','-map','1:a:0',
         '-c:v','copy','-c:a','aac','-b:a','192k','-ar','48000','-ac','2','-t',str(DURATION),'-movflags','+faststart',
@@ -107,14 +109,17 @@ def finish(workers):
     captions()
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--draft',action='store_true');parser.add_argument('--preview',action='store_true');parser.add_argument('--workers',type=int,default=4);parser.add_argument('--finish',action='store_true')
+    parser=argparse.ArgumentParser();parser.add_argument('--draft',action='store_true');parser.add_argument('--preview',action='store_true');parser.add_argument('--workers',type=int,default=4);parser.add_argument('--finish',action='store_true');parser.add_argument('--segments',help='Only these segment indices, e.g. 0,1. Does not finish or mux.')
     args=parser.parse_args();html=build(args.draft);preview(html.as_uri())
     if not args.preview:
         if args.draft:raise SystemExit('Draft frames cannot become the final movie.')
         started=time.monotonic()
         if not args.finish:
             count=FPS*DURATION;size=(count+args.workers-1)//args.workers
-            jobs=[(i,i*size,min(count,(i+1)*size),html.as_uri()) for i in range(args.workers)]
-            with Pool(args.workers) as pool:
+            selected=[int(i) for i in args.segments.split(',')] if args.segments else list(range(args.workers))
+            if not selected or any(i<0 or i>=args.workers for i in selected):raise SystemExit('Invalid segment index')
+            jobs=[(i,i*size,min(count,(i+1)*size),html.as_uri()) for i in selected]
+            with Pool(min(args.workers,len(jobs))) as pool:
                 for i,n in pool.imap_unordered(render_worker,jobs):print(f'Segment {i}: {n} klatek ({time.monotonic()-started:.0f}s)',flush=True)
-        finish(args.workers);print(OUT/'Otula-demo.mp4',flush=True)
+        if not args.segments:
+            finish(args.workers);print(OUT/'Otula-demo.mp4',flush=True)

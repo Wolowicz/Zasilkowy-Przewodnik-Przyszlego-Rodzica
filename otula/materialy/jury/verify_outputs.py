@@ -24,6 +24,8 @@ def verify():
     assert video['codec_name']=='h264' and video['pix_fmt']=='yuv420p'
     assert video['avg_frame_rate']=='60/1'
     assert video.get('color_space')=='bt709'
+    assert int(video['nb_frames'])==6120, 'Incomplete frame sequence'
+    assert abs(float(video['duration'])-102)<.02, 'Video stream is incomplete'
     assert audio['codec_name']=='aac' and audio['sample_rate']=='48000'
     duration=float(probe['format']['duration'])
     assert abs(duration-102)<.1 and duration<180
@@ -31,7 +33,7 @@ def verify():
     assert vtt.startswith('WEBVTT') and vtt.count('-->')==20
     report={'pdf':{'pages':len(doc),'size':PDF.stat().st_size,'clickableLinks':links,'textCharacters':len(all_text)},
             'movie':{'durationSeconds':duration,'width':video['width'],'height':video['height'],'fps':video['avg_frame_rate'],
-                     'videoCodec':video['codec_name'],'audioCodec':audio['codec_name'],'colorSpace':video['color_space'],'size':MOVIE.stat().st_size},
+                     'frames':int(video['nb_frames']),'videoCodec':video['codec_name'],'audioCodec':audio['codec_name'],'colorSpace':video['color_space'],'size':MOVIE.stat().st_size},
             'captions':20,'manualReview':'required separately'}
     path=OUT/'artifact-checks.json'
     path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')

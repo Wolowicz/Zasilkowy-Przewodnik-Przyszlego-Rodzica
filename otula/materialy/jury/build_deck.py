@@ -17,11 +17,14 @@ PUBLIC = 'https://otula-dla-rodziny.etherealdaffodil4.chatgpt.site/'
 BRIEF = 'https://mudnibfuppwadjkynscc.supabase.co/storage/v1/object/public/task-files/057d36b5-cb92-4062-9393-983cb8a96088/files/d02b6603-486b-474e-837f-3ada06d12bee.pdf'
 FALLBACK = {
     'web-start.png':'start.png', 'web-home.png':'pulpit.png',
+    'web-start-detail.png':'start.png',
     'web-calculator-result-detail.png':'kalkulator.png',
     'web-documents.png':'dane-zus.png', 'web-support-detail.png':'karta.png',
+    'web-documents-detail.png':'dane-zus.png',
     'web-calendar.png':'kalendarz.png', 'web-ai-panel.png':'dane-zus.png',
     'phone-start.png':'start.png', 'phone-support.png':'karta.png',
     'phone-daily.png':'poradnik.png',
+    'phone-daily-detail-crop.png':'poradnik.png',
 }
 
 def data(path):
@@ -60,7 +63,7 @@ def build(draft=False):
         '<p class="lead">Rodzic potrzebuje kolejnego kroku, dopasowanego do swojej sytuacji.</p>'
         '<p>Informacja o świadczeniu musi prowadzić do dokumentu, terminu i właściwego miejsca.</p>'
         '<p class="accent">Otula zaczyna od osoby,<br>która potrzebuje pomocy.</p></div>'+
-        shot('web-start.png',alt='Wybór roli w aplikacji webowej na komputerze')+'</div>',
+        shot('web-start-detail.png',alt='Powiększony rzeczywisty panel wyboru roli w aplikacji webowej na komputerze')+'</div>',
         '<p>Opis problemu jest hipotezą projektową, a nie wynikiem własnego badania ilościowego. Użytkownik wybiera rolę mamy, taty albo osoby wspierającej. Nie musi tworzyć konta. Wymóg aplikacji webowej i RWD pochodzi z briefu, stron 14–15.</p>')
 
     add('Każde dziecko ma własny plan', '<div class="wide-copy"><p>Rola, etap i zatrudnienie dopasowują sprawy. Rodzeństwo zachowuje osobne daty i postęp.</p></div>'+
@@ -74,10 +77,10 @@ def build(draft=False):
         '<p>Jawne reguły oddzielają obliczenia od odpowiedzi AI.</p>'
         '<p class="small">Przykład autorski. Wynik orientacyjny,<br>bez decyzji urzędowej.</p></div>'+
         shot('web-calculator-result-detail.png',alt='Czytelny fragment wyniku kalkulatora z podziałem między rodziców')+'</div>',
-        '<p>Przykład pochodzi z danych demonstracyjnych, nie z zestawów osób udostępnionych przez ZUS. Dokładne założenia widoczne na zrzucie są częścią wyniku. Przed finalnym eksportem trzeba uzgodnić zakres z aktualną implementacją i docs/WALIDACJA-ZUS.md. Podstawa, PIT, podwyższenie świadczenia, wykorzystane okresy i sytuacje szczególne wymagają odpowiednich danych i reguł. Nie utożsamiamy testów kodu z pełną zgodnością prawną.</p><p><a href="https://www.zus.pl/pl/swiadczenia/zasilki/zasilek-macierzynski/wysokosc">ZUS: wysokość zasiłku</a></p>')
+        '<p>Przykład pochodzi z danych demonstracyjnych, nie z zestawów osób udostępnionych przez ZUS. Dokładne założenia widoczne na zrzucie są częścią wyniku. Kalkulator rozdziela tygodnie i daty obojga rodziców. Obejmuje też wybrane warianty samodzielnego rodzicielskiego ojca, przysposobienia lub pieczy oraz uzupełniającego urlopu po hospitalizacji. Miesięczne podwyższenie do minimum netto wymaga danych o podatku i innych tytułach. Parametry mają wersję i walidację. Podstawę użytkownik przepisuje z dokumentów; aplikacja nie odtwarza całej historii wynagrodzeń. Zmienne etaty, przerwy i złożona historia wykorzystania wymagają indywidualnego rozliczenia. Szczegółowy zakres i nierozstrzygnięte przypadki opisuje docs/WALIDACJA-ZUS.md. Nie utożsamiamy testów kodu z pełną zgodnością prawną.</p><p><a href="https://www.zus.pl/pl/swiadczenia/zasilki/zasilek-macierzynski/wysokosc">ZUS: wysokość zasiłku</a></p>')
 
     add('Dokumenty i właściwy adresat', '<div class="wide-copy"><p>Ścieżka prowadzi od danych do wniosku i pokazuje, czy sprawa dotyczy pracodawcy, czy ZUS.</p></div>'+
-        shot('web-documents.png','wide-evidence','Pokazowy ekran dokumentów i e-usług')+
+        shot('web-documents-detail.png','wide-evidence','Rzeczywisty fragment symulacji wniosku ZAM, z wyborem okresu i przyciskiem przekazania pracodawcy')+
         '<p class="caption">E-usługi i przekazanie wniosku to symulacja. Otula nie łączy się z rzeczywistym kontem urzędowym.</p>',
         '<p>Pokazujemy fikcyjne dane. Symulacja obejmuje mObywatela, dane ZUS, e-ZLA, zadłużenie i obieg dokumentów w zakresie aktualnej aplikacji. Nie przedstawiamy urzędowych skanów ani danych osób. Wymaganie symulacji pochodzi z briefu ZUS, strony 13–14. Wzory formularzy trzeba sprawdzać w aktualnych instrukcjach, a nie kopiować ze starszego poradnika.</p><p><a href="https://www.zus.pl/wzory-formularzy/zasilki">ZUS: formularze</a></p>','wide')
 
@@ -96,9 +99,9 @@ def build(draft=False):
         shot('web-calendar.png',alt='Moje terminy i widok kalendarza na komputerze')+'</div>',
         '<p>Otula eksportuje wydarzenie ICS z ustawieniem przypomnienia. Alarm uruchamia kalendarz użytkownika po imporcie. Nie obiecujemy powiadomień w tle ani synchronizacji późniejszych zmian. Terminy urzędowe i własny plan przygotowań są różnymi typami informacji. Raport powstaje z lokalnie zapisanych danych rodziny.</p>')
 
-    add('Asystent przy aktualnej sprawie', '<div class="wide-copy"><p>Pytanie, odpowiedź i źródło pozostają obok planu. Rodzic sam decyduje o wysłaniu pytania.</p></div>'+
+    add('Asystent przy aktualnej sprawie', '<div class="wide-copy"><p>Pomoc pozostaje dostępna także wtedy, gdy model ma limit: karta sprawy i źródło urzędowe.</p></div>'+
         shot('web-ai-panel.png','wide-evidence','Panel asystenta AI otwarty obok aktualnej sprawy')+
-        '<p class="caption">AI korzysta z OpenRouter i wskazanych źródeł. Odpowiedź może wymagać sprawdzenia.</p>',
+        '<p class="caption">Na zrzucie: tryb źródeł. Odpowiedź modelu zależy od dostępności usługi OpenRouter.</p>',
         '<p>Asystent działa przez osobny serwer. Do OpenRouter trafia pytanie i dobrany kontekst źródeł, a nie pełny lokalny profil rodziny. Pytania należy wpisywać bez danych osobowych. Na komputerze panel zachowuje kontekst sprawy, a telefon otwiera osobny ekran. Model nie ustala urzędowego uprawnienia i nie stawia diagnozy. Odnośnik oraz cytat umożliwiają sprawdzenie źródła, nie są gwarancją poprawnego znaczenia całej odpowiedzi. Zrzut przedstawia rzeczywisty stan interfejsu. Gdy widoczny jest tryb źródeł, nie przedstawiamy go jako odpowiedzi modelu.</p>','wide')
 
     add('Technologia z jawnym zakresem', '<div class="technology"><div>'
@@ -114,7 +117,8 @@ def build(draft=False):
         '<p>Najbliższy krok: dalsza walidacja przypadków i testy z rodzicami.</p>'
         '<div class="credits"><h3>Udział AI i historia</h3><p>Codex i Claude: wsparcie tworzenia projektu<br>ImageGen: ilustracje<br>OpenRouter: asystent w aplikacji</p>'
         '<p>Prototyp od 16–17 XI.<br>Moduł ZUS rozwijany od 21 XI.</p></div></div>'+
-        shot('phone-daily.png','phone-shot','Codzienne czynności w podręczniku rodzica na telefonie')+'</div>',
+        '<figure class="closing-evidence"><figcaption>Codzienne czynności na telefonie<br>Głód i sytość dziecka</figcaption>'+
+        shot('phone-daily-detail-crop.png','daily-detail','Rzeczywisty wycinek instrukcji rozpoznawania sygnałów głodu z telefonu')+'</figure></div>',
         f'<p>Wcześniejsze zasoby obejmowały markę, plan, Kartę wsparcia, raport i podręcznik. Nie przypisujemy całej pracy okresowi konkursowemu. Narzędzia przygotowania materiałów: HTML/CSS, Python, Playwright/Edge i FFmpeg. Fonty DM Sans i DM Serif Text na licencji SIL OFL. Ilustracje to istniejące zasoby projektu, a zrzuty pokazują działający interfejs. Zgłoszenie oraz oświadczenia autorstwa składa zespół.</p><p><a href="{PUBLIC}">Demo Otuli</a></p>','closing-slide')
 
     fonts=''.join(f"@font-face{{font-family:'{family}';src:url({data(ASSETS/file)});font-weight:{weight}}}" for family,file,weight in [('DM Sans','dm-sans.ttf','100 900'),('DM Serif Text','dm-serif-text.ttf','400')])

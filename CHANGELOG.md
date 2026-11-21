@@ -1,5 +1,12 @@
 # Historia zmian
 
+## 2026-11-21 — aktualne materiały dla jury
+
+- Nowa prezentacja PDF: 10 slajdów, aktualne ekrany webowe, czytelne wycinki Karty wsparcia i codziennych czynności z telefonu, notatki prelegenta oraz jawny zakres technologii i użycia AI.
+- Film 102 s w Full HD / 60 kl./s, głównie z widokami komputerowymi; rzeczywiste zrzuty, duże detale, podkład instrumentalny, plakat, napisy VTT/SRT i odtwarzacz z rozdziałami.
+- Na ekranie asystenta pokazano rzeczywisty tryb źródeł przy niedostępności modelu; nie przedstawiono go jako odpowiedzi AI. Integracje urzędowe pozostają oznaczonymi symulacjami.
+- Odtwarzalne źródła i wyniki kontroli: `otula/materialy/jury/README.md` oraz `QA.md`. 10 stron PDF, 6120 klatek filmu, prawidłowe dekodowanie, pomiar głośności i odtwarzacz sprawdzony przy 320, 390 i 1440 px.
+
 ## 2026-11-21 — audyt stylu 12 ekranów i dokończenie wersji konkursowej
 
 - Spójna paleta tokenów we wszystkich arkuszach, czytelne pola i podpisy, pełne przyciski powrotu oraz kreator kalkulatora z czterema krokami i wyborem segmentowym. Krótkie wprowadzenia i pojedyncze oznaczenie symulacji.
