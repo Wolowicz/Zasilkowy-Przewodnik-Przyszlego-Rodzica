@@ -60,6 +60,8 @@ Testy obejmują 19 autorskich przypadków kalkulatora, eksport ICS oraz lokalny 
 
 ## Dokumentacja
 
+**Dla kolegów: [komplet materiałów i instrukcja przeniesienia do repozytorium zespołu](docs/DLA-ZESPOLU.md).**
+
 | Dla kogo | Dokument |
 | --- | --- |
 | Jury i prezenterzy | [Dla jury](docs/DLA-JURY.md), [pytania i odpowiedzi](docs/PYTANIA-JURY.md), [scenariusz demonstracji](docs/SCENARIUSZ-DEMO.md) |

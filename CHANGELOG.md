@@ -1,5 +1,9 @@
 # Historia zmian
 
+## 2026-11-21 — przekazanie projektu zespołowi
+
+- Mapa wszystkich materiałów, szybki start i instrukcja skopiowania kompletnego projektu do istniejącego repozytorium kolegów.
+
 ## 2026-11-21 — nowy film produktowy
 
 - Montaż 90 s w Full HD, animacje 60 kl./s, krótkie hasła obok prawdziwego interfejsu i osobna scena Karty wsparcia.
