@@ -52,27 +52,52 @@ let zusDocumentUrl = '';
 let zusAutoSubmit = false; // przykład lub sprawa z zestawu: przelicz od razu po otwarciu kalkulatora
 const zusDrafts = new Map();
 const zusEvidence = new Map();
+const zusExamples = new Map();
+const ZUS_DRAFTS_KEY='otula-zus-drafts-v1';
 function zusChildKey() { return state.children[state.active].uid; }
 function zusFingerprint() {
   const c=state.children[state.active];
   return JSON.stringify([c.stage,c.date,c.multiple,state.role,state.work]);
 }
+function zusOwnDraft() {
+  const key=zusChildKey();let saved=zusDrafts.get(key);
+  if(!saved)try{const entries=JSON.parse(localStorage.getItem(ZUS_DRAFTS_KEY)||'{}');saved=entries[key];if(saved?.value&&typeof saved.fingerprint==='string')zusDrafts.set(key,saved);}catch{}
+  return saved?.fingerprint===zusFingerprint()?{...zusInitial(),...structuredClone(saved.value)}:zusInitial();
+}
 function zusCurrentDraft() {
-  const saved=zusDrafts.get(zusChildKey());
-  zusDraft=saved?.fingerprint===zusFingerprint()?structuredClone(saved.value):zusInitial();
+  const example=zusExamples.get(zusChildKey());
+  if(example?.fingerprint!==zusFingerprint())zusExamples.delete(zusChildKey());
+  zusDraft=example?.fingerprint===zusFingerprint()?structuredClone(example.value):zusOwnDraft();
   return zusDraft;
 }
 function zusSaveDraft(value) {
   zusDraft=structuredClone(value);
+  const example=zusExamples.get(zusChildKey());
+  if(example?.fingerprint===zusFingerprint()){example.value=structuredClone(value);return;}
   zusDrafts.set(zusChildKey(),{fingerprint:zusFingerprint(),value:structuredClone(value)});
+  try{
+    const entries=JSON.parse(localStorage.getItem(ZUS_DRAFTS_KEY)||'{}');
+    for(const key of Object.keys(entries))if(!state.children.some(c=>c.uid===key))delete entries[key];
+    entries[zusChildKey()]=zusDrafts.get(zusChildKey());localStorage.setItem(ZUS_DRAFTS_KEY,JSON.stringify(entries));
+  }catch{}
+}
+function zusUseOwnCase() {
+  zusExamples.delete(zusChildKey());zusAutoSubmit=false;zusDraft=zusOwnDraft();return zusDraft;
+}
+function zusOpenExample(input,label) {
+  const value={...zusInitial(),...structuredClone(input),dateMode:input.dateMode||'actual',reviewInsurance:false,reviewBasis:false,reviewDates:false};
+  zusExamples.set(zusChildKey(),{fingerprint:zusFingerprint(),value,evidence:{file:null,sample:label,sprawa:null}});
+  zusAutoSubmit=false;zusDraft=value;return structuredClone(value);
 }
 function zusCurrentEvidence() {
   const key=zusChildKey();
+  const example=zusExamples.get(key);if(example?.fingerprint===zusFingerprint())return example.evidence;
   if(!zusEvidence.has(key))zusEvidence.set(key,{file:null,sample:''});
   return zusEvidence.get(key);
 }
 function zusResetDrafts() {
-  zusDrafts.clear();zusEvidence.clear();zusDraft=null;
+  zusDrafts.clear();zusExamples.clear();zusEvidence.clear();zusDraft=null;
+  try{localStorage.removeItem(ZUS_DRAFTS_KEY);}catch{}
   if(zusDocumentUrl)URL.revokeObjectURL(zusDocumentUrl);
   zusDocumentUrl='';
 }
@@ -139,9 +164,30 @@ function zusInitial() {
     baseA:'',baseB:'',shareA:32,shareB:9,fatherWeeks:32,fractionA:0,fractionB:0,rate:'standard',workPattern:'constant',
     parentalStartA:'',parentalStartB:'',firstYearParental:'unknown',contractFractionA:1,contractFractionB:1,
     gestationWeeks:'',birthWeight:'',hospitalFrom:'',hospitalUntil:'',hospitalExtra:'',hospitalConfirmed:false,
-    eventDate:child.stage==='birth'?child.date:'',childDob:child.stage==='birth'?child.date:'',
+    dateMode:child.stage==='pregnancy'?'planned':'actual',eventDate:child.date||'',childDob:child.stage==='birth'?child.date:'',
     deferred:false,payer:state.role==='mama'&&state.work==='business'?'zus':'unknown',payerB:state.role==='tata'&&state.work==='business'?'zus':'unknown',exception:'none',
     workA:state.role==='mama'?state.work:'any',workB:state.role==='tata'?state.work:'any',coverageEnd:'',debt:'unknown',debtB:'unknown',debtAmountA:'',debtAmountB:'',applicationDate:'',reviewInsurance:false,reviewBasis:false,reviewDates:false};
+}
+const ZUS_BENEFITS={
+  sick:{title:'Chorobowe w ciąży',summary:'Gdy lekarz stwierdzi, że nie możesz pracować; sprawdź ubezpieczenie i okres wyczekiwania.',who:'Osoba w ciąży z odpowiednim ubezpieczeniem i potwierdzoną niezdolnością do pracy.',money:'W ciąży 100% ustalonej podstawy; to nie zawsze 100% pensji.',docs:'e-ZLA z kodem B albo zaświadczenie o ciąży; dokumenty płatnika, a przy działalności odpowiedni wniosek.',source:'sick',href:'#uprawnienia'},
+  maternity:{title:'Pieniądze w czasie macierzyńskiego',summary:'Po porodzie lub przyjęciu dziecka: zasiłek macierzyński za pierwszy okres opieki.',who:'Uprawniony ubezpieczony rodzic; po porodzie standardowo matka. Wyjątki wymagają osobnego sprawdzenia.',money:'Zwykle 100% podstawy albo 81,5% po spełnieniu warunków i wniosku w terminie.',docs:'Dokument porodu/przyjęcia i dane płatnika; odpowiedni wniosek ZAM, jeśli wymaga go Twoja ścieżka.',source:'amount',href:'#kalkulator'},
+  parental:{title:'Pieniądze podczas rodzicielskiego',summary:'Kolejny okres opieki możecie podzielić; każdy rodzic ma własną, nieprzenoszalną część.',who:'Rodzic z własnym uprawnieniem. Brak ubezpieczenia matki nie przesądza o prawach ojca.',money:'To nadal zasiłek macierzyński: 70% albo warunkowo 81,5%; własne 9 tygodni drugiego rodzica — 70%.',docs:'Uzgodniony podział i wykorzystane okresy; wniosek o urlop u pracodawcy, a do wypłaty dokumenty właściwego płatnika.',source:'parentalZus',href:'#kalkulator'},
+  hospital:{title:'Dodatkowy czas po pobycie w szpitalu',summary:'Wcześniactwo lub hospitalizacja mogą wydłużyć płatną opiekę bezpośrednio po macierzyńskim.',who:'Uprawniony rodzic spełniający warunki dotyczące porodu i hospitalizacji dziecka.',money:'Zasiłek macierzyński za uzupełniający okres: 100% podstawy; do 8 lub 15 tygodni zależnie od sytuacji.',docs:'Zaświadczenie szpitala: tydzień ciąży, masa i daty pobytów. Wniosek pracownika co najmniej 21 dni przed końcem macierzyńskiego.',source:'supplementary',href:'#kalkulator'},
+  father:{title:'Dwa tygodnie dla taty',summary:'Urlop ojcowski jest osobny od rodzicielskiego i jego 9 tygodni.',who:'Uprawniony ojciec wychowujący dziecko; znaczenie mają wiek dziecka i wykorzystany okres.',money:'Zasiłek macierzyński za okres ojcowski: 100% podstawy. Ten okres nie jest doliczany przez nasz kalkulator.',docs:'Wniosek i dokumenty wymagane przez pracodawcę lub ZUS; zobacz osobną sprawę.',source:'amount',href:'#sprawa/urlop-ojcowski'},
+  parentBenefit:{title:'Świadczenie rodzicielskie',summary:'Sprawdź tę odrębną pomoc, jeśli nie masz prawa do zasiłku macierzyńskiego.',who:'Rodzic spełniający warunki świadczenia, m.in. dotyczące braku zasiłku macierzyńskiego w rodzinie; sam brak pracy nie rozstrzyga.',money:'To inne świadczenie niż zasiłek za urlop rodzicielski. Warunki i kwotę znajdziesz w osobnej sprawie.',docs:'Wniosek do właściwego organu gminy lub ośrodka świadczeń i potwierdzenia sytuacji rodziny.',href:'#sprawa/rodzicielskie'},
+  rehabilitation:{title:'Gdy chorobowe się kończy',summary:'Świadczenie rehabilitacyjne można sprawdzić, jeśli dalsze leczenie rokuje powrót do pracy.',who:'Osoba nadal niezdolna do pracy po wyczerpaniu chorobowego; oceny dokonuje ZUS.',money:'W okresie ciąży 100% podstawy; świadczenie może trwać do 12 miesięcy.',docs:'ZNp-7, zaświadczenie lekarskie OL-9 i pozostałe dokumenty dla Twojej sytuacji.',source:'rehabilitation',href:'#uprawnienia'},
+  endWork:{title:'Gdy praca kończy się w ciąży',summary:'Data i przyczyna końca zatrudnienia mogą zmienić ochronę i prawo do pieniędzy.',who:'Osoba z kończącą się umową; część umów podlega przedłużeniu, a część sytuacji wymaga sprawdzenia wyjątku.',money:'Nie ustalamy kwoty bez daty i podstawy rozwiązania umowy.',docs:'Umowa, świadectwo pracy i dokumenty potwierdzające okoliczności; sprawdź je z kadrami lub ZUS.',source:'insurance',href:'#uprawnienia'},
+  family800:{title:'800+ na dziecko',summary:'Odrębne wsparcie na wychowanie dziecka; sprawdź warunki i termin wniosku po narodzinach.',who:'Rodzic lub opiekun spełniający warunki programu.',money:'Szczegóły i aktualny okres świadczeniowy pokazujemy w osobnej sprawie.',docs:'Dane dziecka i odpowiedni wniosek do ZUS.',href:'#sprawa/800-plus'}
+};
+function zusBenefitsForSituation(){
+  const child=state.children[state.active],d=zusOwnDraft();
+  const insurance=state.role==='tata'?d.insuranceB:d.insurance;
+  let keys;
+  if(state.role==='tata')keys=['father','parental',child.stage==='pregnancy'?'maternity':'family800'];
+  else if(insurance==='no')keys=['parentBenefit','parental','family800'];
+  else if(child.stage==='pregnancy')keys=['sick','maternity','parental'];
+  else keys=['maternity','parental',d.exception==='hospital'?'hospital':'family800'];
+  return keys.map(key=>({key,title:ZUS_BENEFITS[key].title,summary:ZUS_BENEFITS[key].summary,status:insurance==='unknown'?'Do potwierdzenia':'Warto sprawdzić',href:ZUS_BENEFITS[key].href}));
 }
 function zusField(label,name,value,attributes='') {
   return `<label class="field">${label}<input name="${name}" value="${esc(value)}" ${attributes}></label>`;
@@ -190,7 +236,7 @@ function zusSupplementary(d) {
   if(!birth||!placement)issues.push('Do uzupełniającego potrzebne są rzeczywiste daty urodzenia i porodu/przyjęcia.');
   const ga=Number(d.gestationWeeks),weight=Number(d.birthWeight);
   if(!Number.isInteger(ga)||ga<20||ga>45||!Number.isFinite(weight)||weight<=0||weight>10000)issues.push('Wpisz ukończone tygodnie ciąży i masę urodzeniową w gramach z zaświadczenia szpitala.');
-  if(!d.hospitalConfirmed)issues.push('Potwierdź zaświadczenie szpitala oraz wybrane dziecko przy porodzie mnogim.');
+  if(!d.hospitalConfirmed)issues.push(d.dateMode==='planned'?'Potwierdź, że masa, tydzień ciąży i pobyty są założeniami tego wariantu.':'Potwierdź zaświadczenie szpitala oraz wybrane dziecko przy porodzie mnogim.');
   const rows=[[d.hospitalFrom,d.hospitalUntil]];
   for(const line of String(d.hospitalExtra||'').split(/\r?\n/).filter(s=>s.trim())){
     const match=line.trim().match(/^(\d{4}-\d{2}-\d{2})\s*\/\s*(\d{4}-\d{2}-\d{2})$/);
@@ -402,26 +448,43 @@ function zusCalculation(d,rules=zusRules) {
     total:Math.round(segments.reduce((sum,s)=>sum+Math.round(s.total*100),0))/100,
     perParent,months:zusMonthlyTotals(segments),notices:minimum.notices,ageLimit,custom:JSON.stringify(rules)!==JSON.stringify(ZUS_DEFAULT_RULES)};
 }
+function zusHospitalNextStep(d,result) {
+  const period=result.segments?.filter(s=>s.kind==='supplementary');
+  if(!period?.length)return null;
+  const start=period[0].from,end=period.at(-1).until;
+  if(!zusDate(start))return null;
+  const lastMaternity=zusAddDays(zusDate(start),-1);
+  return {start,end,employeeDeadline:zusIso(zusAddDays(lastMaternity,-21)),otherDeadline:zusIso(lastMaternity),
+    employee:d.workA==='employee',knownWork:['employee','contract','business'].includes(d.workA),
+    recipient:d.workA==='employee'?'pracodawca — wniosek o urlop':d.workA==='business'?'ZUS — wniosek o zasiłek':'właściwy płatnik zasiłku, np. zleceniodawca'};
+}
+function zusHospitalAction(d,result) {
+  const next=zusHospitalNextStep(d,result);if(!next)return '';
+  return `<section class="zus-next zus-hospital-next"><p class="home-kicker">${d.dateMode==='planned'?'Termin w wariancie hipotetycznym':'Twój następny krok'}</p><h3>Złóż wniosek o dodatkowy okres</h3><p><strong>${next.knownWork?`Do ${next.employee?next.employeeDeadline:next.otherDeadline}`:`Pracownik: do ${next.employeeDeadline}; poza etatem: przed ${next.start}`}</strong> · ${next.knownWork?esc(next.recipient):'najpierw potwierdź swój tytuł ubezpieczenia i adresata'}.</p><p>${next.employee?'Wniosek o uzupełniający urlop złóż co najmniej 21 dni przed końcem macierzyńskiego.':'Osoba niebędąca pracownikiem składa wniosek przed rozpoczęciem dodatkowego okresu; przy etacie obowiązuje 21 dni przed końcem macierzyńskiego.'}</p><ul><li>Zaświadczenie szpitala: tydzień ciąży, masa urodzeniowa i daty pobytów.</li><li>Oświadczenie, że drugi rodzic nie zamierza korzystać z tego samego dodatkowego okresu; przy wypłacie przez ZUS sprawdź pozostałe załączniki.</li><li>Zaktualizuj wcześniej złożony wniosek o rodzicielski, jeśli jego początek się przesunie.</li></ul><p>Wyliczony okres: ${next.start} – ${next.end}. ${zusSource('documents','ZUS: adresat, terminy i dokumenty')}</p></section>`;
+}
 function zusResult(d) {
   const result=zusCalculation(d);
-  const destination=value=>value==='employer'?'pracodawcy uprawnionego do wypłaty zasiłków':value==='zus'?'ZUS':'płatnika po potwierdzeniu w kadrach';
+  const destination=value=>value==='employer'?'uprawniony pracodawca':value==='zus'?'ZUS':'do potwierdzenia w kadrach';
   const payer=destination(d.payer),payerB=destination(d.payerB);
   if(result.issues.length)return `<div class="zus-result"><h2 tabindex="-1">Co trzeba jeszcze ustalić?</h2><ul>${result.issues.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>${d.insurance==='no'&&d.insuranceB==='yes'?`<section class="zus-next"><h3>Sprawdź własną ścieżkę drugiego rodzica</h3><p>Brak ubezpieczenia matki nie rozstrzyga automatycznie o prawach ojca. Ten wariant nie dolicza mu okresu macierzyńskiego. Zbierz potwierdzenie jego ubezpieczenia, daty i dotychczasowe okresy opieki, a następnie sprawdź odrębne prawo do rodzicielskiego i ojcowskiego z płatnikiem.</p>${zusSource('parental','Zasady urlopu rodzicielskiego')} <a href="#sprawa/urlop-ojcowski">Sprawa: urlop ojcowski</a></section>`:''}<p>Uzupełnij dane i przelicz ponownie. ${zusSource('insurance','Warunki ubezpieczenia i wyjątki w ZUS')}</p><a class="dashboard-link" href="#uprawnienia">Świadczenia i szczególne sytuacje ${icon('arrow',16)}</a></div>`;
   return `<div class="zus-result"><p class="home-kicker">Symulacja ${result.custom?'· zmienione parametry testowe':'· zasady sprawdzone 21.11.2026'}</p>
-    <h2 tabindex="-1">${result.fatherOnly?'Rodzicielski ubezpieczonego ojca':'Wasz wariant opieki'}</h2><p class="zus-version">Reguły: ${esc(zusRuleLabel())}. Plan zakłada brak zmian przepisów w jego trakcie; minimalną podstawę dobieramy osobno dla każdego roku wypłaty. Dane: ${d.evidenceRequired?'potwierdzone przez Ciebie, bez weryfikacji urzędowej':'symulacja na podanych danych'}.</p><p>${result.fatherOnly?`Ojciec: ${result.shareB} tyg. rodzicielskiego · bez doliczania macierzyńskiego matki`:`${result.maternityDays} dni macierzyńskiego${Number.isInteger(result.maternity)?" ("+result.maternity+" tyg.)":""} · pula rodzicielska ${result.parental} tyg.`}</p>
+    <p class="zus-scenario-label"><strong>${d.dateMode==='planned'?'Wariant hipotetyczny':'Wariant na podanych danych'}</strong> · ${d.dateMode==='planned'?'zakładana':'podana rzeczywista'} data porodu / przyjęcia: ${esc(d.eventDate||'nie podano')}.${typeof state!=='undefined'&&zusCurrentEvidence().sample?` Przykład autorski — dane fikcyjne: ${esc(zusCurrentEvidence().sample)}.`:''}</p>
+    <h2 tabindex="-1">${result.fatherOnly?'Rodzicielski ubezpieczonego ojca':'Wasz wariant opieki'}</h2><p class="zus-version">Reguły: ${esc(zusRuleLabel())}. Plan zakłada brak zmian przepisów w jego trakcie; minimalną podstawę dobieramy osobno dla każdego roku wypłaty. Dane: ${d.dateMode==='planned'?'założenia podane przez Ciebie, wymagające późniejszego potwierdzenia':d.evidenceRequired?'potwierdzone przez Ciebie, bez weryfikacji urzędowej':'symulacja na podanych danych'}.</p><p>${result.fatherOnly?`Ojciec: ${result.shareB} tyg. rodzicielskiego · bez doliczania macierzyńskiego matki`:`${result.maternityDays} dni macierzyńskiego${Number.isInteger(result.maternity)?" ("+result.maternity+" tyg.)":""} · pula rodzicielska ${result.parental} tyg.`}</p>
     ${result.minimumAdoption?'<p class="zus-notice">Zastosowano gwarantowane minimum 9 tygodni macierzyńskiego. Pula rodzicielska 38/62 tygodni nie oznacza automatycznie prawa do jej wykorzystania po granicy wieku.</p>':''}
     ${d.exception==='hospital'?`<p class="zus-notice">Uzupełniający: ${result.supplementary.weeks} tygodni przy ${result.supplementary.days} dniach hospitalizacji w oknie ${result.supplementary.windowFrom} – ${result.supplementary.windowUntil}. ${result.supplementary.weeks?'Liczymy 100% podstawy pierwszego rodzica, bezpośrednio po macierzyńskim.':'W podanych pobytach nie ustalono dodatkowych tygodni; sprawdź kompletne zaświadczenie.'} Daty liczymy od dnia po porodzie (dla dziecka donoszonego od 5. dnia); potwierdź granice z płatnikiem. ${zusSource('supplementary','Warunki uzupełniającego')}</p>`:''}
     ${result.fatherOnly?`<p class="zus-notice">Brak ubezpieczenia matki nie odbiera ojcu własnego uprawnienia do rodzicielskiego. Liczymy wybrany okres według ${zusRules.parentalRate}% jego podstawy, z puli najwyżej ${result.parental-zusRules.reservedWeeks} tygodni. Własne ${zusRules.reservedWeeks} tygodni ojca są już w tej puli. Zakładamy brak wcześniejszego wykorzystania rodzicielskiego i brak sytuacji szczególnych; płatnik musi potwierdzić prawo i okres. ${zusSource('parentalZus','Podział rodzicielskiego w ZUS')}</p>`:''}
     <p class="zus-notice">Suma brutto przed PIT — podwyższenie i założenia rozwiniesz poniżej.</p>
     ${result.notices.length?`<ul class="zus-notice">${result.notices.map(n=>`<li>${esc(n)}</li>`).join('')}</ul>`:''}
-    <div class="zus-total"><strong>${zusMoney(result.total)}</strong><span>Orientacyjna suma brutto zasiłków w poniższym wariancie</span></div>
+    <div class="zus-total"><strong>${zusMoney(result.total)}</strong><span>Orientacyjna suma brutto zasiłku macierzyńskiego za pokazane okresy</span></div>
+    <p>Za co wypłata? Poniżej rozdzielamy kolejne okresy tego samego zasiłku — z datami, stawką i kwotą.</p>
     ${result.firstYearAdjustment?`<p class="zus-notice">Brak dnia rodzicielskiego w stawce 81,5% w pierwszym roku: rodzicielskie liczymy według 70%, a macierzyńskie po wyrównaniu do 100%. Wyrównanie wynosi orientacyjnie ${zusMoney(result.adjustment)} i wymaga wniosku. Jest już zawarte w sumie powyżej — nie dodawaj go drugi raz. ${zusSource('amount','Zasady wyrównania ZUS')}</p>`:''}
     <div class="zus-segments">${result.segments.map(s=>`<section><h3>${s.label}</h3>${s.from?`<p>${s.from} – ${s.until}</p>`:'<p>Bez daty — porównanie wymiaru</p>'}<p>${s.days} dni · ${String(s.rate).replace('.',',')}% podstawy${s.fraction?' · praca '+(s.fraction===.5?'½':s.fraction===.25?'¼':String(s.fraction).replace('.',','))+' etatu':''}</p><strong>${zusMoney(s.daily)} / dzień</strong><span>Razem ${zusMoney(s.total)}</span></section>`).join('')}</div>
     <p>Pierwszy rodzic: ${result.perParent.A.days} dni, ${zusMoney(result.perParent.A.total)}. Drugi rodzic: ${result.perParent.B.days} dni, ${zusMoney(result.perParent.B.total)}. Daty końca obejmują ostatni dzień wypłaty. Nakładanie się okresów rodziców jest dozwolone; zużywa sumę ich tygodni.</p>
     ${zusTopupPanel(result)}
+    ${zusHospitalAction(d,result)}
     ${result.unused?`<p class="zus-notice">${result.unused} tygodni nie jest objętych tym wyliczeniem. ${result.fatherOnly?`${zusRules.reservedWeeks} tygodni zastrzeżonych matce nie przechodzi na ojca. Pozostała różnica, jeśli występuje, to niewybrana część jego puli.`:'Nieprzenoszalna część drugiego rodzica wymaga jego własnego uprawnienia.'}</p>`:''}
     <details class="zus-explain"><summary>Założenia i sposób liczenia</summary><p>Podstawa to kwota ustalona po odliczeniu składek, przed podatkiem. Podstawę dzienną (podstawa / 30), stawkę procentową i kwotę redukcji za pracę zaokrąglamy kolejno do grosza. Kwota dzienna po redukcji = pełny zasiłek dzienny minus zaokrąglona redukcja. Kwota miesięczna zależy od liczby dni kalendarzowych. Suma główna jest brutto. Podwyższenie netto obliczamy osobno z potwierdzonej zaliczki PIT i kwot z pozostałych tytułów; nie obliczamy podatku za płatnika.</p><p>${result.fatherOnly?'Liczymy wyłącznie rodzicielskie ojca przy nieubezpieczonej matce (art. 31 ust. 3h ustawy zasiłkowej). Nie oznacza to przejęcia macierzyńskiego ani prawa do 81,5%.':'Pierwszy rodzic korzysta z całego okresu macierzyńskiego. Rodzicielskie można wykorzystać kolejno lub równolegle. Przy porodzie brak dnia rodzicielskiego w stawce 81,5% w pierwszym roku zmienia stawkę na 70% i pozwala obliczyć wyrównanie macierzyńskiego do 100% na wniosek.'} Kwoty nie obejmują wynagrodzenia za pracę ani osobnego urlopu ojcowskiego.</p><p>Praca u pracodawcy udzielającego urlopu trwa w stałym wymiarze przez cały wybrany okres rodzicielski i jego wydłużenie. Wydłużenie: dni okresu × wymiar pracy względem pełnego etatu, pominięcie części dnia, następnie podział przez (1 − wymiar pracy) i ponowne pominięcie części dnia. Kwotę zasiłku zmniejszamy o stosunek tej pracy do Twojego wymiaru z umowy: praca 1/4 przy umowie 1/2 oznacza redukcję o połowę. Część nieprzenoszalną drugiego rodzica i pozostałą część planujemy jako odrębne okresy. ${zusSource('calculationCommentary','Komentarz ZUS: pkt 144, 147 i 182')} Zmienne okresy pracy, wcześniejsze wykorzystanie części puli i przejęcie macierzyńskiego wymagają odrębnego wyliczenia. Przy adopcji/pieczy macierzyński skracamy do granicy wieku, zachowując minimum 9 tygodni; dla tego minimum pokazujemy pulę 38 lub 62 tygodni. Rodzicielskie przekraczające granicę wieku wymaga potwierdzenia interpretacji z ZUS.</p>${result.ageLimit?`<p>Graniczny wiek dziecka przypada ${fmt(result.ageLimit)}. Zaplanuj wykorzystanie urlopu z uwzględnieniem właściwych terminów.</p>`:''}</details>
-    <h3>Dokumenty i następny krok</h3><p>Wynik dotyczy dziecka wybranego w teczce i założeń widocznych powyżej. Zapisz go razem z wersją reguł.</p><p>${result.fatherOnly?`Ojciec kieruje dokumenty do ${payerB}.`:`Pierwszy rodzic kieruje dokumenty do ${payer}.${result.shareB?` Drugi rodzic: do ${payerB}.`:''}`} Przy zatrudnieniu u płatnika zgłaszającego ponad 20 osób do ubezpieczenia chorobowego wypłata zwykle należy do płatnika. Stan ustala się co do zasady na 30 listopada poprzedniego roku.</p>
+    <h3>Dokumenty i następny krok</h3><p>Wynik dotyczy dziecka wybranego w teczce i założeń widocznych powyżej. Zapisz go razem z wersją reguł.</p><p>${result.fatherOnly?`Płatnik wypłaty ojca: ${payerB}.`:`Płatnik wypłaty pierwszego rodzica: ${payer}.${result.shareB?` Drugiego rodzica: ${payerB}.`:''}`} Pracownik składa wniosek o urlop pracodawcy, nawet gdy pieniądze wypłaca ZUS. Płatnik zgłaszający ponad 20 osób do ubezpieczenia chorobowego zwykle wypłaca zasiłek. Stan ustala się co do zasady na 30 listopada poprzedniego roku.</p>
     <ul><li>Przygotuj aktualny ZAM oraz dokumenty potwierdzające poród lub przyjęcie na wychowanie.</li><li>Pracownik uzgadnia urlop z pracodawcą. Do wypłaty przez ZUS potrzebne może być Z-3, a przy zleceniu Z-3a od płatnika.</li><li>Wniosek o urlop rodzicielski pracownika składa się co najmniej 21 dni przed rozpoczęciem. Wybór stawki 81,5% ma odrębny termin.</li></ul>
     <div class="source-box">${zusSource('amount','Stawki zasiłku')}${zusSource('duration','Wymiar i limity wieku')}${zusSource('parental','Podział i łączenie z pracą')}${zusSource('documents','Aktualne dokumenty')}</div>
     <div class="case-actions"><a class="button secondary" href="#wsparcie/macierzynski">Poproś bliską osobę o pomoc</a><a class="button secondary" href="#terminy">Zaplanuj termin</a><a class="button primary" href="#e-uslugi/zasilek">Wniosek ZAM (symulacja) ${icon('arrow',16)}</a><button class="button secondary" type="button" data-zus-action="print">Drukuj wynik / PDF</button></div></div>`;
@@ -430,14 +493,16 @@ function calculatorPage(r) {
   const d=zusCurrentDraft();
   if(typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{zusSyncFields();if(zusAutoSubmit){zusAutoSubmit=false;document.querySelector('#zus-calculator')?.requestSubmit();}});
   const insurance={unknown:'Do sprawdzenia',yes:'Tak, potwierdzone',no:'Brak ubezpieczenia'};
-  return backLink(r)+pageHeading('Zasiłki i urlopy','Zaplanujcie opiekę','Porównaj podział urlopu, okres wypłaty i kwoty dla obojga rodziców.')+
+  return backLink(r)+pageHeading('Wasze wyliczenie','Ile i przez jaki czas?','Oblicz zasiłek macierzyński za kolejne okresy opieki. Zacznij od własnej sytuacji.')+
     `<div class="zus-page"><p class="zus-notice">Wynik jest orientacyjną symulacją. O prawie i wysokości świadczenia rozstrzyga ZUS lub uprawniony płatnik po sprawdzeniu dokumentów.</p>
+    <section class="zus-own-start"><div><p class="home-kicker">${zusCurrentEvidence().sample?'Przykład · dane fikcyjne':'Własny przypadek'}</p><h2>${zusCurrentEvidence().sample?'Sprawdzasz gotowy przykład':esc(childLabel(state.active))}</h2><p>${zusCurrentEvidence().sample?'Twoje własne dane czekają osobno.':'Korzystamy z Twojej sytuacji. Ubezpieczenie i kwoty uzupełnisz poniżej.'}</p></div><div class="case-actions"><button type="button" class="button secondary" data-zus-action="own">${zusCurrentEvidence().sample?'Wróć do własnego przypadku':'Mój zapisany przypadek'}</button><button type="button" class="button secondary" data-zus-action="premature">Co, jeśli poród będzie wcześniejszy?</button></div></section>
     <div class="zus-demo-choices"><span>Przykłady autorskie</span><button class="filter" data-zus-case="employee">Dwoje rodziców</button><button class="filter" data-zus-case="half">Powrót na pół etatu</button><button class="filter" data-zus-case="uninsured">Brak ubezpieczenia</button><a class="filter" href="#e-uslugi">Dane z ZUS (symulacja)</a><a class="filter" href="#sprawdz-sprawe">Sprawa z zestawu ZUS</a></div>
     ${zusDocumentPanel()}<p class="zus-notice"><strong>Pierwszy rodzic</strong> korzysta z macierzyńskiego (przy porodzie – matka), <strong>drugi</strong> z pozostałej części rodzicielskiego.</p><form id="zus-calculator"><fieldset class="zus-fields"><legend>Dziecko i zdarzenie</legend>
     ${zusSelect('Wasza sytuacja','kind',{birth:'Urodzenie dziecka',adoption:'Przyjęcie w celu adopcji',foster:'Niezawodowa rodzina zastępcza'},d.kind)}
     ${zusSelect('Dzieci urodzone / przyjęte jednocześnie','count',{'0':'Wybierz liczbę dzieci','1':'Jedno','2':'Dwoje','3':'Troje','4':'Czworo','5':'Pięcioro lub więcej'},String(d.count))}
-    ${zusField('Rzeczywista data porodu lub przyjęcia','eventDate',d.eventDate,'type="date"')}
-    ${state.children[state.active].stage==='pregnancy'?`<p class="zus-field-note">W profilu zapisano przewidywany termin porodu${state.children[state.active].date?' ('+esc(state.children[state.active].date)+')':''}. Nie przenosimy go jako rzeczywistej daty zdarzenia. Bez daty można porównać standardowe kwoty; stawka 81,5% i samodzielny rodzicielski ojca wymagają daty do sprawdzenia terminów.</p>`:''}
+    ${zusSelect('Czy to plan, czy znane już daty?','dateMode',{planned:'Planuję / sprawdzam „co, jeśli”',actual:'Zdarzenie już nastąpiło'},d.dateMode||'actual')}
+    ${zusField('<span data-zus-date-label>Data porodu lub przyjęcia</span>','eventDate',d.eventDate,'type="date"')}
+    <p class="zus-field-note" data-zus-date-note>Przewidywana data służy tylko do planowania. Po porodzie przelicz wynik z rzeczywistą datą.</p>
     ${zusField('Data urodzenia przyjmowanego dziecka','childDob',d.childDob,'type="date"')}
     ${zusCheck('Zaświadczenie „Za życiem”','special',d.special)}
     ${zusCheck('Odroczony obowiązek szkolny (piecza zastępcza)','deferred',d.deferred)}
@@ -448,7 +513,8 @@ function calculatorPage(r) {
     ${zusField('Pierwszy pobyt — data przyjęcia','hospitalFrom',d.hospitalFrom||'','type="date"')}
     ${zusField('Pierwszy pobyt — data wypisu','hospitalUntil',d.hospitalUntil||'','type="date"')}
     <label class="field">Kolejne pobyty tego samego dziecka (opcjonalnie)<textarea name="hospitalExtra" rows="3" placeholder="RRRR-MM-DD / RRRR-MM-DD">${esc(d.hospitalExtra||'')}</textarea></label>
-    ${zusCheck('Potwierdzam dane z zaświadczenia szpitala. Przy porodzie mnogim podaję najniższą masę i pobyty dziecka najdłużej hospitalizowanego, bez sumowania różnych dzieci.','hospitalConfirmed',d.hospitalConfirmed)}
+    ${zusCheck('<span data-zus-hospital-confirm>Potwierdzam dane z zaświadczenia szpitala.</span>','hospitalConfirmed',d.hospitalConfirmed)}
+    <p class="zus-field-note">Przy porodzie mnogim: najniższa masa oraz pobyty dziecka najdłużej hospitalizowanego — nie sumuj pobytów różnych dzieci.</p>
     <p class="zus-field-note">Dzień porodu oznacza dzień 0; liczymy od następnego dnia, do dnia 56 lub 105. Przyjęcie i wypis w tym oknie wliczamy. Granicę pobytu potwierdź z płatnikiem na podstawie zaświadczenia. Dla dziecka donoszonego sprawdzamy pobyt w dniach 5–56 po porodzie i dwa kolejne dni zaczynające się między 5. a 28. dniem. Przy przyjęciu na wychowanie uwzględniamy hospitalizację od przyjęcia. ${zusSource('supplementary','Zasady i przykłady MRPiPS')}</p></div></fieldset>
     <fieldset class="zus-fields"><legend>Ubezpieczenie i podstawa</legend>
     ${zusSelect('Ubezpieczenie pierwszego rodzica w dniu zdarzenia','insurance',insurance,d.insurance)}
@@ -488,7 +554,7 @@ function calculatorPage(r) {
     ${zusCheck('Sprawdzono zdarzenie, liczbę dzieci i założenia podziału opieki','reviewDates',d.reviewDates)}
     <p>Potwierdzenia dotyczą tego wyliczenia. Zmiana danych wymaga ich ponownego sprawdzenia.</p></fieldset>
     <button class="button primary" type="submit">Oblicz nasz wariant ${icon('arrow',16)}</button></form>
-    <div id="zus-result" aria-live="polite"></div><a class="dashboard-link" href="#uprawnienia">Świadczenia w ciąży i trudniejsze sytuacje ${icon('right',16)}</a>
+    <div id="zus-result" aria-live="polite"></div><a class="dashboard-link" href="#uprawnienia">Jakie świadczenia warto sprawdzić? ${icon('right',16)}</a>
     <a class="dashboard-link" href="#parametry">Parametry kalkulatora — panel demonstracyjny ${icon('right',16)}</a></div>`;
 }
 function zusParametersPage(r) {
@@ -507,34 +573,45 @@ function zusParametersPage(r) {
     <div class="case-actions"><button class="button primary" type="submit">Zastosuj w symulacji</button><button class="button secondary" data-zus-action="rules-reset" type="button">Przywróć sprawdzone wartości</button></div><p id="zus-parameters-status" role="status"></p></form>
     <p class="zus-field-note">Minimum pełnego etatu: ${zusMoney(zusMinimumBase())}. Próg długu: ${zusMoney(zusRound(zusRules.minimumWage*zusRules.debtThresholdPercent/100))}. Wartości pochodne wyliczamy automatycznie. Domyślne minima wynagrodzeń: 2025 — 4666 zł, 2026 — 4806 zł, 2027 — 4950 zł. Podany rok zastępuje jedną pozycję; pozostałe parametry opisują tę symulację, nie automatyczny silnik historycznego prawa. Produkcyjna zmiana reguł wymaga zatwierdzenia merytorycznego.</p><a class="dashboard-link" href="#kalkulator">Przetestuj kalkulator ${icon('right',16)}</a></div>`;
 }
+function zusBenefitCard(key,status='Warto sprawdzić') {
+  const item=ZUS_BENEFITS[key];
+  return `<article><p class="zus-guide-fact">${esc(status)}</p><h2>${esc(item.title)}</h2><p>${esc(item.summary)}</p><details><summary>Ile, dla kogo i jakie dokumenty?</summary><dl class="zus-benefit-facts"><dt>Dla kogo</dt><dd>${esc(item.who)}</dd><dt>Jakie pieniądze</dt><dd>${esc(item.money)}</dd><dt>Co przygotować</dt><dd>${esc(item.docs)}</dd></dl>${item.source?`<div class="source-box">${zusSource(item.source,'Warunki w źródle')}</div>`:''}</details>${item.href!=='#uprawnienia'?`<a class="dashboard-link" href="${item.href}" ${item.href==='#kalkulator'?'data-zus-action="own"':''}>${item.href==='#kalkulator'?'Oblicz własny wariant':'Zobacz sprawę krok po kroku'} ${icon('arrow',16)}</a>`:''}</article>`;
+}
 function zusGuidePage(r) {
-  return backLink(r)+pageHeading('Uprawnienia i pomoc','Co warto sprawdzić wcześniej','Informacje zweryfikowane w źródłach ZUS 21 listopada 2026 r.')+
-    `<div class="zus-page zus-guide-list">
-    <article><h2>Chorobowe w ciąży</h2><p>Przy niezdolności do pracy potwierdzonej przez lekarza świadczenie w ciąży wynosi 100% podstawy, a okres zasiłkowy może trwać do 270 dni. Ubezpieczenie obowiązkowe zwykle wymaga 30 dni wyczekiwania, dobrowolne 90 dni. Istnieją wyjątki i zasady wliczania poprzedniego ubezpieczenia.</p><p>e-ZLA trafia elektronicznie do ZUS i płatnika. Pracownica informuje pracodawcę o nieobecności. Gdy wypłaca ZUS, płatnik przekazuje właściwe zaświadczenie Z-3 lub Z-3a. Osoba prowadząca firmę składa wniosek ZAS-53. Kod B lub zaświadczenie o ciąży pozwala zastosować właściwą stawkę.</p><div class="source-box">${zusSource('sick','Warunki, dokumenty i terminy ZUS')}</div></article>
-    <article><h2>Świadczenie rehabilitacyjne</h2><p>Po wyczerpaniu zasiłku chorobowego można je otrzymać, jeżeli nadal nie można pracować, a dalsze leczenie lub rehabilitacja rokują odzyskanie zdolności do pracy. Ocenę przeprowadza ZUS. Świadczenie trwa maksymalnie 12 miesięcy. Wynosi 90% podstawy przez pierwsze 3 miesiące i 75% później, a w okresie ciąży – 100%.</p><p>Przygotuj wniosek ZNp-7, zaświadczenie o stanie zdrowia OL-9 i dokumenty wymagane dla Twojej sytuacji. ZUS zaleca złożenie dokumentów co najmniej 6 tygodni przed końcem okresu zasiłkowego.</p><div class="source-box">${zusSource('rehabilitation','Świadczenie rehabilitacyjne w ZUS')}</div></article>
-    <article><h2>Zakończenie pracy w ciąży</h2><p>Gdy ubezpieczenie kończy się przed porodem, zbierz datę i podstawę rozwiązania umowy. Niektóre umowy terminowe przedłużają się do porodu. Śmierć pracodawcy, jego upadłość lub likwidacja mogą dawać szczególne uprawnienia.</p><p>Po utracie zatrudnienia z powodu śmierci, likwidacji lub upadłości pracodawcy, bez zapewnienia innej pracy, możliwy jest zasiłek w wysokości macierzyńskiego do dnia porodu. Za okres po porodzie sprawdza się odrębne warunki. Przygotuj świadectwo pracy i dokumenty potwierdzające okoliczności.</p><div class="source-box">${zusSource('insurance','Wyjątki po ustaniu ubezpieczenia')}${zusSource('documents','Wymagane dowody')}${zusSource('work','Ochrona zatrudnienia — PIP')}</div></article>
-    <article><h2>Wcześniactwo, hospitalizacja i utrata dziecka</h2><p>Wcześniactwo lub pobyt noworodka w szpitalu mogą dawać prawo do uzupełniającego urlopu macierzyńskiego. Wymiar zależy od tygodnia ciąży, masy urodzeniowej i czasu hospitalizacji. Przygotuj zaświadczenie szpitala i ustal termin wniosku z płatnikiem.</p><p>Po utracie ciąży lub dziecka zapytaj ZUS o dokumenty potwierdzające zdarzenie i właściwy skrócony okres świadczenia. Choroba, hospitalizacja albo śmierć matki mogą pozwalać drugiemu uprawnionemu opiekunowi przejąć opiekę i zasiłek. Takie przypadki wymagają indywidualnej oceny dokumentów.</p><div class="source-box">${zusSource('duration','ZUS — okresy i sytuacje szczególne')}${zusSource('documents','Dokumenty do zasiłku')}</div></article>
-    <article><h2>Co może zmienić prawo lub kwotę?</h2><ul><li>Brak zgłoszenia do chorobowego lub zakończenie ubezpieczenia przed porodem.</li><li>Zadłużenie składkowe przy prowadzeniu działalności — sprawdź stan na właściwy dzień.</li><li>Zmiana etatu, przerwy w ubezpieczeniu i nieregularne składniki wynagrodzenia.</li><li>Umowa wykonywana pozornie albo nieuzasadnione podniesienie podstawy mogą podlegać weryfikacji ZUS.</li><li>Wniosek o stawkę 81,5% ma termin 21 dni. Jeżeli nie wykorzystano choć jednego dnia rodzicielskiego w pierwszym roku, zastosowanie mają odrębne zasady stawki i wyrównania.</li></ul><div class="source-box">${zusSource('amount','Wysokość i wyrównanie')}${zusSource('insurance','Warunki prawa do zasiłku')}</div></article>
-    <article><h2>Aktualne formularze</h2><p>Od 24 października 2026 r. ZAM obejmuje również okresy wcześniej obsługiwane przez ZUR i ZAO. Z-3b co do zasady przestał być wymagany. ZUS czasowo udostępnił go 20 listopada w roli Płatnik dla pełnomocników z ograniczonym dostępem do usług eZUS. Dobierz formularz do aktualnej instrukcji i roli użytkownika.</p><div class="source-box">${zusSource('forms','Wzory formularzy ZUS')}${zusSource('documents','Instrukcja składania dokumentów')}</div></article>
-    <article><h2>Wsparcie organizacji społecznych</h2><p>Po utracie ciąży możesz skorzystać z informacji Fundacji Ronić po Ludzku. Rodzicom wcześniaków pomaga Fundacja Wcześniak Rodzice-Rodzicom. Informacje o prawach okołoporodowych udostępnia Fundacja Rodzić po Ludzku. Zakres dostępnej pomocy i kontakt sprawdzisz bezpośrednio w organizacji.</p><div class="source-box"><a href="https://ronicpoludzku.com/" target="_blank" rel="noopener noreferrer">Ronić po Ludzku</a><a href="https://wczesniak.pl/tak-pomagamy/" target="_blank" rel="noopener noreferrer">Wcześniak Rodzice-Rodzicom</a><a href="https://rodzicpoludzku.pl/o-nas/kontakt/" target="_blank" rel="noopener noreferrer">Rodzić po Ludzku</a></div><a class="dashboard-link" href="#wsparcie">Przygotuj własną Kartę wsparcia dla bliskiej osoby ${icon('arrow',16)}</a></article></div>`;
+  const matched=zusBenefitsForSituation(),d=zusOwnDraft(),child=state.children[state.active];
+  const insurance=state.role==='tata'?d.insuranceB:d.insurance;
+  const missing=[];
+  if(insurance==='unknown')missing.push('Potwierdź ubezpieczenie chorobowe — sama umowa nie wystarcza.');
+  if(!(Number(state.role==='tata'?d.baseB:d.baseA)>0))missing.push('Do wyliczenia potrzebna będzie podstawa zasiłku od płatnika.');
+  if(child.stage==='pregnancy')missing.push('Przed porodem daty i przyszłe uprawnienia są założeniami planu.');
+  const remaining=Object.keys(ZUS_BENEFITS).filter(key=>!matched.some(item=>item.key===key));
+  return backLink(r)+pageHeading('Dopasowane do Twojej sytuacji','Jakie świadczenia?',`${child.stage==='pregnancy'?'W ciąży i na czas po porodzie':'Po narodzinach'} · zacznij od tych spraw. Warunki rozwiniesz tylko wtedy, gdy ich potrzebujesz.`)+
+    `<div class="zus-benefits-page"><div class="zus-guide-cards">${matched.map(item=>zusBenefitCard(item.key,item.status)).join('')}</div>
+    <section class="zus-own-start"><div><h2>Policz swój zasiłek</h2><p>${missing.length?missing.map(esc).join(' '):'Użyj zapisanych danych i porównaj kwoty oraz okresy dla obojga rodziców.'}</p></div><a class="button primary" href="#kalkulator" data-zus-action="own">Oblicz zasiłek macierzyński ${icon('arrow',16)}</a></section>
+    <details class="zus-benefits-terms"><summary>Macierzyński, rodzicielski, ojcowski — czym się różnią?</summary><p><strong>Zasiłek macierzyński</strong> to nazwa pieniędzy wypłacanych za różne okresy opieki: macierzyński, uzupełniający po hospitalizacji, rodzicielski i ojcowski. Każdy ma własne warunki i terminy.</p><p><strong>Świadczenie rodzicielskie</strong> jest odrębną pomocą z gminy, m.in. przy braku prawa do zasiłku macierzyńskiego. Nie jest wypłatą za urlop rodzicielski.</p><p>Własne 9 tygodni rodzicielskiego drugiego rodzica i 2 tygodnie ojcowskiego to dwa różne okresy.</p>${zusSource('amount','ZUS: stawki za poszczególne okresy')}</details>
+    <details class="zus-benefits-other"><summary>Inne sytuacje i świadczenia</summary><div class="zus-guide-cards">${remaining.map(key=>zusBenefitCard(key)).join('')}</div></details>
+    <details class="zus-benefits-support"><summary>Wsparcie po stracie lub przy przejęciu opieki</summary><p>Te sytuacje wymagają indywidualnego sprawdzenia dokumentów i okresu z płatnikiem. Możesz poprosić bliską osobę o pomoc przez Kartę wsparcia.</p><div class="source-box">${zusSource('documents','ZUS: dokumenty i szczególne sytuacje')}<a href="https://ronicpoludzku.com/" target="_blank" rel="noopener noreferrer">Ronić po Ludzku</a><a href="https://wczesniak.pl/tak-pomagamy/" target="_blank" rel="noopener noreferrer">Wsparcie rodziców wcześniaków</a></div><a class="button secondary" href="#wsparcie">Przygotuj Kartę wsparcia</a></details></div>`;
 }
 document.addEventListener('click',event=>{
   const sample=event.target.closest('[data-zus-case]');
   if(sample) {
-    zusDraft={...zusInitial(),count:1,multiple:false,baseA:5000,baseB:6000,insurance:'yes',insuranceB:'yes',workA:'employee',workB:'employee',eventDate:'2026-01-01',childDob:'2026-01-01',debt:'clear',payer:'employer'};
+    zusDraft={...zusInitial(),count:1,multiple:false,baseA:5000,baseB:6000,insurance:'yes',insuranceB:'yes',workA:'employee',workB:'employee',dateMode:'actual',eventDate:'2026-01-01',childDob:'2026-01-01',debt:'clear',payer:'employer'};
     if(state.children[state.active].multiple){zusDraft.count=2;zusDraft.multiple=true;zusDraft.shareA=34;}
     if(sample.dataset.zusCase==='half')zusDraft.fractionA=.5;
     if(sample.dataset.zusCase==='uninsured')zusDraft.insurance='no';
-    zusSaveDraft(zusDraft);
-    Object.assign(zusDraft,{reviewInsurance:true,reviewBasis:true,reviewDates:true});zusSaveDraft(zusDraft);zusAutoSubmit=true;
-    const evidence=zusCurrentEvidence();evidence.sample=sample.textContent.trim();evidence.file=null;evidence.sprawa=null;
+    zusOpenExample(zusDraft,sample.textContent.trim());
     if(location.hash==='#kalkulator')render(true);else location.hash='kalkulator';
     return;
   }
   const action=event.target.closest('[data-zus-action]')?.dataset.zusAction;
+  if(action==='own'||action==='premature'){
+    event.preventDefault();zusUseOwnCase();
+    if(action==='premature')zusSaveDraft({...zusDraft,dateMode:'planned',exception:'hospital',hospitalConfirmed:false,reviewInsurance:false,reviewBasis:false,reviewDates:false});
+    if(location.hash==='#kalkulator')render(true);else location.hash='kalkulator';return;
+  }
   if(action==='document-clear'){zusCurrentEvidence().file=null;zusCurrentEvidence().sprawa=null;render(true);}
   const sprawa=event.target.closest('[data-zus-sprawa]')?.dataset.zusSprawa,c=zusCurrentEvidence().sprawa;
-  if(sprawa==='wczytaj'&&c?.kalkulator){zusSaveDraft({...zusInitial(),...c.kalkulator,reviewInsurance:true,reviewBasis:true,reviewDates:true});zusAutoSubmit=true;render(true);}
+  if(sprawa==='wczytaj'&&c?.kalkulator){zusSaveDraft({...zusInitial(),...c.kalkulator,dateMode:'actual',reviewInsurance:true,reviewBasis:true,reviewDates:true});zusAutoSubmit=true;render(true);}
   if(sprawa==='porownaj'&&c&&typeof sprawyPokaz==='function')sprawyPokaz(zusCurrentEvidence().file,c);
   if(action==='rules-reset'){zusSetRules(structuredClone(ZUS_DEFAULT_RULES),true);render(true);}
   if(action==='print') {
@@ -617,6 +694,10 @@ function zusSyncFields() {
   // Include retained values of hidden controls while deciding what to re-enable.
   const d=Object.fromEntries(Array.from(form.elements).filter(el=>el.name&&(el.type!=='checkbox'||el.checked)).map(el=>[el.name,el.value]));
   const fatherOnly=zusFatherOnly(d);
+  const planned=d.dateMode==='planned';
+  form.querySelector('[data-zus-date-label]').textContent=planned?'Hipotetyczna data porodu lub przyjęcia':'Rzeczywista data porodu lub przyjęcia';
+  form.querySelector('[data-zus-date-note]').textContent=planned?'To wariant do planowania. Dla wcześniejszego porodu wpisz zakładaną datę; po zdarzeniu przelicz wynik z potwierdzonymi danymi.':'Wpisz datę z dokumentu porodu lub przyjęcia. Nie zmienia to daty w profilu dziecka.';
+  form.querySelector('[data-zus-hospital-confirm]').textContent=planned?'Rozumiem, że tydzień ciąży, masa i pobyty są założeniami tego wariantu.':'Potwierdzam dane z zaświadczenia szpitala.';
   const hospitalGroup=form.querySelector('.zus-hospital-fields');hospitalGroup.hidden=d.exception!=='hospital';
   hospitalGroup.querySelectorAll('input,textarea').forEach(el=>el.disabled=d.exception!=='hospital');
   const combinedOption=form.elements.rate.querySelector('option[value="combined"]');
