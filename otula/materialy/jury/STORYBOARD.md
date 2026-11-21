@@ -11,7 +11,7 @@
 | 3 | Osobny plan każdego dziecka. Rola, etap, zatrudnienie i terminy. | Duży pulpit webowy, mały ekran telefonu jako potwierdzenie RWD. |
 | 4 | Wariant opieki i zasiłku. Wynik, podział oraz jawne założenia. | Czytelny wycinek autorskiego wyniku kalkulatora. |
 | 5 | Dokumenty i e-usługi. Co przygotować i dokąd skierować. | Ekran demonstracyjnego wniosku lub usług, wyraźnie oznaczony jako symulacja. |
-| 6 | Karta wsparcia. Prośba, którą bliska osoba może wykonać. | Duży prawdziwy fragment prośby, uzupełniony widokiem telefonu. |
+| 6 | Karta wsparcia. Prośba, którą bliska osoba może wykonać. | Duży prawdziwy fragment prośby, czytelny także na projektorze. |
 | 7 | Terminy i wydruk dla rodziny. Przypomnienie po imporcie ICS. | Kalendarz webowy; raport jako funkcja opisana krótko. |
 | 8 | Asystent przy aktualnej sprawie. Odpowiedź, źródło i granice. | Panel AI obok karty sprawy, rzeczywista odpowiedź bez danych osobowych. |
 | 9 | Technologia i gotowość. Reguły oddzielone od modelu, zakres testów i ograniczeń. | Czytelna płaska kompozycja tekstowa, bez udawania certyfikacji. |
@@ -38,7 +38,7 @@ Większość czasu ekranów aplikacji przypada na widoki komputerowe. Tekst pozo
 
 `web-start.png`, `web-home.png`, `web-calculator-result.png`, `web-calculator-result-detail.png`, `web-documents.png`, `web-support.png`, `web-support-detail.png`, `web-calendar.png`, `web-ai-panel.png`, `phone-start.png`, `phone-support.png`, `phone-daily.png`.
 
-Preferowany komputer: 1440 × 900 CSS px przy DPR 2. Telefon: 390 × 844 CSS px przy DPR 2. Detale zachowują rzeczywiste proporcje. Każdy zrzut potrzebuje krótkiej adnotacji: trasa, wersja kodu, rozdzielczość i fikcyjność danych. Generator w trybie finalnym odrzuca brakujące zrzuty zamiast zastępować je starszą wersją.
+Komputer: 1440 × 900 CSS px; telefon: 390 × 844 CSS px. Narzędzie przechwytujące może zwrócić JPG przy DPR 1 i nieco inną szerokość z powodu paska przewijania. Zachowujemy rzeczywiste proporcje; szczegóły pokazujemy przez większe, udokumentowane wycinki. Każdy zrzut potrzebuje krótkiej adnotacji: trasa, wersja kodu, rozdzielczość i fikcyjność danych. Generator w trybie finalnym odrzuca brakujące zrzuty zamiast zastępować je starszą wersją.
 
 ## Zakres przekazu i narzędzia
 
