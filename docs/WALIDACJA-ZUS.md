@@ -10,6 +10,8 @@ Kontrola techniczna obejmuje syntetyczne rodziny, pytania zależne od odpowiedzi
 
 Do uzgodnienia z mentorem pozostają zwłaszcza kwalifikacja granicznych dni hospitalizacji i wieloraczków, wnioski przy zmianie etatu podczas wydłużonego rodzicielskiego, daty i stawki przy historycznych częściach obojga rodziców oraz postępowanie z nakładającymi się tytułami ubezpieczenia. Zestawy testowe potwierdzają zachowanie aplikacji na podanych warunkach. Niezależne porównanie faktycznych kwot i okresów wymaga wzorcowych rozstrzygnięć z ustaloną podstawą i historią wypłat.
 
+Edge przeszedł pełną ścieżkę wywiadu na szerokościach 320, 390 i 1440 px. W dziesięciu widokach na każdej szerokości sprawdzono m.in. pobyty w szpitalu, zmianę roli, wynik, status, ścieżkę po stracie i dodanie pisma z eksportem ICS. Najniższy zmierzony kontrast tekstu wyniósł 4,59:1. Sprawdzane kontrolki miały co najmniej 44 × 44 px. [Wyniki pomiarów dla każdego widoku](../otula/materialy/zrzuty-final/wywiad-ui-qa.json). Współdzielony zapis sprawdzono też po odświeżeniu, przy usunięciu danych w innej karcie oraz po przejściu z Centrum e-usług do kalkulatora.
+
 **86 rozpoznawanych spraw nie oznacza 86 zweryfikowanych wyliczeń.** Zestaw ma 87 PDF, ale dwa mają identyczny SHA-256. Po usunięciu jednej kopii pozostaje 86 unikalnych dokumentacji, łącznie 2008 stron. Lokalny OCR jest dostępny dla całego zestawu; jego dostępność nie oznacza, że każda strona została bezbłędnie odczytana lub sprawdzona wizualnie.
 
 | Miara | Wynik | Co dokładnie potwierdza |

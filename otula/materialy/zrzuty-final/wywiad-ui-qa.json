@@ -1,0 +1,344 @@
+[
+  {
+    "width": 320,
+    "overflow": false,
+    "errors": [],
+    "accessibility": [
+      {
+        "screen": "sytuacje",
+        "textCount": 29,
+        "targetCount": 15,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "wyszukiwanie",
+        "textCount": 13,
+        "targetCount": 7,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "dane-dziecka",
+        "textCount": 33,
+        "targetCount": 12,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "pobyty",
+        "textCount": 31,
+        "targetCount": 11,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "wyniki",
+        "textCount": 127,
+        "targetCount": 31,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "wyniki-szczegoly",
+        "textCount": 225,
+        "targetCount": 76,
+        "minContrast": 4.59,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "wniosek",
+        "textCount": 34,
+        "targetCount": 14,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "pismo",
+        "textCount": 21,
+        "targetCount": 5,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "sytuacje-tata",
+        "textCount": 26,
+        "targetCount": 13,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "strata",
+        "textCount": 22,
+        "targetCount": 6,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      }
+    ],
+    "checks": [
+      "situation",
+      "search-synonyms",
+      "full-interview",
+      "records",
+      "result",
+      "status",
+      "opt-in-storage",
+      "pdf-route",
+      "letter-and-childbirth",
+      "letter-first-and-childbirth",
+      "ics",
+      "date-2027",
+      "role-invalidation",
+      "loss",
+      "cross-tab-deletion"
+    ]
+  },
+  {
+    "width": 390,
+    "overflow": false,
+    "errors": [],
+    "accessibility": [
+      {
+        "screen": "sytuacje",
+        "textCount": 29,
+        "targetCount": 15,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "wyszukiwanie",
+        "textCount": 13,
+        "targetCount": 7,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "dane-dziecka",
+        "textCount": 33,
+        "targetCount": 12,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "pobyty",
+        "textCount": 31,
+        "targetCount": 11,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "wyniki",
+        "textCount": 127,
+        "targetCount": 31,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "wyniki-szczegoly",
+        "textCount": 225,
+        "targetCount": 76,
+        "minContrast": 4.59,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "wniosek",
+        "textCount": 34,
+        "targetCount": 14,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "pismo",
+        "textCount": 21,
+        "targetCount": 5,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "sytuacje-tata",
+        "textCount": 26,
+        "targetCount": 13,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "strata",
+        "textCount": 22,
+        "targetCount": 6,
+        "minContrast": 5.73,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      }
+    ],
+    "checks": [
+      "situation",
+      "search-synonyms",
+      "full-interview",
+      "records",
+      "result",
+      "status",
+      "opt-in-storage",
+      "pdf-route",
+      "letter-and-childbirth",
+      "letter-first-and-childbirth",
+      "ics",
+      "date-2027",
+      "role-invalidation",
+      "loss",
+      "cross-tab-deletion"
+    ]
+  },
+  {
+    "width": 1440,
+    "overflow": false,
+    "errors": [],
+    "accessibility": [
+      {
+        "screen": "sytuacje",
+        "textCount": 29,
+        "targetCount": 15,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "wyszukiwanie",
+        "textCount": 13,
+        "targetCount": 7,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "dane-dziecka",
+        "textCount": 33,
+        "targetCount": 12,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "pobyty",
+        "textCount": 31,
+        "targetCount": 11,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "wyniki",
+        "textCount": 127,
+        "targetCount": 31,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "wyniki-szczegoly",
+        "textCount": 225,
+        "targetCount": 76,
+        "minContrast": 4.59,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "wniosek",
+        "textCount": 34,
+        "targetCount": 14,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "pismo",
+        "textCount": 21,
+        "targetCount": 5,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "sytuacje-tata",
+        "textCount": 26,
+        "targetCount": 13,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      },
+      {
+        "screen": "strata",
+        "textCount": 22,
+        "targetCount": 6,
+        "minContrast": 4.61,
+        "minTarget": 44,
+        "textIssues": [],
+        "targetIssues": []
+      }
+    ],
+    "checks": [
+      "situation",
+      "search-synonyms",
+      "full-interview",
+      "records",
+      "result",
+      "status",
+      "opt-in-storage",
+      "pdf-route",
+      "letter-and-childbirth",
+      "letter-first-and-childbirth",
+      "ics",
+      "date-2027",
+      "role-invalidation",
+      "loss",
+      "cross-tab-deletion"
+    ]
+  }
+]
