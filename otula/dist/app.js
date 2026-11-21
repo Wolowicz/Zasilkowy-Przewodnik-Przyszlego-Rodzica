@@ -225,23 +225,28 @@ function navLinks(active, cls, short = false) {
     `<a href="#${id}" class="${cls} ${active === id ? 'selected' : ''}" ${active === id ? 'aria-current="page"' : ''}>${icon(glyph,20)}<span>${short ? shortLabel : label}</span></a>`).join('');
 }
 const parentNavigation = [
-  ['start','Moja sytuacja','home'], ['uprawnienia','Co mi przysługuje?','heart'],
-  ['kalkulator','Ile mogę otrzymać?','wallet'], ['formularze','Dokumenty i wnioski','files'],
-  ['terminy','Moje terminy','calendar'], ['biblioteka','Wszystkie świadczenia','book'],
-  ['e-uslugi','Centrum e-usług','shield']
+  ['start','Moja sytuacja','home'], ['plan-wynik','Plan i oś czasu','calendar'],
+  ['kalkulator','Kalkulator świadczeń','wallet'], ['sprawdz-sprawe','Sprawdź sprawę PDF','search'],
+  ['formularze','Dokumenty i wnioski','files']
+];
+const supportNavigation = [
+  ['uprawnienia','Co mi przysługuje?','heart'], ['e-uslugi','Symulacje e-usług','shield'],
+  ['biblioteka','Wszystkie świadczenia','book'], ['terminy','Moje terminy','clock'],
+  ['wsparcie','Poproś bliskich o pomoc','mail'], ['parametry','Parametry (admin)','adjust']
 ];
 function parentNavLinks(active) {
-  return parentNavigation.map(([id,label,glyph])=>`<a href="${id==='kalkulator'?ownCalculatorRoute():'#'+id}" class="nav-item ${active===id?'selected':''}" ${active===id?'aria-current="page"':''}>${icon(glyph,20)}<span>${label}</span></a>`).join('');
+  return parentNavigation.map(([id,label,glyph])=>`<a href="${id==='kalkulator'?ownCalculatorRoute():id==='plan-wynik'?'#moja-sprawa/wynik':'#'+id}" class="nav-item ${active===id?'selected':''}" ${active===id?'aria-current="page"':''}>${icon(glyph,20)}<span>${label}</span></a>`).join('');
 }
 function extraNavLinks(active) {
-  return [['plan','Moje kolejne kroki','plan'],['raport','Pobierz mój plan','download'],['wsparcie','Poproś bliskich o pomoc','mail'],['narzedzia','Więcej możliwości','menu']].map(([id,label,glyph])=>
+  return supportNavigation.map(([id,label,glyph])=>
     `<a href="#${id}" class="nav-item ${active===id?'selected':''}" ${active===id?'aria-current="page"':''}>${icon(glyph,20)}<span>${label}</span></a>`).join('');
 }
 function frame(r) {
-  const active = ({sprawa:'biblioteka',slowniczek:'biblioteka',sytuacja:'e-uslugi',rodzina:'e-uslugi','moja-sprawa':'start'})[r.page] || r.page;
+  const active = ({sprawa:'biblioteka',slowniczek:'biblioteka',sytuacja:'e-uslugi',rodzina:'e-uslugi','moja-sprawa':location.hash.startsWith('#moja-sprawa/wynik')?'plan-wynik':'start'})[r.page] || r.page;
   sidebar.innerHTML = `<div class="brand-block">${brand()}<div class="brand-subtitle">Twój plan rodzicielstwa</div></div>
-    <nav aria-label="Nawigacja główna"><div class="nav-label">Świadczenia i formalności</div>${parentNavLinks(active)}
-    <div class="nav-label nav-section">Plan i wsparcie</div>${extraNavLinks(active)}</nav>`;
+    <nav aria-label="Nawigacja główna"><div class="nav-label">Ścieżka zasiłkowa</div>${parentNavLinks(active)}
+    <div class="nav-label nav-section">Wsparcie i integracje</div>${extraNavLinks(active)}</nav>
+    <div class="nav-compliance">${icon('check',18)}<div><strong>Zgodność ZUS 2026</strong><span>Stawki i wymiary z ustawy zasiłkowej i Kodeksu pracy, z datą obowiązywania.</span></div></div>`;
   document.querySelector('.footer').innerHTML = `<a href="#o-przewodniku">${icon('help',18)} O przewodniku</a><a href="#dane">${icon('lock',18)} Dane i usuwanie profilu</a><button class="text-button" data-action="invite">${icon('share',18)} Zaproś znajomych</button><span id="invite-link"></span>`;
   const crumbs = [['start', 'Moja sytuacja']];
   if (r.page === 'sprawa') crumbs.push(['plan', 'Mój plan'], ['', byId(r.id).title]);
@@ -249,7 +254,7 @@ function frame(r) {
   document.querySelector('#topbar').innerHTML = `<nav class="crumb" aria-label="Jesteś tutaj">${crumbs.map(([href, label], i) =>
       i < crumbs.length - 1 ? `<a href="#${href}">${esc(label)}</a><i aria-hidden="true">/</i>` : `<strong>${esc(label)}</strong>`).join(' ')}</nav>
     <div class="mobile-brand">${brand()}<span class="brand-subtitle">Twój plan rodzicielstwa</span></div>
-    <span class="frame-date">${dateTodayLabel()}</span>
+    <div class="top-tools"><a class="top-search" href="#biblioteka">${icon('search',18)}<span>Szukaj zasiłku, wniosku, terminu…</span></a><button type="button" class="top-ai" data-action="open-assistant">${icon('chat',17)}<span>Zapytaj Otulę AI</span></button><a class="top-mobywatel" href="#e-uslugi"><i aria-hidden="true"></i><span>mObywatel</span></a></div>
     <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" data-action="toggle-menu">${icon('menu',22)}<span>Menu</span></button>`;
   mobileNavigation.hidden = true;
   mobileNavigation.innerHTML = `<div class="mobile-nav-heading"><strong>W czym pomóc?</strong><button type="button" class="icon-button" data-action="close-menu" aria-label="Zamknij menu">${icon('close',22)}</button></div>
@@ -676,6 +681,7 @@ document.addEventListener('click', event => {
   const id = button.dataset.id;
   switch (button.dataset.action) {
     case 'toggle-menu': setMobileMenu(mobileNavigation.hidden); break;
+    case 'open-assistant': document.querySelector('#assistant-launcher')?.click(); break;
     case 'close-menu': setMobileMenu(false,true); break;
     case 'print-family': window.print(); break;
     case 'invite': inviteFamily(); break;

@@ -1,0 +1,96 @@
+/* Otula — wygląd wg projektu Stitch („Tender Guidance”), w ustalonej palecie:
+   różowawe tło, białe miękkie karty, berry jako akcja, pastele tematów, Nunito. Ładowany jako ostatni. */
+:root {
+  --page: #fff8f8; --card: #ffffff; --ink: #452e35; --muted: #6f6265; --berry: #783e51; --berry-dark: #5b293c;
+  --rose-bg: #f4e0e7; --peach-bg: #fbe4d7; --gold-bg: #f8ebc7; --sage-bg: #e6eedc; --sky-bg: #e1eef8; --lilac-bg: #ece4f6;
+  --soft-line: #f1e3e7; --shadow: 0 6px 24px rgba(120, 62, 81, .07);
+}
+body, .app-shell, main, #main { background: var(--page) !important; }
+
+/* ---------- pasek boczny ---------- */
+#sidebar { background: #fff !important; border-right: 1px solid var(--soft-line) !important; }
+#sidebar .brand-block { padding-bottom: 14px; }
+#sidebar .nav-label { color: var(--ink); opacity: .75; font-size: 11.5px; letter-spacing: .08em; text-transform: none; font-weight: 800; margin: 18px 12px 6px; }
+#sidebar .nav-item, #mobile-navigation .nav-item { border-radius: 14px; padding: 10px 14px; gap: 12px; color: var(--ink); font-weight: 600; }
+#sidebar .nav-item:hover { background: #fff0f2; }
+#sidebar .nav-item.selected, #mobile-navigation .nav-item.selected { background: var(--berry) !important; color: #fff !important; box-shadow: 0 4px 14px rgba(120, 62, 81, .25); }
+#sidebar .nav-item.selected .icon { color: #fff; }
+.nav-compliance { margin: 22px 10px 10px; padding: 12px 14px; border-radius: 16px; background: #fff0f2; display: flex; gap: 10px; align-items: flex-start; color: var(--berry); }
+.nav-compliance strong { display: block; font-size: 13px; color: var(--ink); }
+.nav-compliance span { display: block; font-size: 12px; color: var(--muted); line-height: 1.35; margin-top: 2px; }
+
+/* ---------- górny pasek ---------- */
+#topbar { background: rgba(255, 255, 255, .85) !important; backdrop-filter: blur(8px); border-bottom: 1px solid var(--soft-line) !important; }
+.top-tools { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.top-search { display: flex; align-items: center; gap: 8px; min-width: 260px; padding: 9px 16px; border-radius: 99px; background: #fff; border: 1px solid var(--soft-line); color: var(--muted); font-size: 14px; text-decoration: none; }
+.top-ai { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 99px; border: 0; background: var(--peach-bg); color: #934e3f; font: inherit; font-weight: 750; font-size: 14px; cursor: pointer; }
+.top-mobywatel { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 99px; background: var(--sage-bg); color: #4c6944; font-weight: 800; font-size: 13px; text-decoration: none; }
+.top-mobywatel i { width: 8px; height: 8px; border-radius: 50%; background: #4c6944; }
+@media (max-width: 999px) { .top-tools { display: none; } }
+
+/* ---------- karty ---------- */
+main .zus-result, main .catalog-card, main .home-progress, main .wywiad-question, main .wywiad-missing, main .wywiad-summary section, main .otula-timeline, main .tool-entry, main details:not(.wywiad-why) {
+  background: var(--card); border: 1px solid var(--soft-line) !important; border-radius: 24px; box-shadow: var(--shadow);
+}
+.button.primary, button.primary { background: var(--berry); border-color: var(--berry); box-shadow: 0 4px 14px rgba(120, 62, 81, .22); }
+.button.primary:hover { background: var(--berry-dark); }
+.button.secondary { background: #fff; border: 1px solid var(--soft-line); }
+.chip.sage { background: var(--sage-bg); color: #4c6944; }
+
+/* ---------- baner powitalny ---------- */
+.otula-hello { display: flex; align-items: center; gap: 18px; padding: 24px 28px; margin: 4px 0 20px; border-radius: 28px; background: linear-gradient(110deg, #fdeef1 0%, #fbe1e8 60%, #fde6dc 100%); box-shadow: var(--shadow); }
+.otula-hello .tile-icon { width: 56px; height: 56px; border-radius: 18px; background: #fff; flex: none; }
+.otula-hello h1 { margin: 0 0 4px !important; font-size: clamp(26px, 3vw, 36px) !important; letter-spacing: -.02em; }
+.otula-hello p { margin: 0; color: var(--muted); max-width: 52ch; }
+.otula-hello .otula-demo { margin-left: auto; white-space: nowrap; background: #fff; border: 0; box-shadow: var(--shadow); }
+@media (max-width: 700px) { .otula-hello { flex-wrap: wrap; padding: 20px; } .otula-hello .otula-demo { margin-left: 0; width: 100%; justify-content: center; } }
+
+/* ---------- kafelki sytuacji ---------- */
+.wywiad-tiles { gap: 14px !important; }
+.wywiad-tile { border-radius: 22px !important; padding: 18px !important; min-height: 96px; text-align: left; }
+.wywiad-tile:hover { transform: translateY(-2px); }
+
+/* ---------- pytanie (kreator) ---------- */
+.wywiad-progressbar span { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.wywiad-progressbar b { font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+.wywiad-progressbar em { font-style: normal; color: var(--berry); font-weight: 800; font-size: 14px; }
+.wywiad-progressbar::after { height: 8px !important; background: #fde4ea !important; }
+.wywiad-progressbar i { height: 8px !important; background: var(--berry) !important; }
+.wywiad-topic { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 99px; background: var(--sage-bg); color: #4c6944; font-weight: 800; font-size: 13px; margin-bottom: 12px; }
+.wywiad-topic i { width: 7px; height: 7px; border-radius: 50%; background: #4c6944; }
+.wywiad-question { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 8px 0 !important; }
+.wywiad-choice { background: #fff !important; border: 1px solid transparent !important; box-shadow: 0 2px 12px rgba(120, 62, 81, .07); padding: 16px 18px !important; min-height: 64px !important; align-items: flex-start !important; gap: 14px; justify-content: flex-start !important; }
+.wywiad-choice:hover { border-color: #eaa9bd !important; }
+.wywiad-choice.active { border-color: var(--berry) !important; background: #fff6f8 !important; }
+.wywiad-dot { width: 22px; height: 22px; flex: none; border-radius: 50%; background: #fde4ea; margin-top: 1px; display: grid; place-items: center; }
+.wywiad-choice.active .wywiad-dot { background: var(--berry); box-shadow: inset 0 0 0 6px #fde4ea; }
+.wywiad-choice-text { display: grid; gap: 3px; flex: 1; }
+.wywiad-choice-text b { font-size: 17px; font-weight: 800; color: var(--ink); }
+.wywiad-choice-text small { font-size: 14px; color: var(--muted); font-weight: 500; line-height: 1.35; }
+.wywiad-choice .wywiad-choice-mark { display: none; }
+.wywiad-picks .wywiad-dot { display: none; }
+.wywiad-why { background: #fdeef1 !important; border-radius: 20px !important; padding: 4px 16px !important; margin: 14px 0 !important; }
+.wywiad-why summary { display: flex !important; align-items: center; gap: 12px; padding: 10px 0; list-style: none; }
+.wywiad-why summary::-webkit-details-marker { display: none; }
+.wywiad-why-icon { width: 38px; height: 38px; flex: none; border-radius: 12px; background: #fbd9e2; color: var(--berry); display: grid; place-items: center; font-weight: 900; font-size: 18px; }
+.wywiad-why summary b { display: block; font-size: 16px; color: var(--ink); }
+.wywiad-why summary small { display: block; font-size: 13px; color: var(--muted); font-weight: 500; }
+.wywiad-actions { border-top: 0 !important; }
+
+/* ---------- oś czasu urlopów ---------- */
+.otula-timeline { padding: 22px 24px; margin: 18px 0; }
+.otula-timeline-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+.otula-timeline-head h2 { margin: 0; font-size: 21px; }
+.otula-bar { display: flex; gap: 6px; padding: 6px; border-radius: 99px; background: #fff0f2; overflow: hidden; }
+.otula-bar .seg { min-width: 0; padding: 10px 12px; border-radius: 99px; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+.seg.m, .otula-legend i.m { background: var(--berry); color: #fff; }
+.seg.u, .otula-legend i.u { background: #a9cbe6; color: #22405e; }
+.seg.r, .otula-legend i.r { background: #f4b99a; color: #5e2e22; }
+.seg.o, .otula-legend i.o { background: #b9d3a8; color: #2f4a29; }
+.seg.c, .otula-legend i.c { background: #cdb9e6; color: #3e2a5a; }
+.otula-legend { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: var(--muted); }
+.otula-legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 7px; vertical-align: -1px; }
+@media (max-width: 640px) { .otula-bar { border-radius: 18px; flex-direction: column; } .otula-bar .seg { flex: none !important; text-align: left; } }
+.wywiad-why summary > span:not(.wywiad-why-icon) { text-align: left; flex: 1; }
+.wywiad-missing-list .button { white-space: nowrap; flex: none; }
+@media (max-width: 640px) { #interview-content .wywiad-question { padding: 4px 0 !important; border: 0 !important; } }

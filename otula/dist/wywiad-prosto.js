@@ -185,5 +185,15 @@
     };
   }
   const PICKS = { count: [1, 2, 3, 4], paternityUsedDays: [0, 7, 14], motherUsedWeeks: [14, 16, 18, 20] };
-  root.OtulaProsto = { get, picks: id => PICKS[id] || null };
+  const SUB = {
+    work: { employee: 'Masz etat — zasiłek wypłaca pracodawca albo ZUS', contract: 'Zlecenie lub umowa usługowa — chorobowe jest dobrowolne', business: 'Sama/sam opłacasz składki ZUS', cooperating: 'Pomagasz w firmie bliskiej osoby', krus: 'Rolnik — świadczenia z KRUS, nie z ZUS', none: 'Bez składek na chorobowe' },
+    payerSize: { over20: 'Średnia lub duża firma — wypłaca zasiłek sama', upTo20: 'Mała firma — zasiłek wypłaci ZUS' },
+    insurance: { yes: 'Np. umowa o pracę albo opłacane dobrowolne chorobowe', no: 'Np. zlecenie bez chorobowego, umowa o dzieło' },
+    plan: { standard: 'Więcej na początku, potem mniej — łatwiej dzielić z tatą', combined: 'Równa kwota przez cały rok; wniosek do 21 dni po porodzie' },
+    event: { pregnancy: 'Jesteś w ciąży lub planujecie dziecko', birth: 'Dziecko już jest na świecie', adoption: 'Złożony wniosek do sądu o przysposobienie', foster: 'Rodzina zastępcza niezawodowa' },
+    insuranceDispute: { yes: 'Masz decyzję lub pismo w tej sprawie', no: 'Nie było takiego pisma — najczęstsza odpowiedź' },
+    debt: { yes: 'Nieopłacone składki w dniu porodu', no: 'Wszystkie składki opłacone' },
+    zaZyciem: { yes: 'Zaświadczenie od lekarza specjalisty', no: 'Większość rodzin go nie ma' }
+  };
+  root.OtulaProsto = { get, picks: id => PICKS[id] || null, sub: (id, v) => (SUB[id] || {})[v] || '' };
 })(window);
