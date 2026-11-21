@@ -14,6 +14,11 @@ async function run(){
  for(const d of cases){assert.deepEqual(api.validate(d),[],d.kind);const bytes=await api.generatePdf(d,libraries),pdf=await PDFLib.PDFDocument.load(bytes);assert(pdf.getPageCount()>=1);assert.equal(pdf.getTitle(),api.TITLES[d.kind]);assert.equal(pdf.getForm().getFields().length,0);assert.match(api.paragraphs(d).at(-1).text,/\.{10}/,'Puste miejsce na podpis');}
  const loss=cases[4];assert(!/imię dziecka|płeć|rozpoznanie|Dziecko testowe/i.test(api.paragraphs(loss).map(p=>p.text).join(' ')));assert(api.validate({...loss,proof:''}).length);
  assert.equal(api.normalize({kind:'maternity',answers:{event:'childDeath'}}).kind,'loss');
+ assert.equal(api.normalize({kind:'loss',answers:{event:'childDeath',lossDocument:'act'}}).proof,'death');
+ assert.equal(api.normalize({kind:'loss',answers:{event:'loss',lossDocument:'act'}}).proof,'record');
+ assert.equal(api.normalize({kind:'parental',answers:{previousParental:'no'}}).usedParts,'0');
+ assert.equal(api.normalize({kind:'paternity',answers:{paternityUsedDays:7}}).usedDays,7);
+ assert.match(api.normalize({kind:'parental',answers:{parentalParts:[{parent:'other',from:'2027-01-01',to:'2027-01-07'}]}}).usedPeriods,/Drugi rodzic/);
  assert(api.validate({...base,reviewed:false}).length);assert(api.validate({...base,employed:false}).length);assert(api.validate({...base,from:'2027-02-30'}).length);
  assert(api.validate({...cases[2],usedDays:'14'}).some(x=>x.includes('14 dni')),'Nie przyznawaj drugich 14 dni');
  assert(api.validate({...cases[1],usedParts:'5'}).length,'Nie twórz szóstej zwykłej części');
