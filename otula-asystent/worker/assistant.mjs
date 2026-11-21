@@ -124,7 +124,7 @@ export default {async fetch(req,env){
   const publicClient=origins.has(origin)||(origin==='null'&&!req.headers.has('cookie')&&!req.headers.has('authorization'));
   if(publicClient)headers['access-control-allow-origin']=origin;
   const reply=(body,status=200)=>new Response(JSON.stringify(body),{status,headers});
-  if(new URL(req.url).pathname!=='/ask')return reply({service:'Otula'},200);
+  if(new URL(req.url).pathname!=='/ask')return reply({service:'Otula',models:assistantModels(env)},200);
   if(!publicClient)return reply({error:'Otwórz asystenta w Otuli.'},403);
   if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
   if(req.method!=='POST'||!req.headers.get('content-type')?.startsWith('application/json'))return reply({error:'Niepoprawne żądanie.'},400);
@@ -174,10 +174,11 @@ export default {async fetch(req,env){
     try{
       const r=await timedFetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer '+env.OPENROUTER_API_KEY},body:JSON.stringify({model,max_tokens:1400,temperature:0,response_format:{type:'json_object'},messages})},Math.min(22000,remaining));
       if(!r.ok){
-        console.warn('OpenRouter HTTP',r.status);
+        console.warn('OpenRouter HTTP',r.status,'model',model);
         if(r.status===429){
-          unavailable='Bezpłatny model osiągnął chwilowy limit zapytań.';
+          unavailable='Wybrany model lub konto OpenRouter osiągnęło chwilowy limit zapytań.';
           const error=(await r.json().catch(()=>({}))).error;
+          console.warn('OpenRouter limit category', /free/i.test(error?.message||'')?'free-tier':/credit|balance/i.test(error?.message||'')?'credits':'rate-limit');
           if(error?.metadata?.provider_name && /upstream/i.test(error.message??''))continue;
           break;
         }
@@ -190,7 +191,7 @@ export default {async fetch(req,env){
       if(Array.isArray(facts)&&!facts.length)return fail('Brakuje potwierdzenia odpowiedzi w odczytanych źródłach.');
       const checkedFacts=citationFacts(facts,sources);
       if(!checkedFacts)continue;
-      return reply({mode:'ai',facts:checkedFacts,...sourceInfo});
+      return reply({mode:'ai',model,facts:checkedFacts,...sourceInfo});
     }catch(err){console.warn('OpenRouter attempt',err.name);}
   }
   if(clinical)return fail(unavailable+(topic?' Możesz skorzystać z podręcznika i dobranych publikacji.':' Poniżej znajdziesz publikacje dobrane do Twojego pytania.'));
