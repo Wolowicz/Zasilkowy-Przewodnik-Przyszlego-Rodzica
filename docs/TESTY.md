@@ -11,27 +11,57 @@ npm run build:assistant
 
 | Zakres | Plik | Wynik |
 | --- | --- | --- |
-| Autorskie przypadki kalkulatora i izolacja szkiców dzieci | `otula/tests/zus.test.cjs` | Kontrola przez `npm test`; bieżącą liczbę przypadków podaje skrypt |
+| Autorskie przypadki kalkulatora i izolacja szkiców dzieci | `otula/tests/zus.test.cjs` | 105 przypadków kalkulatora oraz dodatkowe asercje szkiców, reguł i lat minimum; przeszły |
 | ICS: data, alarm, rewizja, UID dziecka, znaki polskie, CRLF, linie 75 bajtów | `otula/tests/calendar.test.cjs` | Przeszły |
-| Walidacja źródeł/cytatów AI oraz konfiguracji modeli | `otula/tests/assistant.test.cjs` | Kontrola przez `npm test` |
+| Walidacja źródeł/cytatów AI oraz konfiguracji modeli | `otula/tests/assistant.test.cjs` | Przeszła; nie dowodzi zgodności znaczenia każdej odpowiedzi ze źródłem |
+| Szyfrowanie i stany odczytu spraw ZUS | `otula/tests/sprawy.test.cjs` | Przeszły: 86 rekordów, brak jawnych danych, odrzucenie obcego/zmienionego pliku oraz nieprawidłowych danych generatora |
 | Składnia JS frontendu i skryptów | `scripts/check.mjs` | Przeszła |
 | Lokalny frontend/API, fallback bez klucza, origin, rozmiar, niedostępność sekretów | `tests/dev.test.mjs` | Przeszedł |
 | Synchronizacja kart i build workera | `scripts/build-assistant.mjs` | Przeszły |
 
 Test serwera uruchamia krótkotrwały proces na `127.0.0.1:4179`, wyłącza klucz w środowisku potomnym i kończy proces po sprawdzeniu. Nie wywołuje modelu. Środowisko wykonawcze przy imporcie: Node.js 24.14.1 na Windows. Sandbox blokował połączenie loopback (`EACCES`); powtórzenie testu poza blokadą sieciową zakończyło się poprawnie. To różnica uprawnień środowiska, nie awaria aplikacji.
 
-Przypadki kalkulatora obejmują standardowy podział, pół etatu, 81,5%, bliźnięta, Za życiem, brak lub nieustalone ubezpieczenie, niepoprawny podział/podstawę/liczbę dzieci, za duży etat, pracę poza umową o pracę, granicę terminu wniosku, dług, sytuację szczególną i adopcję. Sprawdzane są także szkice przypisane do dzieci, unieważnienie szkicu po zmianie sytuacji oraz potwierdzenia danych w teczce. Są to syntetyczne przypadki z asercjami, nie pełne pokrycie wszystkich kombinacji prawnych ani dane rodzin ze spraw ZUS.
+Przypadki kalkulatora obejmują standardowe pule i Za życiem, niezależne tygodnie/daty rodziców, 9 tygodni zastrzeżonych, ubezpieczenie oraz brak lub sprzeczność danych. Kontrolują też:
 
-## Otrzymane materiały i próba spraw ZUS
+- 81,5%: wniosek przed porodem i do 21. dnia, brak dnia rodzicielskiego w pierwszym roku i wyrównanie;
+- minimum pracownika przy pełnym i częściowym etacie oraz przejście 2025→2026→2027; pomocnik podwyższenia wymaga rzeczywistych danych PIT/netto;
+- proporcję pracy do umowy, dwa etapy pomijania niepełnych dni wydłużenia i etapowe zaokrąglenia stawki; własny przykład 9 tygodni przy 1/4 etatu daje 83 dni;
+- minimum 63 dni po przyjęciu przed granicą wieku, pule 38/62 i wstrzymanie indywidualnego wariantu rodzicielskiego poza granicą;
+- hospitalizację: masę/tydzień ciąży, okna dni, nakładanie pobytów, sumowanie i jedno zaokrąglenie, granice 8/15 tygodni oraz stawkę 100%; konwencja dnia porodu pozostaje do potwierdzenia na przykładzie ZUS;
+- próg zadłużenia 1% właściwego minimum, osobno dla rodziców; nieznana kwota nie oznacza zera;
+- zapis parametrów i migrację starszej konfiguracji. Rok minimum jest odrębny od wersji reguł: własne minimum 5100 zł w 2027 nie zmienia minimum 2026;
+- szkice przypisane do dzieci, unieważnienie po zmianie sytuacji i potwierdzenia danych w teczce.
 
-21 listopada dostarczono sześć materiałów ogólnych oraz archiwum 87 skanowanych PDF ze sprawami. Cztery wybrane sprawy odczytano lokalnie: OCR przetworzył 74 strony, a 14 kluczowych stron zweryfikowano wizualnie. To **trzy częściowe zgodności okresu lub blokady, jedna sprawa poza modelem i zero zakończonych walidacji kwoty**. Pozostałych 83 plików nie przeanalizowano indywidualnie.
+Są to syntetyczne przypadki z asercjami, nie pełne pokrycie kombinacji prawnych ani wyniki rodzin z teczek ZUS. Szczegółowe granice opisują [reguły i źródła](REGULY-I-ZRODLA.md).
 
-- Standard: zgodna struktura 140 + 224 dni; ustalenie podstawy po zmianie etatu pozostaje poza algorytmem.
-- Adopcja z późniejszym Za życiem: zgodna struktura 140 + 392 dni; podstawa przy krótkim ubezpieczeniu nie została odtworzona.
-- Odmowa związana z brakiem ubezpieczenia: ręczne wskazanie tego braku blokuje kwotę; aplikacja nie ustala samodzielnie tytułu ubezpieczenia ani nie wydaje decyzji.
-- Praca na część etatu, wcześniejsze zakończenie i podwyższenie do minimum: rzeczywista wypłata nie jest odtwarzana przez stały model pracy przez cały okres i wydłużenie.
+## Otrzymane materiały i sprawy ZUS
 
-Wyniki i odwołania do materiałów znajdują się w [WALIDACJA-ZUS.md](WALIDACJA-ZUS.md). Dokumenty, lokalne odczyty OCR i dane osób nie należą do repozytorium ani publicznego demo. Test jednostkowy reguły z własnymi danymi nie zastępuje porównania rzeczywistej kwoty ze sprawy.
+21 listopada dostarczono sześć materiałów ogólnych oraz 87 skanowanych PDF. Jedna para jest identyczna bajtowo: **86 unikalnych spraw, 2008 stron**. Lokalny OCR obejmuje cały zestaw, ale nie jest dowodem poprawnego odczytu każdej strony.
+
+| Poziom kontroli | Wynik |
+| --- | --- |
+| Rozpoznawanie oryginalnego PDF i lokalne odszyfrowanie | 86/86; zachowane wcześniejsze 10, dodane 76 |
+| Częściowo odczytana decyzja lub adnotacja o wyniku | 57: 46 przyznań/adnotacji o wypłacie, 11 odmów |
+| Rozstrzygnięcie nieustalone | 29; brak domyślnego przyznania |
+| Niezależnie porównane kwoty | **0** |
+
+Techniczny roundtrip wszystkich oryginalnych PDF wykonał się lokalnie. Testy generatora kontrolują brakujący plik, duplikat i sprzeczny status; testy przeglądarkowego mechanizmu — odrzucenie obcego lub zmienionego PDF. Każdy zaszyfrowany opis zawiera stan odczytu i strony źródłowe, a nieustalone okresy wniosku są oddzielone od rozstrzygniętych.
+
+Skany, jawne opisy, mapowanie i OCR pozostają poza repozytorium oraz stroną. Do aplikacji trafia szyfrogram i niesensytywne agregaty. Rozpoznanie dokumentu nie jest automatycznym OCR nowej teczki ani poprawnym policzeniem świadczenia. Wcześniejsza próba czterech spraw pozostaje zapisem historycznym w [WALIDACJA-ZUS.md](WALIDACJA-ZUS.md).
+
+## Aktualny audyt interfejsu
+
+Sprawdzono **12 tras × 3 szerokości: 320, 390 i 1440 px**. Macierz obejmuje start, plan, terminy, kalkulator, sprawę ZUS, e-usługi, uprawnienia, parametry, formularze, podręcznik, Kartę wsparcia i raport. [Galeria wszystkich 36 widoków](EKRANY.md) oraz [zapis wymiarów i nawigacji](../otula/materialy/zrzuty-final/audit-after.json) dokumentują zakres. Zapis nie wykazał poziomego przepełnienia w żadnym z tych widoków. Uzgodnione kolory, typografia i komponenty są w [STYL-I-DESIGN.md](STYL-I-DESIGN.md).
+
+To kontrola zapisanych ekranów z fikcyjnymi danymi, nie automatyczny test wszystkich interakcji, certyfikacja WCAG ani sprawdzenie wszystkich telefonów. `npm test` nie odtwarza tej sesji przeglądarkowej.
+
+## Publiczny asystent AI
+
+21.11.2026 sprawdzono publiczną odpowiedź na pytanie o dokumenty do becikowego: tryb AI zawierał odpowiedź, urzędowe odnośniki i cytaty. Konfiguracja pokazu korzysta z `google/gemini-2.5-flash-lite` przez OpenRouter; szczegóły i zakres potwierdzenia są w [ASYSTENT-AI.md](ASYSTENT-AI.md). To pojedynczy test działania, nie ocena każdej tezy lub całej macierzy pytań. Lokalny test API bez klucza pozostaje osobną kontrolą trybu zastępczego.
+
+## Aktualne materiały dla jury
+
+Pakiet obejmuje 10 slajdów 16:9 oraz film planowany na 102 s, 1920×1080, 60 kl./s, z aktualnych ekranów i fikcyjnych danych. [Źródła, generator i procedura kontroli](../otula/materialy/jury/README.md) opisują odtworzenie artefaktów. PDF przeszedł kontrolę liczby stron, fontów, odnośnika demo i układu; aktualizacja sceny AI oraz końcowy render filmu są osobno weryfikowane przed podmianą plików. Metadane filmu i wynik finalnego przeglądu trzeba potwierdzić dla końcowego MP4; nie przenosimy wyników kontroli starego filmu na nowy.
 
 ## Wcześniejsze sprawdzenie wersji aplikacji z 21 listopada
 
@@ -43,19 +73,13 @@ Scenariusze przeglądarkowe objęły 320, 390 i 1440 px: nowe moduły ZUS, kalen
 
 W publicznym wdrożeniu sprawdzono powitanie, ścieżkę, termin, kalkulator, film i zgodność archiwum. PDF miał 10 stron; przejrzano miniatury całości oraz gęstsze slajdy. Ówczesny MP4 trwał około 109,8 sekundy; zastąpił go opisany poniżej film 90-sekundowy. Zrzuty i artefakty są w repozytorium. Nie dołączono automatyzacji całej sesji przeglądarkowej; opis jest zapisem wykonanej kontroli, nie obietnicą `npm test` odtwarzającego UI.
 
-## Kontrola istniejącego filmu — poprzednia wersja z 21 listopada
+## Historia kontroli wcześniejszych materiałów
 
-Poniższy zapis dotyczy istniejącego pliku. Nie jest kontrolą nowego montażu ani potwierdzeniem aktualności pokazanych ekranów. PDF, film i źródła prezentacji pozostają bez zmian; ich aktualizacja wymaga osobnego potwierdzenia właścicielki.
-
-- ffprobe: H.264, 1920×1080, 60 kl./s, 90,005 s; AAC stereo 48 kHz. Ruch nagranego UI pochodzi ze źródła 25 kl./s, grafiki montażowe są animowane w 60 kl./s.
-- Pełne dekodowanie 5400 klatek zakończyło się bez błędów; blackdetect nie zgłosił czarnych odcinków dłuższych niż 0,1 s.
-- Obejrzano 16 klatek gotowego MP4: sceny, trzy przejścia i zakończenie, a Kartę wsparcia także w 960×540. Sprawdzono proporcje i rozmieszczenie tekstów.
-- Pomiar dźwięku: −19,06 LUFS, −5,06 dBTP, bez przesterowania. To kontrola techniczna, nie odsłuch na urządzeniu jury.
-- MP4 ma atom moov przed mdat (faststart). Film ma plakat, opcjonalne opisy VTT i tekstowy przebieg w odtwarzaczu.
+Poprzedni MP4 90 s przeszedł kontrolę dekodowania 5400 klatek, wybranych scen, przejść, dźwięku i faststart. Ten zapis dotyczy poprzedniej wersji. Nie stanowi potwierdzenia aktualnego montażu 102 s; końcową kontrolę wykonuje się ponownie według procedury z katalogu materiałów dla jury.
 
 ## Czego nie potwierdzono
 
-- Pełnej walidacji oficjalnych spraw ZUS; żadna kwota w próbie czterech spraw nie została potwierdzona co do grosza.
+- Pełnej walidacji oficjalnych spraw ZUS; w całym katalogu 86 spraw żadna kwota nie została niezależnie potwierdzona co do grosza.
 - Pełnej poprawności wszystkich kart po zmianach prawa; dotychczasowy katalog zachowuje datę 17.11.2026.
 - Realnego logowania, integracji urzędowych, wysyłki wniosku i OCR — tych funkcji nie ma.
 - Jakości każdej odpowiedzi modelu, odporności na wszystkie prompt injection i kontroli kosztów pod obciążeniem.
@@ -68,7 +92,7 @@ Poniższy zapis dotyczy istniejącego pliku. Nie jest kontrolą nowego montażu 
 2. Dodaj drugie dziecko; sprawdź osobne daty, oznaczone sprawy, wydarzenia i szkice kalkulatora. Zmiana daty/etapu powinna wymagać ponownego potwierdzenia danych obliczenia.
 3. Wybierz filtry ciąża / po narodzinach / wszystkie. Otwórz sprawę i wróć przyciskiem systemowym.
 4. Utwórz termin, popraw godzinę, przeładuj, eksportuj ICS i sprawdź alarm po imporcie.
-5. Przelicz trzy przykłady kalkulatora, zmień parametry testowe i sprawdź oznaczenie niestandardowych reguł.
+5. Przelicz trzy przykłady kalkulatora, zmień parametry testowe i sprawdź oznaczenie niestandardowych reguł. Upewnij się, że zmiana minimum dla 2027 nie zmienia minimum 2026, a roczne daty nie są przedstawiane jako wygaśnięcie prawa.
 6. Otwórz pokazowy PDF bez wysyłki; sprawdź próbny formularz z fikcyjnymi danymi.
 7. Edytuj Kartę wsparcia i porównaj skopiowany tekst z widokiem.
 8. Pobierz PDF/Word; sprawdź polskie znaki, aktywne dziecko i własne terminy.

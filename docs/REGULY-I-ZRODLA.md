@@ -64,7 +64,7 @@ Obsługiwana jest nieprzerwana ścieżka pierwszego rodzica: macierzyński → u
 
 W ścieżce działalności można podać kwotę długu osobno dla każdego rodzica. Próg 1% odnosi się do minimalnego wynagrodzenia właściwego dla roku początku prawa danego rodzica. Nieznana kwota nie oznacza zera; przekroczenie progu lub brak potrzebnych danych wymaga ustalenia z ZUS. Nie jest to pełny model późniejszej spłaty, terminu przedawnienia czy osób współpracujących. Źródło: lokalna ustawa zasiłkowa, art. 2a; poradnik ZUS s. 25 i 37.
 
-Panel parametrów zapisuje lokalnie zwalidowaną konfigurację, z datami i etykietą parametrów własnych. Nie tworzy centralnej historii zatwierdzeń. Dostępność kwot minimalnych dla wybranych lat nie oznacza obsługi całego prawa historycznego; dla nieznanego roku wynik wymaga potwierdzenia podstawy przez płatnika.
+Panel parametrów zapisuje lokalnie zwalidowaną konfigurację z etykietą parametrów własnych. Daty `validFrom`/`validTo` wyznaczają wyłącznie rok minimalnego wynagrodzenia wskazany przez `minimumYear`; nie są datami wygaśnięcia przepisów o urlopach. Wersja reguł jest odrębna, a plan zakłada brak przyszłych zmian prawa. Starszy zapis lokalny otrzymuje daty zgodne z rokiem bez utraty podanej kwoty. Nie tworzy centralnej historii zatwierdzeń. Dostępność kwot minimalnych dla wybranych lat nie oznacza obsługi całego prawa historycznego; dla nieznanego roku wynik wymaga potwierdzenia podstawy przez płatnika.
 
 ## Odrębny wariant ojca
 

@@ -54,7 +54,7 @@ Klucz profilu to `otula-plan-v1` w `localStorage`. Historia przejść używa `ot
 | --- | --- |
 | Dziecko | `uid` stabilny identyfikator, `name`, `stage`, `date`, `done`, `extras`, `checks`, `note`, `multiple`, `events` |
 | Własny termin | `id`, `title`, `date`, `time`, `remind`, `caseId`, `note`, `done`, `revision` |
-| Parametry kalkulatora | `ZUS_DEFAULT_RULES` oraz lokalny zapis zatwierdzonej kopii pod `otula-zus-rules-v2`; schemat 2, walidacja, daty obowiązywania, etykieta parametrów własnych i reset; bez kont administratorów i centralnego zatwierdzania |
+| Parametry kalkulatora | `ZUS_DEFAULT_RULES` oraz lokalny zapis zatwierdzonej kopii pod `otula-zus-rules-v2`; schemat 2, walidacja, rok minimalnego wynagrodzenia oddzielony od wersji reguł, etykieta parametrów własnych i reset; bez kont administratorów i centralnego zatwierdzania |
 
 Daty są wartościami kalendarzowymi `YYYY-MM-DD`. Nie interpretuj terminu formalności jako uniwersalnej chwili UTC. Identyfikatory spraw są zapisane w postępie użytkownika — ich zmiana wymaga migracji. `uid` dziecka i `id` wydarzenia tworzą stabilny UID eksportu ICS. Edycja zwiększa `revision` używaną jako `SEQUENCE`.
 
