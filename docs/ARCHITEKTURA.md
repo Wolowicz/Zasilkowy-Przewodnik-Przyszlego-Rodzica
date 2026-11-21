@@ -46,7 +46,7 @@ Trasy mają postać `#start`, `#plan`, `#sprawa/<id>`, `#wsparcie/<id>`, `#termi
 
 Na telefonie nawigacja jest rozwijana przyciskiem „Menu”, a na komputerze pozostaje w bocznym pasku. Asystent ma przycisk w rogu: od 1000 px otwiera niemodalny panel, poniżej pełną trasę `#pomoc`. Podczas powitania oba mechanizmy są ukryte. Zamknięcie panelu i menu przywraca fokus; systemowe cofanie nadal korzysta z tras.
 
-Szkice kalkulatora są przechowywane tylko w pamięci bieżącej sesji, osobno według stabilnego UID dziecka. Zmiana danych istotnych dla obliczenia unieważnia szkic/wynik; usunięcie profilu czyści też te szkice. Nie są częścią trwałej historii świadczeń.
+Własne szkice kalkulatora są zapisywane lokalnie w `otula-zus-drafts-v1`, osobno według stabilnego UID dziecka. Zmiana danych istotnych dla obliczenia unieważnia odpowiednie potwierdzenia/wynik; usunięcie profilu czyści też te szkice. Przykłady demonstracyjne pozostają tylko w pamięci i nie nadpisują własnego szkicu. To zapis roboczy na urządzeniu, bez synchronizacji i urzędowej historii świadczeń.
 
 Klucz profilu to `otula-plan-v1` w `localStorage`. Historia przejść używa `otula-trail` w `sessionStorage`. Rola i praca należą do opiekuna. Lista `children` zawiera osobne plany, a `active` wybiera dziecko. Część pól aktywnego dziecka jest odzwierciedlana w stanie głównym dla zgodności z istniejącym interfejsem; `snapshotChild()` zapisuje je przed zmianą dziecka.
 
@@ -76,7 +76,7 @@ Lokalny adapter nie zmienia plików wdrożenia. Podczas serwowania `family.js` p
 
 | Plik | Rola |
 | --- | --- |
-| `otula/dist/e-uslugi.js`, `e-uslugi.css` | Centrum e-usług: symulacja logowania mObywatel (kod weryfikacyjny), pobrania danych z ZUS, zaświadczenia o zadłużeniu na wybrany dzień, e-ZLA, wiadomości eZUS, wniosków o urlopy i ZAM oraz odpisu aktu urodzenia. Trzy fikcyjne osoby (etat, działalność z zadłużeniem, zlecenie bez chorobowego). Dane można przenieść do kalkulatora (`zusSaveDraft`). |
+| `otula/dist/e-uslugi.js`, `e-uslugi.css` | Centrum e-usług domyślnie pokazuje wspólny profil rodziny i kieruje do jednej edycji `#sytuacja`, świadczeń, własnego wyliczenia oraz oficjalnego eZUS. Osobne rozwinięcie zawiera pokaz mObywatel, pobierania danych, zaświadczeń i wniosków. Trzy fikcyjne osoby mają odrębne daty; `zusOpenExample` przenosi je do oznaczonego przykładu bez zmiany danych rodziny. |
 | `otula/dist/sprawy-zus.js`, `sprawy-zus.css` | „Sprawdź sprawę ZUS”: PDF → SHA-256 w przeglądarce → odszyfrowanie opracowanego wcześniej opisu. Pokazuje fakty, strony źródłowe, stan odczytu oraz oddziela okresy wniosku od rozstrzygniętych. `nieustalona` nie zmienia się domyślnie w przyznanie. Porównanie działa tylko dla dostępnych danych; obecny katalog nie ma zweryfikowanych kwot. Ta sama funkcja działa w teczce kalkulatora. |
 | `otula/dist/sprawy-zus-dane.js` | Wyłącznie szyfrogram AES-GCM. Klucz i indeks wyprowadzone z SHA-256 oryginalnego PDF; bez pliku danych nie da się odczytać. Generuje `scripts/sprawy-zus/zaszyfruj.mjs`. |
 | `otula/dist/ui-czytelnosc.css` | Jednolite sekcje rozwijane (karta z przyciskiem +/– zamiast trójkąta ▶), minimalne rozmiary krojów, kompaktowy przycisk asystenta na telefonie. |

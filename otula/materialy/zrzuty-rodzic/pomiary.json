@@ -1,0 +1,218 @@
+[
+  {
+    "h1": "Co możesz otrzymać?",
+    "route": "#start",
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "h1": "Ścieżka rodzica",
+    "route": "#plan",
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "h1": "Moje terminy",
+    "route": "#terminy",
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "h1": "Ile i przez jaki czas?",
+    "route": "#kalkulator",
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "h1": "Sprawdź sprawę",
+    "route": "#sprawdz-sprawe",
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "h1": "Twoja sytuacja",
+    "route": "#e-uslugi",
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "h1": "Jakie świadczenia?",
+    "route": "#uprawnienia",
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "h1": "Parametry zasiłków",
+    "route": "#parametry",
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "h1": "Formularze ZUS",
+    "route": "#formularze",
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "h1": "Karta wsparcia",
+    "route": "#wsparcie",
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "h1": "Podręcznik rodzica",
+    "route": "#poradnik",
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "h1": "Raport dla rodziny",
+    "route": "#raport",
+    "scroll": 375,
+    "width": 390
+  },
+  {
+    "h1": "Co możesz otrzymać?",
+    "route": "#start",
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "h1": "Ścieżka rodzica",
+    "route": "#plan",
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "h1": "Moje terminy",
+    "route": "#terminy",
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "h1": "Ile i przez jaki czas?",
+    "route": "#kalkulator",
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "h1": "Sprawdź sprawę",
+    "route": "#sprawdz-sprawe",
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "h1": "Twoja sytuacja",
+    "route": "#e-uslugi",
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "h1": "Jakie świadczenia?",
+    "route": "#uprawnienia",
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "h1": "Parametry zasiłków",
+    "route": "#parametry",
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "h1": "Formularze ZUS",
+    "route": "#formularze",
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "h1": "Karta wsparcia",
+    "route": "#wsparcie",
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "h1": "Podręcznik rodzica",
+    "route": "#poradnik",
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "h1": "Raport dla rodziny",
+    "route": "#raport",
+    "scroll": 305,
+    "width": 320
+  },
+  {
+    "h1": "Co możesz otrzymać?",
+    "route": "#start",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "h1": "Ścieżka rodzica",
+    "route": "#plan",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "h1": "Moje terminy",
+    "route": "#terminy",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "h1": "Ile i przez jaki czas?",
+    "route": "#kalkulator",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "h1": "Sprawdź sprawę",
+    "route": "#sprawdz-sprawe",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "h1": "Twoja sytuacja",
+    "route": "#e-uslugi",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "h1": "Jakie świadczenia?",
+    "route": "#uprawnienia",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "h1": "Parametry zasiłków",
+    "route": "#parametry",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "h1": "Formularze ZUS",
+    "route": "#formularze",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "h1": "Karta wsparcia",
+    "route": "#wsparcie",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "h1": "Podręcznik rodzica",
+    "route": "#poradnik",
+    "scroll": 1425,
+    "width": 1440
+  },
+  {
+    "h1": "Raport dla rodziny",
+    "route": "#raport",
+    "scroll": 1425,
+    "width": 1440
+  }
+]

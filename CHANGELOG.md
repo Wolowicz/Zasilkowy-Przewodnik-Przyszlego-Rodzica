@@ -1,5 +1,14 @@
 # Historia zmian
 
+## 2026-11-21 — prostsza ścieżka rodzica i wspólne dane
+
+- Start odpowiada „Co możesz otrzymać?” i pokazuje trzy dopasowane świadczenia; dalej prowadzi do kwoty, dokumentów i terminów. Dodatkowe materiały i przykłady przeniesiono do „Więcej możliwości”. Zachowano Kartę wsparcia.
+- Centrum e-usług jest przed kalkulatorem i korzysta z tego samego profilu co edycja sytuacji. Dane nie są wpisywane ponownie. Pokaz fikcyjnych integracji jest osobnym rozwinięciem; linki do rzeczywistego eZUS i formularzy są widoczne bez uruchamiania pokazu.
+- Własne szkice kalkulatora zapisują się na urządzeniu osobno dla dzieci; gotowe przykłady nie zmieniają własnych danych. Wariant wcześniejszego porodu ma jawnie hipotetyczną datę, masę, tydzień ciąży i pobyty, a wynik pokazuje kwoty za okresy oraz dokumenty, adresata i termin wniosku.
+- Dopasowany ekran świadczeń odróżnia rodzaje wsparcia i udostępnia warunki w rozwinięciach. Zachowano rozróżnienie urlopu i zasiłku oraz pracodawcy jako adresata urlopu i podmiotu wypłacającego pieniądze.
+- Testy: 106 autorskich przypadków kalkulatora oraz regresje wspólnego profilu, zapisu, izolacji przykładów i hipotetycznych dat. Przegląd funkcjonalny: odświeżenie, zmiana dziecka, przejście z sytuacji do wyliczenia wcześniactwa. Nie jest to walidacja kwot na zestawach ZUS.
+- Dokument decyzji: `docs/SCIEZKA-RODZICA-I-ZUS.md`. Ekrany tej zmiany i pomiary szerokości: `otula/materialy/zrzuty-rodzic/`.
+
 ## 2026-11-21 — publikacja wersji konkursowej
 
 - Opublikowano aktualny `otula/dist` na dotychczasowej stronie Sites (wersja 23), z PDF 10 slajdów i filmem 102 s. Publiczne odnośniki obu plików zwróciły HTTP 200.
