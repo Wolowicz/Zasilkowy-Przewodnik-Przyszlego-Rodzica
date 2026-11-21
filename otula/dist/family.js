@@ -35,10 +35,15 @@ function familyNavigation(active) {
 function toolsPage(r) {
   const settings = [
     {id:'rodzina', label:'Moja rodzina', description:'Dodaj dziecko lub zmień jego dane.', glyph:'heart', color:'peach'},
-    {id:'sytuacja', label:'Moja sytuacja', description:'Zmień rolę, etap lub formę zatrudnienia.', glyph:'adjust', color:'rose'}
+    {id:'e-uslugi', label:'Twoja sytuacja', description:'Zobacz dane, na których opiera się Twój plan.', glyph:'adjust', color:'rose'}
+  ];
+  const examples = [
+    {id:'biblioteka', label:'Wszystkie sprawy', description:'Przejrzyj pełną bibliotekę dokumentów i praw.', glyph:'book', color:'gold'},
+    {id:'sprawdz-sprawe', label:'Sprawdź sprawę ZUS', description:'Otwórz przykład do porównania z kalkulatorem.', glyph:'files', color:'sky'},
+    {id:'parametry', label:'Panel parametrów', description:'Sprawdź wersję reguł i ustawienia symulacji.', glyph:'adjust', color:'lilac'}
   ];
   const links=items=>items.map(t=>`<a class="case-row" href="#${t.id}">${tileIcon({icon:t.glyph,color:t.color})}<span class="case-copy"><strong class="case-title">${t.label}</strong><span class="case-sub">${t.description}</span></span>${icon('right',16)}</a>`).join('');
-  return backLink(r)+`<div class="tools-page"><h1 tabindex="-1">Narzędzia</h1><div class="case-list">${links(familyTools)}</div><h2>Ustawienia rodziny</h2><div class="case-list">${links(settings)}</div></div>`;
+  return backLink(r)+`<div class="tools-page"><h1 tabindex="-1">Więcej możliwości</h1><p>Pomoc na co dzień i dodatkowe ustawienia Twojego planu.</p><div class="case-list">${links(familyTools)}</div><h2>Ustawienia rodziny</h2><div class="case-list">${links(settings)}</div><h2>Przykłady i ustawienia</h2><div class="case-list">${links(examples)}</div></div>`;
 }
 
 function childSwitch(compact=false){
