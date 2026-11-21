@@ -2,6 +2,8 @@
 
 Lista jest planem, nie deklaracją gotowych funkcji ani terminów dostawy.
 
+Materiały ZUS otrzymano 21.11.2026. Pierwsza próba czterech spraw ujawniła trzy częściowe zgodności i jedną sprawę poza zakresem; kwot nie potwierdzono w pełni. Wyniki i priorytety po analizie opisuje [WALIDACJA-ZUS.md](WALIDACJA-ZUS.md). Publikacja poprawek UX nie zamyka poniższych braków obliczeniowych.
+
 | Priorytet | Zadanie | Kryterium zakończenia |
 | --- | --- | --- |
 | P0 — wiarygodność | Oficjalne przypadki ZUS | Każdy przypadek ma wynik oczekiwany/otrzymany, opis różnicy i akceptację merytoryczną |

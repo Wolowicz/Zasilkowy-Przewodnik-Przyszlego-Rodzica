@@ -24,6 +24,7 @@ flowchart LR
 | `app.js` | Routing hash, stan, plan, szczegóły spraw, Karta wsparcia, podstawowy eksport |
 | `catalog.js` | Katalog spraw, role, zatrudnienie, terminy i słowniczek |
 | `family.js` | Profile dzieci, podręcznik, raport i interfejs asystenta |
+| `assistant-panel.js`, `assistant-panel.css` | Kontekstowy panel AI na komputerze; na telefonie przejście do pełnego ekranu |
 | `care.js` | Treści podręcznika wraz ze źródłami |
 | `matching.js` | Dopasowanie tematów opieki; kopia synchronizowana do backendu |
 | `calendar.js` | Własne terminy, widok miesiąca i ICS |
@@ -41,6 +42,10 @@ Pliki frontendu są klasycznymi skryptami współdzielącymi zakres globalny. Ko
 Trasy mają postać `#start`, `#plan`, `#sprawa/<id>`, `#wsparcie/<id>`, `#terminy`, `#termin/<id>`, `#kalkulator`, `#konto-demo`, `#parametry`. Stan nawigacji pozwala wrócić z ekranu podrzędnego. Nie zastępuj tras oknami modalnymi: systemowe „wstecz” powinno zachować sens na telefonie. Sekwencja powitania nie pokazuje zakładek aplikacji przed ukończeniem wyborów.
 
 ## Dane lokalne
+
+Na telefonie nawigacja jest rozwijana przyciskiem „Menu”, a na komputerze pozostaje w bocznym pasku. Asystent ma przycisk w rogu: od 1000 px otwiera niemodalny panel, poniżej pełną trasę `#pomoc`. Podczas powitania oba mechanizmy są ukryte. Zamknięcie panelu i menu przywraca fokus; systemowe cofanie nadal korzysta z tras.
+
+Szkice kalkulatora są przechowywane tylko w pamięci bieżącej sesji, osobno według stabilnego UID dziecka. Zmiana danych istotnych dla obliczenia unieważnia szkic/wynik; usunięcie profilu czyści też te szkice. Nie są częścią trwałej historii świadczeń.
 
 Klucz profilu to `otula-plan-v1` w `localStorage`. Historia przejść używa `otula-trail` w `sessionStorage`. Rola i praca należą do opiekuna. Lista `children` zawiera osobne plany, a `active` wybiera dziecko. Część pól aktywnego dziecka jest odzwierciedlana w stanie głównym dla zgodności z istniejącym interfejsem; `snapshotChild()` zapisuje je przed zmianą dziecka.
 

@@ -3,6 +3,21 @@
 .benefit-launch small { color: #68505b; font-size: 13px; }
 .benefit-launch > .icon { margin-left: auto; }
 .zus-page { max-width: 980px; }
+.zus-dossier { padding: clamp(18px,3vw,28px); border: 1px solid #e3cfc1; border-radius: 22px; background: #fff3dc; margin: 22px 0; }
+.zus-dossier h2 { margin-top: 8px; }
+.zus-dossier .field { max-width: 100%; }
+.zus-dossier summary { cursor: pointer; font-weight: 650; padding: 14px 0; }
+.zus-steps { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; padding: 0; list-style: none; counter-reset: dossier; margin: 20px 0; }
+.zus-steps li { counter-increment: dossier; display: flex; gap: 9px; align-items: flex-start; font-size: 15px; font-weight: 650; }
+.zus-steps li:before { content: counter(dossier); display: grid; place-items: center; background: #793e58; color: white; width: 27px; height: 27px; border-radius: 50%; flex: 0 0 27px; }
+.zus-review { border: 1px solid #dfc9d0; background: #f9edf1; border-radius: 18px; padding: 18px; display: grid; gap: 12px; margin: 22px 0; }
+.zus-review legend { padding: 0 8px; font-weight: 700; }
+.zus-review label { display: flex; align-items: flex-start; gap: 10px; font-size: 16px; }
+.zus-review p,.zus-version { font-size: 14px; color: #67535c; }
+.zus-next { padding: 18px; background: #f9edf1; border-radius: 16px; margin: 18px 0; }
+.zus-dossier :is(p,a),.zus-review label { overflow-wrap: anywhere; }
+@media(max-width:700px) { .zus-steps { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media(max-width:380px) { .zus-steps { grid-template-columns: minmax(0,1fr); } }
 .zus-page h2 { font-size: clamp(26px,4vw,36px); line-height: 1.15; margin-bottom: 12px; }
 .zus-page h3 { font-size: 22px; line-height: 1.2; margin-top: 18px; }
 .zus-page p, .zus-page li { line-height: 1.6; }

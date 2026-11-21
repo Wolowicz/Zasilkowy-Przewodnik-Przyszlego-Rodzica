@@ -1,5 +1,14 @@
 # Historia zmian
 
+## 2026-11-21 — poprawki UX i przegląd materiałów ZUS
+
+- Mobilne menu zamiast dwóch rzędów zakładek, spójne kroki powitania i proporcje ilustracji, układ komputerowy oraz podpis „Twój plan rodzicielstwa”.
+- Kontekstowy panel asystenta na komputerze i pełny ekran na telefonie; anulowanie oczekiwania, przywracanie fokusu i testy referencji.
+- Osobne szkice kalkulatora dla dzieci, jawne brakujące dane, potwierdzenia podstawy/ubezpieczenia/dat i aktualne odnośniki formularzy.
+- Osobne wyliczenie rodzicielskiego ojca przy nieubezpieczonej matce, bez doliczania jej macierzyńskiego; 52 autorskie testy kalkulatora i niezależny przegląd reguł wariantu.
+- Lokalny przegląd materiałów ogólnych oraz czterech spraw ZUS; zakres i nierozstrzygnięte obliczenia opisuje `docs/WALIDACJA-ZUS.md`. Dokumentów organizatora nie publikowano.
+- PDF prezentacji i film pozostają w poprzedniej wersji: ich aktualizacja jest etapem pozostawionym do osobnego potwierdzenia właścicielki.
+
 ## 2026-11-21 — przekazanie projektu zespołowi
 
 - Mapa wszystkich materiałów, szybki start i instrukcja skopiowania kompletnego projektu do istniejącego repozytorium kolegów.

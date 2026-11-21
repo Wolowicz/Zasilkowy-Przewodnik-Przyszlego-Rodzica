@@ -172,9 +172,9 @@ function helpPage(r){
  const topic=CARE_TOPICS.find(t=>t.id===r.id),item=byId(r.id);
  const seed=topic? topic.title : item?`Co daje mi ta sprawa i ile kosztuje: ${item.title}?`:'';
  return `<header class="ask-hero"><div><div class="small-label">Asystent rodzica</div><h1 tabindex="-1">Zapytaj Otulę</h1><p>O sprawy w urzędzie i o codzienność z dzieckiem.</p></div><div class="ask-art" aria-hidden="true"></div></header>
- <form class="ask-panel" id="assistant-form"><label for="help-search">Twoje pytanie</label><div class="ask-field">${icon('chat',21)}<input type="search" id="help-search" data-context="${esc(r.id||'')}" maxlength="480" value="${esc(seed)}" placeholder="Np. po czym poznam, że dziecko jest głodne?" required></div>
- <div class="ask-actions"><button type="submit" id="ask-ai" class="button primary">${icon('chat',17)} Zapytaj AI</button></div>
- <p class="privacy-line">Otula sama sprawdza źródła. Przy formalnościach sięga do urzędów, a przy pytaniach o zdrowie także do serwisów dla rodziców i publikacji medycznych. Wpisz pytanie bez danych osobowych. AI korzysta z OpenRouter.</p></form>
+ <form class="ask-panel" id="assistant-form"><label for="help-search">Twoje pytanie</label><div class="ask-field">${icon('chat',21)}<input type="search" id="help-search" data-context="${esc(r.id||'')}" ${topic||item?'data-context-locked="true"':''} maxlength="480" value="${esc(seed)}" placeholder="Np. po czym poznam, że dziecko jest głodne?" required></div>
+ <div class="ask-actions"><button type="submit" id="ask-ai" class="button primary">${icon('chat',17)} Zapytaj AI</button><button type="button" id="ask-cancel" class="button secondary" hidden>Przerwij</button></div>
+ <p class="privacy-line">Po kliknięciu wyślemy pytanie i temat sprawy do asystenta korzystającego z OpenRouter. Imiona, daty i profil rodziny nie są dołączane. Nie wpisuj danych osobowych. Otula dobiera źródła urzędowe i medyczne; AI może się pomylić.</p></form>
  <div class="starter-list" aria-label="Przykładowe pytania">${starterQuestions.map(([,q],i)=>`<button type="button" data-question="${i}">${esc(q)} ${icon('arrow',14)}</button>`).join('')}</div>
  <section id="ai-result" class="answer-panel" aria-live="polite" hidden></section><div id="help-result">${seed?answerSearch(seed,r.id):''}</div>`;
 }
@@ -217,6 +217,7 @@ function clearAssistant(){
  const out=document.querySelector('#ai-result');
  if(out){out.hidden=true;out.replaceChildren();out.removeAttribute('aria-busy');}
  const button=document.querySelector('#ask-ai');if(button)button.disabled=false;
+ const cancel=document.querySelector('#ask-cancel');if(cancel)cancel.hidden=true;
 }
 
 function sourceLinks(out,items){
@@ -238,7 +239,9 @@ function showOnline(out,result){
 }
 async function queryAssistant(question,signal,context){
  const r=await fetch('https://otula-pytania-rodzicow.etherealdaffodil4.chatgpt.site/ask',{method:'POST',signal,credentials:'omit',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,context})});
- return r.json();
+ const result=await r.json();
+ if(!r.ok){const error=new Error(result.error||'Usługa jest chwilowo niedostępna.');error.status=r.status;throw error;}
+ return result;
 }
 
 async function searchGovFromDevice(query,signal){
@@ -256,14 +259,17 @@ async function searchGovFromDevice(query,signal){
 }
 
 async function askOtula(){
- const field=document.querySelector('#help-search'),q=field.value.trim(),out=document.querySelector('#ai-result');clearAssistant();
+ const field=document.querySelector('#help-search'),out=document.querySelector('#ai-result');if(!field||!out)return;
+ const q=field.value.trim();clearAssistant();
  out.hidden=false;
  if(q.length<3||/@|\d[\s-]*(?:\d[\s-]*){8}|sk-or-/i.test(q)){out.textContent='Wpisz pytanie bez numerów dokumentów i danych kontaktowych.';field.focus();return;}
  if(urgentQuestion(q)){out.textContent=urgentAdvice;return;}
  const controller=new AbortController();currentAsk=controller;
  document.querySelector('#ask-ai').disabled=true;
- out.setAttribute('aria-busy','true');out.textContent='Dobieram źródła i sprawdzam odpowiedź…';
- const timeout=setTimeout(()=>controller.abort(),57000);
+ document.querySelector('#ask-cancel').hidden=false;
+ out.setAttribute('aria-busy','true');out.textContent='Dobieram i odczytuję źródła. Odpowiedź może potrwać do minuty…';
+ let timedOut=false;
+ const timeout=setTimeout(()=>{timedOut=true;controller.abort();},57000);
  try{
   const result=await queryAssistant(q,controller.signal,field.dataset.context);
   if(result.mode==='web' && result.kind==='official' && !result.results?.length){
@@ -276,6 +282,7 @@ async function askOtula(){
   const excerpts=result.mode==='extracts';
   if(result.mode!=='ai'&&!excerpts){out.textContent=result.error||result.message||'Usługa jest niedostępna.';sourceLinks(out,result.sources);return;}
   const heading=document.createElement('h2');heading.textContent=excerpts?'Fragmenty ze źródeł':'Odpowiedź AI';out.append(heading);
+  if(!excerpts){const note=document.createElement('p');note.className='answer-caution';note.textContent='AI może się pomylić. Porównaj odpowiedź z cytatem i warunkami w źródle. To informacja, nie decyzja o świadczeniu ani diagnoza.';out.append(note);}
   if(excerpts){const note=document.createElement('p');note.textContent=result.message;out.append(note);}
   for(const fact of result.facts){
     const src=result.sources[fact.ref-1],section=document.createElement('div'),link=document.createElement('a'),quote=document.createElement('blockquote');
@@ -288,10 +295,10 @@ async function askOtula(){
   }
   const stamp=document.createElement('small');stamp.textContent='Odczyt źródeł '+new Date(result.checked).toLocaleString('pl-PL');out.append(stamp);
   if(result.reading?.length){const h=document.createElement('h3');h.textContent='Do dalszej lektury';out.append(h);sourceLinks(out,result.reading);}
- }catch{if(currentAsk===controller){out.textContent='Połączenie nie powiodło się. Sprawdź internet i spróbuj ponownie.';}}
- finally{clearTimeout(timeout);if(currentAsk===controller){out.removeAttribute('aria-busy');document.querySelector('#ask-ai').disabled=false;}}
+ }catch(error){if(currentAsk===controller){out.textContent=timedOut?'Odpowiedź trwała zbyt długo. Twoje pytanie pozostało w polu — spróbuj ponownie lub skorzystaj z kart poniżej.':error.status===429?'Osiągnięto chwilowy limit pytań. Spróbuj ponownie za minutę.':error.status?error.message:'Nie udało się połączyć. Sprawdź internet; pytanie pozostało w polu. Możesz skorzystać z kart poniżej.';}}
+ finally{clearTimeout(timeout);if(currentAsk===controller){out.removeAttribute('aria-busy');const button=document.querySelector('#ask-ai');if(button)button.disabled=false;const cancel=document.querySelector('#ask-cancel');if(cancel)cancel.hidden=true;}}
 }
 window.addEventListener('hashchange',clearAssistant);
 document.addEventListener('input',e=>{if(e.target.id==='help-search')clearAssistant();});
-document.addEventListener('click',e=>{if(e.target.closest('[data-question]'))clearAssistant();});
+document.addEventListener('click',e=>{if(e.target.closest('[data-question]'))clearAssistant();if(e.target.closest('#ask-cancel')){clearAssistant();const out=document.querySelector('#ai-result');if(out){out.hidden=false;out.textContent='Przerwano oczekiwanie. Pytanie pozostało w polu.';}document.querySelector('#help-search')?.focus();}});
 document.addEventListener('submit',e=>{if(e.target.id==='assistant-form'){e.preventDefault();askOtula();}});

@@ -614,7 +614,7 @@ const caseAnswers = {
     when: 'Za okres odpowiadający urlopowi macierzyńskiemu, następnie rodzicielskiemu, jeśli spełniasz warunki. Nie obowiązuje okres wyczekiwania na ubezpieczeniu.',
     wait: 'Wypłata powinna nastąpić najpóźniej 30 dni od wyjaśnienia ostatniej okoliczności potrzebnej do ustalenia prawa, np. po uzupełnieniu brakującego dokumentu.',
     amount: 'Zasadniczo 100% podstawy za okres macierzyński i 70% za rodzicielski. Przy wniosku w ciągu 21 dni po porodzie można wybrać 81,5% za oba okresy. Wyłączne 9 tygodni drugiego rodzica płatne jest w wysokości 70%.',
-    appeal: allowanceAppeal, more: 'Jeśli płaci ZUS, pracodawca przekazuje zaświadczenie Z-3, przy zleceniu stosuje się Z-3a, a przy działalności Z-3b. Ustal z płatnikiem, kto wysyła załączniki.',
+    appeal: allowanceAppeal, more: 'Formularze sprawdzone 21.11.2026: gdy wypłaca ZUS, pracodawca przekazuje Z-3, a przy zleceniu stosuje się Z-3a. Od 24.10.2026 Z-3b nie jest ogólnie wymagany od przedsiębiorcy; aktualne dokumenty dobierz według instrukcji ZUS. Ustal z płatnikiem, kto wysyła załączniki. Szczególny, czasowy dostęp do Z-3b dla pełnomocników w eZUS opisujemy w Teczce sprawy kalkulatora.',
     contact: zusContact, law: 'Ustawa zasiłkowa z 25 czerwca 1999 r., art. 29–31 i 64.'
   },
   'urlop-ojcowski': {

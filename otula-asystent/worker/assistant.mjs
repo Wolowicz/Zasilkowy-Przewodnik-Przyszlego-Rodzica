@@ -8,6 +8,17 @@ for(const topic of careTopics){
   for(const source of topic.extraSources||[])official.add(new URL(source.url).hostname);
 }
 const hits = new Map();
+// Validate citation structure only. This does not establish semantic agreement with the source.
+function citationFacts(value,sources){
+  if(!Array.isArray(value)||value.length>4)return null;
+  if(!value.every(f=>Number.isInteger(f?.ref)&&typeof f.text==='string'&&f.text.trim().length>0&&f.text.length<=850&&Number.isInteger(f.line)&&sources[f.ref-1]?.lines[f.line-1]))return null;
+  return value.map(f=>({text:f.text.trim(),ref:f.ref,quote:sources[f.ref-1].lines[f.line-1]}));
+}
+function assistantModels(env){
+  const preferred=typeof env.OPENROUTER_MODEL==='string'?env.OPENROUTER_MODEL.trim():'';
+  const fallback=typeof env.OPENROUTER_FALLBACK_MODEL==='string'?env.OPENROUTER_FALLBACK_MODEL.trim():'';
+  return [...new Set([preferred||'openrouter/free',fallback||'google/gemma-4-26b-a4b-it:free'])].filter(v=>/^[a-zA-Z0-9_./:-]{1,150}$/.test(v)).slice(0,2);
+}
 const norm = s => s.toLowerCase().replace(/ł/g,'l').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 const hints = {
   'urlop-rodzicielski':'bliźnięta bliźniaki trojaczki urlop rodzicielski ile tygodni',
@@ -156,8 +167,8 @@ export default {async fetch(req,env){
     {role:'user',content:JSON.stringify({pytanie:q,karty:found.map(c=>({title:c.title,why:c.why,docs:c.docs,korzysc:c.benefit,koszt:c.cost,uwaga:c.alert})),publikacje:sources.map((s,i)=>({ref:i+1,fragmenty:s.lines.map((text,j)=>({line:j+1,text}))}))})}
   ];
   const sourceInfo={sources:sources.map(({title,url})=>({title,url})),reading:discovered.filter(r=>!sources.some(s=>s.url===r.url)).slice(0,3),checked:new Date(Math.min(...sources.map(s=>Date.parse(s.checked)))).toISOString()};
-  let unavailable='Model chwilowo nie udostępnił potwierdzonej odpowiedzi.';
-  for(const model of ['openrouter/free','google/gemma-4-26b-a4b-it:free']){
+  let unavailable='Model chwilowo nie udostępnił odpowiedzi z odnośnikami do źródeł.';
+  for(const model of assistantModels(env)){
     const remaining=now+50000-Date.now();
     if(remaining<1500)break;
     try{
@@ -177,8 +188,9 @@ export default {async fetch(req,env){
       if(typeof content!=='string'||!content.trim())continue;
       const {facts}=JSON.parse(content.replace(/^\s*```(?:json)?|\s*```\s*$/gi,'').trim());
       if(Array.isArray(facts)&&!facts.length)return fail('Brakuje potwierdzenia odpowiedzi w odczytanych źródłach.');
-      if(!Array.isArray(facts)||facts.length>4||!facts.every(f=>Number.isInteger(f?.ref)&&typeof f.text==='string'&&f.text.trim().length>0&&f.text.length<=850&&Number.isInteger(f.line)&&sources[f.ref-1]?.lines[f.line-1]))continue;
-      return reply({mode:'ai',facts:facts.map(f=>({text:f.text,ref:f.ref,quote:sources[f.ref-1].lines[f.line-1]})),...sourceInfo});
+      const checkedFacts=citationFacts(facts,sources);
+      if(!checkedFacts)continue;
+      return reply({mode:'ai',facts:checkedFacts,...sourceInfo});
     }catch(err){console.warn('OpenRouter attempt',err.name);}
   }
   if(clinical)return fail(unavailable+(topic?' Możesz skorzystać z podręcznika i dobranych publikacji.':' Poniżej znajdziesz publikacje dobrane do Twojego pytania.'));

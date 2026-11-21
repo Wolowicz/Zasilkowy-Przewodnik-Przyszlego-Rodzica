@@ -22,7 +22,7 @@ const storageKey = 'otula-plan-v1';
 const trailKey = 'otula-trail';
 const main = document.querySelector('#main');
 const sidebar = document.querySelector('#sidebar');
-const tabbar = document.querySelector('#tabbar');
+const mobileNavigation = document.querySelector('#mobile-navigation');
 let state = loadState();
 let category = 'all';
 let libraryStage = 'all';
@@ -220,7 +220,7 @@ function navLinks(active, cls, short = false) {
 }
 function frame(r) {
   const active = ({sprawa:'plan',slowniczek:'biblioteka'})[r.page] || r.page;
-  sidebar.innerHTML = `<div class="brand-block">${brand()}<div class="brand-subtitle">Przewodnik rodzica</div></div>
+  sidebar.innerHTML = `<div class="brand-block">${brand()}<div class="brand-subtitle">Twój plan rodzicielstwa</div></div>
     <nav aria-label="Nawigacja główna"><div class="nav-label">Twoja przestrzeń</div>${navLinks(active, 'nav-item')}
     <a href="#sytuacja" class="nav-item ${active === 'sytuacja' ? 'selected' : ''}">${icon('person', 20)}<span>Moja sytuacja</span></a>
     <a href="#kalkulator" class="nav-item ${active==='kalkulator'?'selected':''}">${icon('wallet',20)}<span>Kalkulator zasiłków</span></a>${familyNavigation(active)}</nav>`;
@@ -230,12 +230,41 @@ function frame(r) {
   else if (r.page !== 'start') crumbs.push(['', titles[r.page]]);
   document.querySelector('#topbar').innerHTML = `<nav class="crumb" aria-label="Jesteś tutaj">${crumbs.map(([href, label], i) =>
       i < crumbs.length - 1 ? `<a href="#${href}">${esc(label)}</a><i aria-hidden="true">/</i>` : `<strong>${esc(label)}</strong>`).join(' ')}</nav>
-    <div class="mobile-brand">${brand(false)}${r.page==='start'?'<span class="brand-subtitle">Przewodnik rodzica</span>':''}</div>
+    <div class="mobile-brand">${brand()}<span class="brand-subtitle">Twój plan rodzicielstwa</span></div>
     <span class="frame-date">${dateTodayLabel()}</span>
-    <a class="tools-link" href="#sytuacja" ${active==='sytuacja'?'aria-current="page"':''}>${icon('adjust',16)} Moja sytuacja</a>`;
-  tabbar.innerHTML = navLinks(active, 'tab', true);
+    <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" data-action="toggle-menu">${icon('menu',22)}<span>Menu</span></button>`;
+  mobileNavigation.hidden = true;
+  mobileNavigation.innerHTML = `<div class="mobile-nav-heading"><strong>W czym pomóc?</strong><button type="button" class="icon-button" data-action="close-menu" aria-label="Zamknij menu">${icon('close',22)}</button></div>
+    <div class="mobile-nav-links">${navLinks(active,'nav-item')}
+    <a href="#kalkulator" class="nav-item" ${active==='kalkulator'?'aria-current="page"':''}>${icon('wallet',20)}<span>Kalkulator zasiłków</span></a>
+    <a href="#formularze" class="nav-item" ${active==='formularze'?'aria-current="page"':''}>${icon('files',20)}<span>Dokumenty i formularze</span></a>
+    ${familyTools.map(tool=>`<a class="nav-item" href="#${tool.id}" ${active===tool.id?'aria-current="page"':''}>${icon(tool.glyph,20)}<span>${tool.label}</span></a>`).join('')}
+    <a href="#sytuacja" class="nav-item" ${active==='sytuacja'?'aria-current="page"':''}>${icon('adjust',20)}<span>Moja sytuacja</span></a>
+    <a href="#rodzina" class="nav-item" ${active==='rodzina'?'aria-current="page"':''}>${icon('person',20)}<span>Moja rodzina</span></a></div>`;
   document.title = (r.page === 'sprawa' ? byId(r.id).title : titles[r.page]) + ' · Otula';
 }
+function setMobileMenu(open, restoreFocus = false) {
+  const toggle=document.querySelector('.mobile-menu-toggle');
+  if(!mobileNavigation || !toggle)return;
+  if(open)mobileNavigation.style.setProperty('--mobile-menu-top',Math.ceil(document.querySelector('#topbar').getBoundingClientRect().bottom)+'px');
+  mobileNavigation.hidden=!open;
+  toggle.setAttribute('aria-expanded',String(open));
+  window.syncAssistantLauncher?.(route(),document.body.classList.contains('arriving'));
+  if(open)mobileNavigation.querySelector('a[aria-current],a')?.focus({preventScroll:true});
+  else if(restoreFocus)toggle.focus({preventScroll:true});
+}
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape' && !mobileNavigation.hidden){setMobileMenu(false,true);event.preventDefault();}
+});
+document.addEventListener('click',event=>{
+  if(mobileNavigation.hidden)return;
+  if(event.target.closest('#mobile-navigation a'))setMobileMenu(false,event.target.closest('a').hash===location.hash);
+  else if(!event.target.closest('#mobile-navigation,.mobile-menu-toggle'))setMobileMenu(false);
+});
+document.addEventListener('focusin',event=>{
+  if(!mobileNavigation.hidden && !event.target.closest('#mobile-navigation,.mobile-menu-toggle'))setMobileMenu(false);
+});
+window.matchMedia('(min-width: 901px)').addEventListener('change',event=>{if(event.matches)setMobileMenu(false);});
 function tileIcon(item, big = false) {
   return `<span class="tile-icon ${item.color} ${big ? 'big' : ''}">${icon(item.icon, big ? 27 : 24)}</span>`;
 }
@@ -353,8 +382,8 @@ function arrival() {
   const {page}=route();
   const step=page==='dzieci'?2:page==='praca'?3:1;
   const illustration='<img class="arrival-art" src="./assets/powitanie-z-bliskimi.webp" width="1440" height="576" alt="Babcia i koleżanka odwiedzają rodziców z noworodkiem.">';
-  const content=step===1?welcome(illustration):`${illustration}<div class="arrival-inner">${welcome()}</div>`;
-  return `<div class="arrival" data-step="${step}"><header class="arrival-brand"><div class="arrival-signature">${brand(false)}<span class="brand-subtitle">Przewodnik rodzica</span></div><div class="arrival-progress"><span>Krok ${step} z 3</span><span class="step-track" aria-hidden="true">${[1,2,3].map(n=>`<i class="${n<=step?'complete':''}"></i>`).join('')}</span></div></header><div class="arrival-card">${content}</div></div>`;
+  const content=step===1?welcome(illustration):`<div class="arrival-side">${illustration}<p>Spokojnie, po jednym kroku.<span>Układamy plan dopasowany do Was.</span></p></div><div class="arrival-inner">${welcome()}</div>`;
+  return `<div class="arrival" data-step="${step}"><header class="arrival-brand"><div class="arrival-signature">${brand(false)}<span class="brand-subtitle">Twój plan rodzicielstwa</span></div><div class="arrival-progress"><span>Krok ${step} z 3</span><span class="step-track" aria-hidden="true">${[1,2,3].map(n=>`<i class="${n<=step?'complete':''}"></i>`).join('')}</span></div></header><div class="arrival-card">${content}</div></div>`;
 }
 function dashboardFamily() {
   const many=state.children.length>1;
@@ -402,6 +431,7 @@ function start() {
   const title=next?next.title:all.length?'Wszystkie sprawy odhaczone':'Wybierz sprawy dla rodziny';
   const copy=next?next.short:all.length?'W planie możesz wrócić do dokumentów i sprawdzić wykonane kroki.':'W bibliotece znajdziesz dokumenty i świadczenia, które możesz dodać do planu dziecka.';
   return `<div class="home-dashboard"><header class="dashboard-head"><div><div class="home-date">${dateTodayLabel()}</div><h1 tabindex="-1">Rodzinny plan</h1><p class="dashboard-stage">${icon(pregnancy?'sprout':'heart',17)} ${GUIDE.stages[state.stage]} <span>·</span> ${esc(GUIDE.roles[role()].short)}</p></div>${dashboardFamily()}</header>
+  <nav class="home-shortcuts" aria-label="Najważniejsze sprawy"><a href="#plan">${icon('plan',21)} Mój plan</a><a href="#terminy">${icon('calendar',21)} Moje terminy</a><a href="#wsparcie">${icon('mail',21)} Karta wsparcia</a></nav>
   <a class="benefit-launch" href="#kalkulator"><span class="setup-bloom">${icon('wallet',23)}</span><span><strong>Zasiłki i podział opieki</strong><small>Policz wariant dla obojga rodziców</small></span>${icon('right',18)}</a><div class="dashboard-panels"><section class="home-feature ${artClass}">${art}<div class="feature-copy">
   <div class="home-kicker">${next?'Następna sprawa':'Twój plan'}</div><h2>${title}</h2><p>${copy}</p>
   <a class="button primary" href="#${next?'sprawa/'+next.id:all.length?'plan':'biblioteka'}">${next?'Otwórz sprawę':all.length?'Przejrzyj plan':'Wybierz sprawę'} ${icon('arrow',16)}</a></div></section>
@@ -565,6 +595,7 @@ function render(focus = false) {
   if (r.page === 'biblioteka') main.insertAdjacentHTML('afterbegin','<div class="library-tools"><a href="#slowniczek">Słowniczek</a><a href="#pomoc">Zapytaj AI</a></div>');
   if (r.page === 'biblioteka') document.querySelector('#query').value = query;
   if (focus) main.querySelector('h1')?.focus({ preventScroll: true });
+  window.syncAssistantLauncher?.(r,document.body.classList.contains('arriving'));
 }
 function refreshMessage() {
   const item = byId(supportId);
@@ -608,11 +639,13 @@ document.addEventListener('click', event => {
     return;
   }
   const starter=event.target.closest('[data-question]');
-  if(starter){const [id,q]=starterQuestions[Number(starter.dataset.question)],field=main.querySelector('#help-search');field.value=q;field.dataset.context=id;main.querySelector('#help-result').innerHTML=answerSearch(q,id);field.focus();return;}
+  if(starter){const [id,q]=starterQuestions[Number(starter.dataset.question)],field=document.querySelector('#help-search');field.value=q;delete field.dataset.contextLocked;field.dataset.context=id;document.querySelector('#help-result').innerHTML=answerSearch(q,id);field.focus();return;}
   const button = event.target.closest('[data-action]');
   if (!button) return;
   const id = button.dataset.id;
   switch (button.dataset.action) {
+    case 'toggle-menu': setMobileMenu(mobileNavigation.hidden); break;
+    case 'close-menu': setMobileMenu(false,true); break;
     case 'print-family': window.print(); break;
     case 'invite': inviteFamily(); break;
     case 'back': goBack(); break;
@@ -661,7 +694,7 @@ document.addEventListener('click', event => {
     case 'reset-cancel': resetAsk = false; render(); main.querySelector('[data-action="reset-ask"]')?.focus(); break;
     case 'reset':
       try { localStorage.removeItem(storageKey); sessionStorage.removeItem(trailKey); trail=[]; position=0; } catch { announce('Przeglądarka nie pozwala usunąć zapisu. Sprawdź ustawienia pamięci witryny.'); break; }
-      state = newState(); calendarMonth='';calendarDay='';calendarDraftCase='';calendarDelete=''; zusDraft=null; zusDemo=''; zusRules=structuredClone(ZUS_DEFAULT_RULES); resetAsk = false; supportId = ''; query = ''; category = 'all'; planFilter = 'all';
+      state = newState(); calendarMonth='';calendarDay='';calendarDraftCase='';calendarDelete=''; zusResetDrafts(); zusDemo=''; zusRules=structuredClone(ZUS_DEFAULT_RULES); resetAsk = false; supportId = ''; query = ''; category = 'all'; planFilter = 'all';
       location.hash = 'start'; render(true); announce('Usunięto zapisane dane.'); break;
   }
 });
@@ -722,7 +755,7 @@ document.addEventListener('input', event => {
   if(t.dataset.childField==='name'){updateSetupChild(t);return;}
   if(t.id==='handbook-search' || t.id==='handbook-section'){document.querySelector('#handbook-contents').innerHTML=handbookContents(document.querySelector('#handbook-search').value,document.querySelector('#handbook-section').value);return;}
   if(t.id==='glossary-search'){document.querySelector('#glossary-results').innerHTML=glossaryResults(t.value);return;}
-  if(t.id==='help-search'){delete t.dataset.context;main.querySelector('#help-result').innerHTML=t.value.trim()?answerSearch(t.value):'';return;}
+  if(t.id==='help-search'){if(t.dataset.contextLocked!=='true')delete t.dataset.context;document.querySelector('#help-result').innerHTML=t.value.trim()?answerSearch(t.value,t.dataset.context):'';return;}
   if(t.id==='child-note'){state.children[state.active].note=t.value;saved('');return;}
   if (t.id === 'query') { query = t.value; document.querySelector('#results').innerHTML = libraryResults(); }
   if (t.id === 'greeting' || t.id === 'sign') { state.support[t.id] = t.value.slice(0, 40); refreshMessage(); saved(''); }

@@ -6,7 +6,7 @@ Ten dokument opisuje **implementację prototypu**, a nie wiążącą interpretac
 
 Użytkownik podaje rodzaj zdarzenia, liczbę dzieci z jednego porodu/przyjęcia, daty, ubezpieczenie obojga rodziców, gotowe podstawy zasiłku, podział tygodni, wariant stawki i stały wymiar pracy. Liczba wszystkich dzieci w rodzinie nie jest liczbą dzieci urodzonych jednocześnie.
 
-Podstawa jest już ustaloną wartością wejściową. Kalkulator nie przelicza wynagrodzenia netto, historii wypłat, potrąceń, nieobecności ani zbiegu tytułów. Przykładowe wartości formularza nie pochodzą z konta ZUS.
+Podstawa jest już ustaloną wartością wejściową. Kalkulator nie przelicza wynagrodzenia netto, historii wypłat, potrąceń, nieobecności ani zbiegu tytułów. Przykładowe wartości formularza nie pochodzą z konta ZUS. Przed wyliczeniem użytkownik potwierdza sprawdzenie ubezpieczenia, podstawy i dat w teczce. Nieustalone ubezpieczenie drugiego rodzica nie jest traktowane jak brak jego uprawnień. Szkice należą do wybranego dziecka i są unieważniane po zmianie powiązanej sytuacji.
 
 ## Parametry zapisane w kodzie
 
@@ -30,11 +30,15 @@ daily = round(base / 30 × rate / 100 × (1 − fraction), do 2 miejsc)
 total = round(days × daily, do 2 miejsc)
 ```
 
-To założenie stałej pracy przez całą część rodzicielskiego, również podczas wydłużenia. Nie obejmuje zmiennych odcinków etatu. Wynik sumuje segmenty, nie symuluje rzeczywistych miesięcznych przelewów. Nie potwierdzono zgodności co do grosza z zestawami ZUS.
+To założenie stałej pracy przez całą część rodzicielskiego, również podczas wydłużenia. Nie obejmuje zmiennych odcinków etatu ani wcześniejszego zakończenia wypłaty na wniosek. Wynik sumuje segmenty, nie symuluje rzeczywistych miesięcznych przelewów. W próbie czterech dostarczonych spraw ZUS potwierdzono częściowo struktury okresów i jedną blokadę, ale **nie potwierdzono żadnej kwoty co do grosza**. [Zakres walidacji](WALIDACJA-ZUS.md).
 
 Wariant 81,5% wymaga daty zdarzenia i wniosku w obsługiwanym przedziale 0–21 dni. Kod sprawdza liczbę dzieci, podstawy, podział tygodni, ubezpieczenie, zakres etatu i sygnały sytuacji szczególnych. Wybrana szczególna sytuacja, nieustalone ubezpieczenie lub zadłużenie przy działalności może blokować kwotę i wyświetlać kwestie do wyjaśnienia.
 
 Adopcja i piecza wymagają dodatkowych dat i sprawdzenia granicy wieku. Przy zbliżeniu do limitu kod kieruje do indywidualnego wyliczenia; nie modeluje wszystkich skróconych okresów ani przejęć uprawnień.
+
+## Odrębny wariant ojca
+
+Osobny wariant porodu pozwala policzyć rodzicielski ubezpieczonego ojca przy potwierdzonym braku ubezpieczenia matki: maksymalnie pula minus 9 tygodni matki, stawka 70%, bez macierzyńskiego matki i bez wariantu 81,5%. Własne 9 tygodni ojca mieści się już w podanej liczbie. Obliczenie zakłada niewykorzystaną wcześniej pulę, własne uprawnienie ojca i brak sytuacji szczególnej; nie rozstrzyga ich automatycznie. Wybór zmiennego etatu, przerw lub zakończenia urlopu wstrzymuje uproszczony wynik i wskazuje konieczność rozliczenia odcinków.
 
 ## Poza zakresem wyliczenia
 
@@ -45,7 +49,7 @@ Adopcja i piecza wymagają dodatkowych dat i sprawdzenia granicy wieku. Przy zbl
 
 ## Karty, terminy i dokumenty
 
-Katalog zawiera **21 spraw**, a podręcznik **54 tematy**. [Rejestr 139 odnośników](REJESTR-ZRODEL.md) powstaje z pól źródeł w kodzie. Nie jest liczbą niezależnych badań ani potwierdzeniem przeczytania całych książek. Katalog formularzy prowadzi do [ZUS — zasiłki](https://www.zus.pl/wzory-formularzy/zasilki); aktualne formularze trzeba dobierać do sytuacji płatnika.
+Katalog zawiera **21 spraw**, a podręcznik **54 tematy**. [Rejestr odnośników](REJESTR-ZRODEL.md) powstaje z pól źródeł w kodzie. Nie jest liczbą niezależnych badań ani potwierdzeniem przeczytania całych książek. Katalog formularzy prowadzi do [ZUS — zasiłki](https://www.zus.pl/wzory-formularzy/zasilki); aktualne formularze trzeba dobierać do sytuacji płatnika. [Oddzielna notatka](FORMULARZE-ZUS.md) opisuje weryfikację zmian formularzy i konflikt między starszym poradnikiem a nowszymi komunikatami.
 
 `due` może określać dni, miesiące kalendarzowe lub opis słowny. Dodanie automatycznej daty wymaga ustalenia zdarzenia, od którego biegnie termin. Nie wolno zamienić „od sporządzenia karty” na „od porodu” bez wyjaśnienia i źródła. Daty podczas ciąży mogą być wyłącznie planistyczne; hipotetyczne terminy po narodzinach nie są eksportowane jako pewne terminy urzędowe.
 
@@ -57,9 +61,13 @@ Podręcznik odsyła m.in. do NFZ, WHO, AAP/HealthyChildren, Medycyny Praktycznej
 2. Sprawdź grupę uprawnionych, warunki, wyjątki, początek terminu, właściwy organ i dokumenty.
 3. Zmień kartę lub regułę bez zmiany stabilnego ID. Dodaj test granicy, jeśli zmiana dotyczy obliczeń.
 4. Uzyskaj niezależny przegląd merytoryczny przed produkcyjnym użyciem.
-5. Zsynchronizuj backend, odśwież rejestr źródeł, raporty i prezentację, jeśli pokazują zmienioną treść.
+5. Zsynchronizuj backend i odśwież rejestr źródeł oraz raporty aplikacji. Prezentację i film aktualizuj w uzgodnionym zakresie; obecne pliki pokazują poprzednią wersję i pozostają bez zmian do osobnego potwierdzenia właścicielki.
 6. Zapisz zmianę i nierozwiązane pytania. Nie aktualizuj globalnej daty sprawdzenia bez przejrzenia całego oznaczonego zakresu.
 
 ## Załączniki konkursowe
 
-[Brief ZUS](https://mudnibfuppwadjkynscc.supabase.co/storage/v1/object/public/task-files/057d36b5-cb92-4062-9393-983cb8a96088/files/d02b6603-486b-474e-837f-3ada06d12bee.pdf) wskazuje przykładowe sprawy, tabelę okresów i wyciąg przepisów. Tych załączników nie uzyskano. Oficjalny katalog formularzy ani publiczny poradnik nie zastępują testów na przypadkach jury. Po otrzymaniu materiałów należy dopisać tabelę: ID przypadku, dane, wynik oczekiwany, wynik Otuli, różnica, wyjaśnienie i status.
+[Brief ZUS](https://mudnibfuppwadjkynscc.supabase.co/storage/v1/object/public/task-files/057d36b5-cb92-4062-9393-983cb8a96088/files/d02b6603-486b-474e-837f-3ada06d12bee.pdf) wskazuje przykładowe sprawy, tabelę okresów i wyciąg przepisów. **21.11.2026 materiały otrzymano:** sześć dokumentów ogólnych oraz 87 skanowanych PDF ze sprawami. Ogólne materiały odczytano lokalnie. Próba czterech spraw obejmowała lokalny OCR 74 stron i wizualne sprawdzenie 18 stron kluczowych.
+
+Wynik: trzy częściowe zgodności okresu lub blokady, jedna sprawa poza modelem, zero zakończonych walidacji kwoty; pozostałych 83 plików nie analizowano indywidualnie. [WALIDACJA-ZUS.md](WALIDACJA-ZUS.md) mapuje wymagania i reguły na dostarczone materiały oraz opisuje każdą granicę dowodu. Przypadek pracy na część etatu pokazał potrzebę modelowania rzeczywistych odcinków i podwyższenia świadczenia, a przypadki podstaw — zmian etatu i krótkiego ubezpieczenia.
+
+Skany, odczyty OCR, dane płacowe, daty rodzin i mapowanie osób pozostają poza repozytorium, stroną i bazą AI. Lokalna karta dalszej walidacji powinna zawierać anonimowy identyfikator, dane, wynik oczekiwany, wynik Otuli, różnicę, wyjaśnienie i status. Agregat w repozytorium nie jest dowodem kompletnego odtworzenia decyzji ZUS.

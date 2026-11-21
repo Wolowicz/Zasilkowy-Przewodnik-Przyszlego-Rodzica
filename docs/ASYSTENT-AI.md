@@ -4,6 +4,8 @@ Asystent jest częścią Otuli, ale jego serwer działa osobno. Kod znajduje si�
 
 ## Przebieg odpowiedzi
 
+Na komputerze przycisk „Zapytaj Otulę” otwiera panel obok aktualnej sprawy. Na telefonie otwiera pełny ekran asystenta. Kontekst oznacza identyfikator karty, nie dane rodziny. Można przerwać oczekiwanie, poprawić pytanie i ponowić próbę po błędzie. Panel jest ukryty podczas wprowadzania rodziny i drukowania.
+
 1. Frontend wysyła pytanie oraz opcjonalny identyfikator karty lub tematu. Nie dołącza całego profilu rodziny.
 2. Serwer kontroluje origin, typ żądania, rozmiar, długość pytania, wybrane wzorce danych i limit zapytań.
 3. Kontekst i dopasowanie rozróżniają formalności od tematów zdrowia/opieki. Rozpoznane objawy alarmowe mają osobną odpowiedź ogólną.
@@ -45,6 +47,8 @@ Konfiguracja kodu próbuje `openrouter/free`, a następnie `google/gemma-4-26b-a
 Błędy uprawnień/rozliczeń nie powodują ujawnienia sekretu w odpowiedzi. Niedostępność modelu uruchamia źródła lub fragmenty. Nie sprawdzono w tym imporcie odpowiedzi płatnego/produkcyjnego modelu nowym kluczem; test lokalny działa bez niego.
 
 ## Granice ochrony
+
+Opcjonalne zmienne serwera `OPENROUTER_MODEL` i `OPENROUTER_FALLBACK_MODEL` pozwalają wybrać modele bez zmiany kodu. Brak tych zmiennych zachowuje powyższe domyślne wartości. Ta aktualizacja nie zmienia sekretu ani modelu w środowisku produkcyjnym. Testy konfiguracji i kontroli referencji są w `otula/tests/assistant.test.cjs` i uruchamia je `npm test`.
 
 - Lista originów obejmuje domeny demonstracji. Dopuszczony jest także origin `null` dla anonimowej wersji plikowej bez cookie i Authorization. To kompromis demonstracyjny, nie uwierzytelnienie.
 - Limit 8 pytań na 60 sekund działa w pamięci instancji według nagłówka IP dostarczanego przez platformę lub wspólnego klucza. Nie jest globalnym, trwałym limitem kosztów.
