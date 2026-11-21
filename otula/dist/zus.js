@@ -29,11 +29,15 @@ function zusValidateRules(r) {
   if(r.adoptionMinWeeks>r.maternityWeeks?.[0])issues.push('Minimalny wymiar przyjęcia nie może przekraczać standardowego macierzyńskiego.');
   if(!Number.isInteger(r.minimumYear)||r.minimumYear<2020||r.minimumYear>2100||!Number.isFinite(r.minimumWage)||r.minimumWage<=0||r.minimumWage>100000)issues.push('Sprawdź rok i wysokość minimalnego wynagrodzenia.');
   if(!Number.isFinite(r.contributionRate)||r.contributionRate<0||r.contributionRate>=100||!Number.isFinite(r.parentalBenefitAmount)||r.parentalBenefitAmount<=0||!Number.isFinite(r.debtThresholdPercent)||r.debtThresholdPercent<0||r.debtThresholdPercent>100)issues.push('Sprawdź składki, świadczenie rodzicielskie i próg zadłużenia.');
-  if(!zusDate(r.validFrom)||!zusDate(r.validTo)||r.validFrom>r.validTo)issues.push('Podaj poprawny przedział obowiązywania parametrów.');
+  if(r.validFrom!==`${r.minimumYear}-01-01`||r.validTo!==`${r.minimumYear}-12-31`)issues.push('Przedział minimalnego wynagrodzenia musi odpowiadać wybranemu rokowi. Nie jest datą wygaśnięcia przepisów o urlopach.');
   return [...new Set(issues)];
 }
 function zusLoadRules() {
-  try{const saved=JSON.parse(localStorage.getItem(ZUS_RULES_KEY)||'null');if(saved?.schema===2&&!zusValidateRules(saved.rules).length)return saved.rules;}catch{}
+  try{const saved=JSON.parse(localStorage.getItem(ZUS_RULES_KEY)||'null');if(saved?.schema===2){
+    // Older copies used these dates as descriptive metadata. Preserve edited amounts when migrating them to the wage year.
+    const rules={...saved.rules,validFrom:`${saved.rules.minimumYear}-01-01`,validTo:`${saved.rules.minimumYear}-12-31`};
+    if(!zusValidateRules(rules).length)return rules;
+  }}catch{}
   return structuredClone(ZUS_DEFAULT_RULES);
 }
 function zusSetRules(r,reset=false) {
@@ -404,11 +408,11 @@ function zusResult(d) {
   const payer=destination(d.payer),payerB=destination(d.payerB);
   if(result.issues.length)return `<div class="zus-result"><h2 tabindex="-1">Co trzeba jeszcze ustalić?</h2><ul>${result.issues.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>${d.insurance==='no'&&d.insuranceB==='yes'?`<section class="zus-next"><h3>Sprawdź własną ścieżkę drugiego rodzica</h3><p>Brak ubezpieczenia matki nie rozstrzyga automatycznie o prawach ojca. Ten wariant nie dolicza mu okresu macierzyńskiego. Zbierz potwierdzenie jego ubezpieczenia, daty i dotychczasowe okresy opieki, a następnie sprawdź odrębne prawo do rodzicielskiego i ojcowskiego z płatnikiem.</p>${zusSource('parental','Zasady urlopu rodzicielskiego')} <a href="#sprawa/urlop-ojcowski">Sprawa: urlop ojcowski</a></section>`:''}<p>Uzupełnij dane i przelicz ponownie. ${zusSource('insurance','Warunki ubezpieczenia i wyjątki w ZUS')}</p><a class="dashboard-link" href="#uprawnienia">Świadczenia i szczególne sytuacje ${icon('arrow',16)}</a></div>`;
   return `<div class="zus-result"><p class="home-kicker">Symulacja ${result.custom?'· zmienione parametry testowe':'· zasady sprawdzone 21.11.2026'}</p>
-    <h2 tabindex="-1">${result.fatherOnly?'Rodzicielski ubezpieczonego ojca':'Wasz wariant opieki'}</h2><p class="zus-version">Reguły: ${esc(zusRuleLabel())}; zadeklarowany zakres ${zusRules.validFrom} – ${zusRules.validTo}. Dane: ${d.evidenceRequired?'potwierdzone przez Ciebie, bez weryfikacji urzędowej':'symulacja na podanych danych'}.</p><p>${result.fatherOnly?`Ojciec: ${result.shareB} tyg. rodzicielskiego · bez doliczania macierzyńskiego matki`:`${result.maternityDays} dni macierzyńskiego${Number.isInteger(result.maternity)?" ("+result.maternity+" tyg.)":""} · pula rodzicielska ${result.parental} tyg.`}</p>
+    <h2 tabindex="-1">${result.fatherOnly?'Rodzicielski ubezpieczonego ojca':'Wasz wariant opieki'}</h2><p class="zus-version">Reguły: ${esc(zusRuleLabel())}. Plan zakłada brak zmian przepisów w jego trakcie; minimalną podstawę dobieramy osobno dla każdego roku wypłaty. Dane: ${d.evidenceRequired?'potwierdzone przez Ciebie, bez weryfikacji urzędowej':'symulacja na podanych danych'}.</p><p>${result.fatherOnly?`Ojciec: ${result.shareB} tyg. rodzicielskiego · bez doliczania macierzyńskiego matki`:`${result.maternityDays} dni macierzyńskiego${Number.isInteger(result.maternity)?" ("+result.maternity+" tyg.)":""} · pula rodzicielska ${result.parental} tyg.`}</p>
     ${result.minimumAdoption?'<p class="zus-notice">Zastosowano gwarantowane minimum 9 tygodni macierzyńskiego. Pula rodzicielska 38/62 tygodni nie oznacza automatycznie prawa do jej wykorzystania po granicy wieku.</p>':''}
     ${d.exception==='hospital'?`<p class="zus-notice">Uzupełniający: ${result.supplementary.weeks} tygodni przy ${result.supplementary.days} dniach hospitalizacji w oknie ${result.supplementary.windowFrom} – ${result.supplementary.windowUntil}. ${result.supplementary.weeks?'Liczymy 100% podstawy pierwszego rodzica, bezpośrednio po macierzyńskim.':'W podanych pobytach nie ustalono dodatkowych tygodni; sprawdź kompletne zaświadczenie.'} Daty liczymy od dnia po porodzie (dla dziecka donoszonego od 5. dnia); potwierdź granice z płatnikiem. ${zusSource('supplementary','Warunki uzupełniającego')}</p>`:''}
     ${result.fatherOnly?`<p class="zus-notice">Brak ubezpieczenia matki nie odbiera ojcu własnego uprawnienia do rodzicielskiego. Liczymy wybrany okres według ${zusRules.parentalRate}% jego podstawy, z puli najwyżej ${result.parental-zusRules.reservedWeeks} tygodni. Własne ${zusRules.reservedWeeks} tygodni ojca są już w tej puli. Zakładamy brak wcześniejszego wykorzystania rodzicielskiego i brak sytuacji szczególnych; płatnik musi potwierdzić prawo i okres. ${zusSource('parentalZus','Podział rodzicielskiego w ZUS')}</p>`:''}
-    <p class="zus-notice"><strong>Zakres kwoty:</strong> suma brutto przed PIT. Podwyższenie po PIT policzysz osobno poniżej, po potwierdzeniu podatku i zasiłków z innych tytułów. Zmiany etatu, przerwy i wcześniejsze zakończenie urlopu wymagają rozliczenia odcinkami. Wynik jest planem, nie historią przelewów.</p>
+    <p class="zus-notice">Suma brutto przed PIT — podwyższenie i założenia rozwiniesz poniżej.</p>
     ${result.notices.length?`<ul class="zus-notice">${result.notices.map(n=>`<li>${esc(n)}</li>`).join('')}</ul>`:''}
     <div class="zus-total"><strong>${zusMoney(result.total)}</strong><span>Orientacyjna suma brutto zasiłków w poniższym wariancie</span></div>
     ${result.firstYearAdjustment?`<p class="zus-notice">Brak dnia rodzicielskiego w stawce 81,5% w pierwszym roku: rodzicielskie liczymy według 70%, a macierzyńskie po wyrównaniu do 100%. Wyrównanie wynosi orientacyjnie ${zusMoney(result.adjustment)} i wymaga wniosku. Jest już zawarte w sumie powyżej — nie dodawaj go drugi raz. ${zusSource('amount','Zasady wyrównania ZUS')}</p>`:''}
@@ -499,7 +503,7 @@ function zusParametersPage(r) {
     ${zusField('Za życiem — jedno dziecko (tyg.)','specialSingle',zusRules.specialParentalWeeks[0],'type="number" min="18" max="150" step="1" required')}
     ${zusField('Za życiem — wieloraczki (tyg.)','specialMultiple',zusRules.specialParentalWeeks[1],'type="number" min="18" max="150" step="1" required')}
     ${[['reservedWeeks','Część nieprzenoszalna (tyg.)'],['adoptionMinWeeks','Minimalny okres przy przyjęciu (tyg.)'],['olderChildParentalWeeks','Rodzicielski przy minimum 9 tygodni (tyg.)'],['olderChildSpecialParentalWeeks','Za życiem przy minimum 9 tygodni (tyg.)'],['minimumYear','Rok minimalnego wynagrodzenia'],['minimumWage','Minimalne wynagrodzenie (zł)'],['contributionRate','Odliczenie składek (%)'],['parentalBenefitAmount','Świadczenie rodzicielskie netto (zł)'],['debtThresholdPercent','Próg długu (% minimalnego wynagrodzenia)']].map(([key,label])=>zusField(label,key,zusRules[key],'type="number" min="0" step="0.01" required')).join('')}
-    ${zusField('Parametry — obowiązywanie od','validFrom',zusRules.validFrom,'type="date" required')}${zusField('Parametry — obowiązywanie do','validTo',zusRules.validTo,'type="date" required')}</div>
+    <p class="zus-field-note">Podana kwota minimalnego wynagrodzenia dotyczy całego wybranego roku: od 1 stycznia do 31 grudnia. Pozostałe reguły są wersją sprawdzoną ${esc(zusRules.version)}; nie mają tu daty automatycznego wygaśnięcia.</p></div>
     <div class="case-actions"><button class="button primary" type="submit">Zastosuj w symulacji</button><button class="button secondary" data-zus-action="rules-reset" type="button">Przywróć sprawdzone wartości</button></div><p id="zus-parameters-status" role="status"></p></form>
     <p class="zus-field-note">Minimum pełnego etatu: ${zusMoney(zusMinimumBase())}. Próg długu: ${zusMoney(zusRound(zusRules.minimumWage*zusRules.debtThresholdPercent/100))}. Wartości pochodne wyliczamy automatycznie. Domyślne minima wynagrodzeń: 2025 — 4666 zł, 2026 — 4806 zł, 2027 — 4950 zł. Podany rok zastępuje jedną pozycję; pozostałe parametry opisują tę symulację, nie automatyczny silnik historycznego prawa. Produkcyjna zmiana reguł wymaga zatwierdzenia merytorycznego.</p><a class="dashboard-link" href="#kalkulator">Przetestuj kalkulator ${icon('right',16)}</a></div>`;
 }
@@ -517,7 +521,7 @@ function zusGuidePage(r) {
 document.addEventListener('click',event=>{
   const sample=event.target.closest('[data-zus-case]');
   if(sample) {
-    zusDraft={...zusInitial(),count:1,multiple:false,baseA:5000,baseB:6000,insurance:'yes',insuranceB:'yes',workA:'employee',workB:'employee',eventDate:'2026-11-01',childDob:'2026-11-01',debt:'clear',payer:'employer'};
+    zusDraft={...zusInitial(),count:1,multiple:false,baseA:5000,baseB:6000,insurance:'yes',insuranceB:'yes',workA:'employee',workB:'employee',eventDate:'2026-01-01',childDob:'2026-01-01',debt:'clear',payer:'employer'};
     if(state.children[state.active].multiple){zusDraft.count=2;zusDraft.multiple=true;zusDraft.shareA=34;}
     if(sample.dataset.zusCase==='half')zusDraft.fractionA=.5;
     if(sample.dataset.zusCase==='uninsured')zusDraft.insurance='no';
@@ -567,7 +571,7 @@ document.addEventListener('submit',event=>{
     next.parentalWeeks=[Number(d.get('parentalSingle')),Number(d.get('parentalMultiple'))];
     next.specialParentalWeeks=[Number(d.get('specialSingle')),Number(d.get('specialMultiple'))];
     next.maternityWeeks=Array.from({length:5},(_,i)=>Number(d.get('maternityWeeks'+i)));
-    next.validFrom=d.get('validFrom');next.validTo=d.get('validTo');
+    next.validFrom=`${next.minimumYear}-01-01`;next.validTo=`${next.minimumYear}-12-31`;
     const outcome=zusSetRules(next);
     document.querySelector('#zus-parameters-status').textContent=outcome.issues.length?outcome.issues.join(' '):`Zastosowano ${zusRuleLabel()}. Minimum pełnego etatu ${zusMoney(zusMinimumBase())}; próg długu ${zusMoney(zusRound(zusRules.minimumWage*zusRules.debtThresholdPercent/100))}. `+(outcome.persisted?'Zapisano na tym urządzeniu.':'Przeglądarka nie pozwoliła zapisać; zmiana działa tylko w tej karcie.');
   }

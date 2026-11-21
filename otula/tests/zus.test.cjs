@@ -108,6 +108,15 @@ assert.equal(vm.runInContext('zusMinimumBase()',context),4314.5);
 assert.ok(vm.runInContext('zusSetRules({...ZUS_DEFAULT_RULES,reservedWeeks:40}).issues.length',context));
 assert.equal(vm.runInContext('zusRules.minimumWage',context),5000,'invalid update is atomic');
 vm.runInContext('zusSetRules(structuredClone(ZUS_DEFAULT_RULES),true)',context);assert.equal(storage.size,0);
+// The annual wage window is not an expiry date for parental-leave rules.
+assert.ok(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,minimumYear:2027}).length',context));
+assert.equal(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,minimumYear:2027,minimumWage:5100,validFrom:"2027-01-01",validTo:"2027-12-31"}).length',context),0);
+context.input={...defaults,eventDate:'2026-11-01',baseA:1000,shareA:0,shareB:0};
+r=vm.runInContext('zusCalculation(input,{...ZUS_DEFAULT_RULES,minimumYear:2027,minimumWage:5100,validFrom:"2027-01-01",validTo:"2027-12-31"})',context);
+assert.equal(r.issues.length,0);assert.equal(r.segments[0].base,4147.1);assert.equal(r.segments[1].base,4400.79);assert.equal(r.segments[1].until,'2027-03-20');
+vm.runInContext('localStorage.setItem(ZUS_RULES_KEY,JSON.stringify({schema:2,rules:{...ZUS_DEFAULT_RULES,minimumYear:2027,minimumWage:5100}}))',context);
+assert.equal(vm.runInContext('zusLoadRules().minimumWage',context),5100);assert.equal(vm.runInContext('zusLoadRules().validFrom',context),'2027-01-01');
+storage.clear();
 
 // Drafts follow stable child IDs, not list positions, and never cross family profiles.
 context.state={active:0,role:'mama',work:'employee',children:[{uid:'child-a',stage:'birth',date:'2026-11-01',multiple:false},{uid:'child-b',stage:'pregnancy',date:'2027-03-09',multiple:true}]};
