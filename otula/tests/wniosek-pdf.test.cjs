@@ -30,8 +30,11 @@ async function run(){
  const hospital={...own,periods:[{kind:'supplementary',from:'2027-04-09',to:'2027-04-22'}],maternityEnd:'2027-04-08',hospitalCondition:'between28and37',hospitalConfirmed:true,stays:[{from:'2026-11-20',to:'2026-11-27'}],otherUses:'no'};
  assert.deepEqual(api.validate(hospital),[]);const hv=api.fieldValues(hospital);assert.equal(hv['3.przerwaniem4B'],true);assert.equal(hv['5.NIE'],true);assert(!hv['5.NIE2']);
  assert(api.validate({...hospital,hospitalConfirmed:false}).length);
- const death={...own,reason:'loss',children:'MARTWE URODZENIE 20.11.2026, ZAŚWIADCZENIE MEDYCZNE'};
+ const death={...own,reason:'loss',children:'',lossDate:'2026-11-20',lossDocument:'medical'};
  assert.deepEqual(api.validate(death),[],'Nie wymagaj imienia ani płci po stracie');
+ assert.match(api.fieldValues(death)['3.Tekst1'],/zaświadczenie/);
+ assert(api.validate({...death,lossDocument:''}).length);
+ assert.equal(api.normalize({answers:{event:'childDeath'}}).reason,'loss');
  const bytes=await api.generatePdf(own,assets);const pdf=await PDFLib.PDFDocument.load(bytes);
  assert.equal(pdf.getPageCount(),7);assert.equal(pdf.getForm().getFields().length,0,'PDF do druku nie ma aktywnych pól/skryptów formularza');
  assert.equal(pdf.getTitle(),'ZAM – wniosek do sprawdzenia i podpisu');

@@ -27,3 +27,9 @@ Ważna kontrola: opisy dostępności niektórych checkboxów strony 5 oryginalne
 `OtulaWniosek.loadLibraries()` zwraca `{PDFLib, jsPDF, font}`. `composePdf({template, schema, values, title}, libraries?)` przyjmuje bajty wzoru oraz schemat `{pages, fields:[{page, name, rect:[x,y,right,bottom], type:'Text'|'CheckBox', comb, maxLength}]}`. Współrzędne w punktach liczone od lewego górnego rogu strony. Wartości mają klucze `page.name`. Zbyt długa treść jest odrzucana zamiast ucinana. Helper nie waliduje prawa ani merytoryki innego formularza: odpowiedzialność należy do modułu danego druku.
 
 Testy: `node otula/tests/wniosek-pdf.test.cjs`. To testy techniczne i syntetyczne, bez danych rodzin z akt ZUS.
+
+### Ścieżka po stracie
+
+Widok po stracie ciąży lub dziecka pyta wyłącznie o datę i rodzaj potwierdzenia straty; nie żąda imienia, płci ani diagnozy dziecka. Pole danych dzieci jest ukrywane i czyszczone przy zmianie powodu na stratę. Oświadczenia o pełnym wariancie 81,5% i „Za życiem” są w tym widoku ukryte i odznaczane. Podany przez wywiad okres trzeba sprawdzić; sam generator nie ustala prawa ani nie przyznaje automatycznie ośmiu tygodni w każdym przypadku.
+
+Zwykłe pisma urlopowe do pracodawcy opisuje [PISMA-I-URLOPY.md](PISMA-I-URLOPY.md); są odrębne od urzędowego ZAM.
