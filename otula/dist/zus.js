@@ -13,11 +13,14 @@ const ZUS_DEFAULT_RULES = Object.freeze({
   combinedRate: 81.5,
   adoptionMinWeeks: 9,olderChildParentalWeeks:38,olderChildSpecialParentalWeeks:62,
   minimumYear:2026,minimumWage:4806,contributionRate:13.71,parentalBenefitAmount:1000,debtThresholdPercent:1,
-  validFrom:'2026-01-01',validTo:'2026-12-31'
+  validFrom:'2026-01-01',validTo:'2026-12-31',
+  partsLimit:5, policyFrom:'2026-01-01', policyTo:'2026-12-31'
 });
 const ZUS_RULES_KEY='otula-zus-rules-v2';
 function zusValidateRules(r) {
   const issues=[];
+  if (!Number.isInteger(r.partsLimit) || r.partsLimit < 1 || r.partsLimit > 30) issues.push('Limit części musi być liczbą całkowitą od 1 do 30.');
+  if (!zusDate(r.policyFrom) || !zusDate(r.policyTo) || r.policyFrom > r.policyTo) issues.push('Podaj prawidłowy początek i koniec okresu parametrów.');
   for(const key of ['maternityRate','parentalRate','combinedRate'])if(!Number.isFinite(r[key])||r[key]<=0||r[key]>100)issues.push('Stawki muszą być większe od 0 i nie większe od 100%.');
   if(!(r.parentalRate<=r.combinedRate&&r.combinedRate<=r.maternityRate))issues.push('Zachowaj kolejność: rodzicielski ≤ uśredniony ≤ macierzyński.');
   for(const [key,length] of [['maternityWeeks',5],['parentalWeeks',2],['specialParentalWeeks',2]]){
@@ -35,7 +38,7 @@ function zusValidateRules(r) {
 function zusLoadRules() {
   try{const saved=JSON.parse(localStorage.getItem(ZUS_RULES_KEY)||'null');if(saved?.schema===2){
     // Older copies used these dates as descriptive metadata. Preserve edited amounts when migrating them to the wage year.
-    const rules={...saved.rules,validFrom:`${saved.rules.minimumYear}-01-01`,validTo:`${saved.rules.minimumYear}-12-31`};
+    const rules={...ZUS_DEFAULT_RULES,...saved.rules,validFrom:`${saved.rules.minimumYear}-01-01`,validTo:`${saved.rules.minimumYear}-12-31`};
     if(!zusValidateRules(rules).length)return rules;
   }}catch{}
   return structuredClone(ZUS_DEFAULT_RULES);
@@ -47,7 +50,83 @@ function zusSetRules(r,reset=false) {
   return {issues:[],persisted};
 }
 let zusRules = zusLoadRules();
+function zusRulesOn(date, rules=zusRules) {
+  return date >= rules.policyFrom && date <= rules.policyTo ? rules : ZUS_DEFAULT_RULES;
+}
+function zusInterviewParameters(date) {
+  const rules = zusRulesOn(date);
+  const when = zusDate(date);
+  const wage = when ? zusWages(rules)[when.getUTCFullYear()] : undefined;
+  return {partsLimit:rules.partsLimit, debtThreshold:wage ? zusRound(wage*rules.debtThresholdPercent/100) : null};
+}
 let zusDraft = null;
+let zusInterviewDraft = null;
+const zusFromInterview = () => typeof location !== 'undefined' && location.hash === '#kalkulator/wywiad';
+function zusInterviewInputs(a) {
+  const father = (a.role === 'supporter' ? a.behalf : a.role) === 'father' && ['birth','pregnancy'].includes(a.event);
+  const own = father ? 'B' : 'A', other = father ? 'A' : 'B';
+  const has = value => value !== undefined && value !== null && value !== '' && value !== 'unknown';
+  const parts = Array.isArray(a.parentalParts) ? a.parentalParts : [];
+  const rows = Array.isArray(a.childrenClinical) ? a.childrenClinical : [];
+  const hospital = a.hospital === 'yes' ? window.OtulaWywiadReguly?.helpers?.hospital?.(a) : null;
+  const stays = hospital && !hospital.missing?.length ? hospital.stays || [] :
+    Number(a.count) === 1 && Array.isArray(a.hospitalStays) ? a.hospitalStays : [];
+  const data = {
+    kind:['adoption','foster'].includes(a.event) ? a.event : 'birth',
+    count:has(a.count) ? Number(a.count) : 0, multiple:Number(a.count)>1,
+    dateMode:a.event === 'pregnancy' ? 'planned' : 'actual', eventDate:has(a.eventDate) ? a.eventDate : '',
+    childDob:has(a.childDob) ? a.childDob : a.event === 'birth' ? a.eventDate : '',
+    special:rows.length ? rows.some(row=>row.zaZyciem==='yes') : a.zaZyciem==='yes',
+    deferred:a.schoolDeferred==='yes', exception:a.hospital==='yes' ? 'hospital' : 'none',
+    gestationWeeks:hospital?.gestationWeeks || (has(a.gestationWeeks) ? a.gestationWeeks : ''),
+    birthWeight:hospital?.grams || (has(a.birthWeight) ? a.birthWeight : ''),
+    hospitalFrom:stays[0]?.from || '', hospitalUntil:stays[0]?.to || '',
+    hospitalExtra:stays.slice(1).map(s=>s.from+' / '+s.to).join('\n'),
+    hospitalConfirmed:a.hospitalConfirmed==='yes' && !!stays.length && !hospital?.missing?.length,
+    insurance:(father ? a.otherInsurance : a.insurance) || 'unknown',
+    insuranceB:(father ? a.insurance : a.otherInsurance) || 'unknown',
+    workA:'any', workB:'any', baseA:'',baseB:'', payer:'unknown',payerB:'unknown',
+    contractFractionA:'',contractFractionB:'',
+    priorParts:parts.length || (a.previousParental === 'no' ? 0 : ''),
+    priorParentalParts:parts, priorApplicant:own,
+    interviewChecks:window.OtulaWywiadReguly?.helpers?.inspect?.(a)
+      .filter(item=>item.scope==='all' && ['coverage-date','noncoverage','suspension','business-ended','reenrolment','hours-base'].includes(item.id))
+      .map(item=>item.text) || [],
+    workPattern:a.workDuringParental==='yes' ? 'variable' : 'constant',
+    rate:a.plan==='combined' ? 'combined' : 'standard',
+    applicationDate:has(a.applicationDate) ? a.applicationDate : '', firstYearParental:a.firstYearParental||'unknown',
+    fatherWeeks:has(a.parentalWeeks) && father ? a.parentalWeeks : ''
+  };
+  data['work'+own] = ['employee','contract','business'].includes(a.work) ? a.work : a.work==='cooperating' ? 'business' : 'any';
+  data['base'+own] = a.baseKnown==='yes' && has(a.benefitBase) ? a.benefitBase : '';
+  data['base'+other] = a.otherBaseKnown==='yes' && has(a.otherBenefitBase) ? a.otherBenefitBase : '';
+  data['share'+own] = has(a.parentalWeeks) ? a.parentalWeeks : '';
+  data['share'+other] = has(a.otherPlannedWeeks) ? a.otherPlannedWeeks : '';
+  data['parentalStart'+own] = has(a.parentalStart) ? a.parentalStart : '';
+  data['parentalStart'+other] = has(a.otherParentalStart) ? a.otherParentalStart : '';
+  data[father?'debtB':'debt'] = a.debt === 'clear' ? 'clear' : 'unknown';
+  data[father?'payerB':'payer'] = ['business','cooperating'].includes(a.work) || a.payerSize==='upTo20' || a.employmentEnded==='yes' ? 'zus' : a.payerSize==='over20' ? 'employer' : 'unknown';
+  if (!father && has(a.coverageEnd)) data.coverageEnd = a.coverageEnd;
+  return data;
+}
+function zusInterviewPatch(a,d) {
+  const original=zusInterviewInputs(a);
+  if(!hasSameEvent() || !d.reviewBasis || !d.reviewDates || !d.reviewInsurance) return null;
+  const father=(a.role==='supporter'?a.behalf:a.role)==='father' && original.kind==='birth';
+  const own=father?'B':'A', other=father?'A':'B';
+  const patch={};
+  if(d['base'+own]>0) Object.assign(patch,{baseKnown:'yes',benefitBase:d['base'+own]});
+  if(d['base'+other]>0 && d['insurance'+(other==='A'?'':'B')]==='yes')
+    Object.assign(patch,{otherBaseKnown:'yes',otherBenefitBase:d['base'+other]});
+  if(a.event!=='pregnancy'){
+    patch.parentalWeeks=father&&zusFatherOnly(d)?d.fatherWeeks:d['share'+own];
+    patch.otherPlannedWeeks=father&&zusFatherOnly(d)?0:d['share'+other];
+    if(d['parentalStart'+own]) patch.parentalStart=d['parentalStart'+own];
+    if(d['parentalStart'+other]) patch.otherParentalStart=d['parentalStart'+other];
+  }
+  return patch;
+  function hasSameEvent(){return original.eventDate && original.eventDate===d.eventDate && original.kind===d.kind && original.count===d.count && original.insurance===d.insurance && original.insuranceB===d.insuranceB;}
+}
 let zusDocumentUrl = '';
 let zusAutoSubmit = false; // przykład lub sprawa z zestawu: przelicz od razu po otwarciu kalkulatora
 const zusDrafts = new Map();
@@ -65,6 +144,14 @@ function zusOwnDraft() {
   return saved?.fingerprint===zusFingerprint()?{...zusInitial(),...structuredClone(saved.value)}:zusInitial();
 }
 function zusCurrentDraft() {
+  if (zusFromInterview()) {
+    const answers = window.OtulaWywiad?.getAnswers() || {};
+    const fingerprint = JSON.stringify(answers);
+    if (zusInterviewDraft?.fingerprint !== fingerprint)
+      zusInterviewDraft = {fingerprint, value:{...zusInitial(),...zusInterviewInputs(answers)}};
+    zusDraft = structuredClone(zusInterviewDraft.value);
+    return zusDraft;
+  }
   const example=zusExamples.get(zusChildKey());
   if(example?.fingerprint!==zusFingerprint())zusExamples.delete(zusChildKey());
   zusDraft=example?.fingerprint===zusFingerprint()?structuredClone(example.value):zusOwnDraft();
@@ -72,6 +159,7 @@ function zusCurrentDraft() {
 }
 function zusSaveDraft(value) {
   zusDraft=structuredClone(value);
+  if (zusFromInterview() && zusInterviewDraft) { zusInterviewDraft.value=structuredClone(value); return; }
   const example=zusExamples.get(zusChildKey());
   if(example?.fingerprint===zusFingerprint()){example.value=structuredClone(value);return;}
   zusDrafts.set(zusChildKey(),{fingerprint:zusFingerprint(),value:structuredClone(value)});
@@ -90,12 +178,14 @@ function zusOpenExample(input,label) {
   zusAutoSubmit=false;zusDraft=value;return structuredClone(value);
 }
 function zusCurrentEvidence() {
+  if (zusFromInterview()) return zusInterviewDraft?.evidence ?? (zusInterviewDraft ? (zusInterviewDraft.evidence={file:null,sample:''}) : {file:null,sample:''});
   const key=zusChildKey();
   const example=zusExamples.get(key);if(example?.fingerprint===zusFingerprint())return example.evidence;
   if(!zusEvidence.has(key))zusEvidence.set(key,{file:null,sample:''});
   return zusEvidence.get(key);
 }
 function zusResetDrafts() {
+  zusInterviewDraft=null;
   zusDrafts.clear();zusExamples.clear();zusEvidence.clear();zusDraft=null;
   try{localStorage.removeItem(ZUS_DRAFTS_KEY);}catch{}
   if(zusDocumentUrl)URL.revokeObjectURL(zusDocumentUrl);
@@ -205,10 +295,17 @@ function zusRead(form) {
   const value=Object.fromEntries(d);
   for(const key of ['count','baseA','baseB','shareA','shareB','fatherWeeks','fractionA','fractionB','contractFractionA','contractFractionB'])value[key]=Number(d.get(key));
   for(const key of ['debtAmountA','debtAmountB'])value[key]=d.get(key)===''?'':Number(d.get(key));
+  value.priorParts=d.get('priorParts') ? Number(d.get('priorParts')) : null;
   value.special=d.has('special');value.deferred=d.has('deferred');
   value.hospitalConfirmed=d.has('hospitalConfirmed');
   for(const key of ['reviewInsurance','reviewBasis','reviewDates'])value[key]=d.has(key);
   value.multiple=state.children[state.active].multiple;value.evidenceRequired=true;
+  if(zusFromInterview() && zusInterviewDraft) {
+    value.multiple=value.count>1;
+    value.priorParentalParts=zusInterviewDraft.value.priorParentalParts;
+    value.priorApplicant=zusInterviewDraft.value.priorApplicant;
+    value.interviewChecks=zusInterviewDraft.value.interviewChecks;
+  }
   return value;
 }
 function zusFatherOnly(d) { return d.kind==='birth'&&d.insurance==='no'&&d.insuranceB==='yes'; }
@@ -345,8 +442,8 @@ function zusTimeline(segments,d,maternityDays,ageLimit,supplementaryDays=0) {
   }
   return [...new Set(issues)];
 }
-function zusCalculation(d,rules=zusRules) {
-  const issues=[];
+function zusCalculation(d,rules=zusRulesOn(d.eventDate)) {
+  const issues=[...(d.interviewChecks||[])];
   const fatherOnly=zusFatherOnly(d);
   const count=d.count;
   if(d.evidenceRequired && !['reviewInsurance','reviewBasis','reviewDates'].every(key=>d[key]))issues.push('Potwierdź sprawdzenie danych w teczce przed obliczeniem.');
@@ -391,8 +488,22 @@ function zusCalculation(d,rules=zusRules) {
   if(!fatherOnly&&d.shareA>maximum)issues.push(`Pierwszy rodzic może w tym wariancie wykorzystać najwyżej ${maximum} tygodni rodzicielskich. ${rules.reservedWeeks} tygodni jest zastrzeżone dla drugiego rodzica.`);
   const shareA=fatherOnly?0:d.shareA;
   const shareB=fatherOnly?d.fatherWeeks:d.insuranceB==='yes'?(d.shareB??parental-d.shareA):0;
+  if (Number.isInteger(d.priorParts) && d.priorParts + Number(shareA > 0) + Number(shareB > 0) > rules.partsLimit) issues.push('Plan przekracza wspólny limit ' + rules.partsLimit + ' części rodzicielskiego. Sprawdź wcześniejsze wnioski obojga rodziców.');
   if(!fatherOnly&&(!Number.isInteger(shareB)||shareB<0))issues.push('Podaj pełną, nieujemną liczbę tygodni rodzicielskich drugiego rodzica.');
   if(shareA+shareB>parental)issues.push(`Suma tygodni obojga rodziców przekracza wspólną pulę ${parental} tygodni.`);
+  if (d.priorParentalParts?.length) {
+    const prior={A:0,B:0};
+    for(const part of d.priorParentalParts) {
+      const from=zusDate(part.from),to=zusDate(part.to);
+      if(!from||!to||from>to||!['self','other'].includes(part.parent)) {
+        issues.push('Popraw daty wcześniejszych części rodzicielskiego w wywiadzie.'); break;
+      }
+      const owner=part.parent==='self' ? d.priorApplicant : d.priorApplicant==='A'?'B':'A';
+      prior[owner]+=Math.round((to-from)/86400000)+1;
+    }
+    if(prior.A+shareA*7>maximum*7 || prior.B+shareB*7>maximum*7 || prior.A+prior.B+(shareA+shareB)*7>parental*7)
+      issues.push('Wykorzystane części razem z planowanymi przekraczają pozostały wymiar rodzicielskiego.');
+  }
   if(fatherOnly&&(!Number.isInteger(shareB)||shareB<1||shareB>maximum))issues.push(`Wpisz od 1 do ${maximum} pełnych tygodni rodzicielskiego ojca. W tej puli są już jego własne ${rules.reservedWeeks} tygodni; części matki nie można przejąć.`);
   if(!fatherOnly&&shareB>maximum)issues.push(`Drugi rodzic może wykorzystać najwyżej ${maximum} tygodni. Zwiększ udział pierwszego rodzica.`);
   if(fatherOnly&&d.rate==='combined')issues.push('Samodzielny rodzicielski ojca przy nieubezpieczonej matce liczymy według 70%. Wybierz wariant standardowy; przejęcia uprawnień w szczególnych sytuacjach wymagają odrębnego ustalenia.');
@@ -433,6 +544,13 @@ function zusCalculation(d,rules=zusRules) {
   if(firstYearAdjustment&&!d.parentalStartA&&shareA)timelineData.parentalStartA=zusIso(birthday);
   if(firstYearAdjustment&&!d.parentalStartB&&!shareA)timelineData.parentalStartB=zusIso(birthday);
   issues.push(...zusTimeline(segments,timelineData,maternityDays,ageLimit,supplementary.weeks*7));
+  for (const part of d.priorParentalParts || []) {
+    const parent = part.parent==='self' ? d.priorApplicant : d.priorApplicant==='A'?'B':'A';
+    if(segments.some(s=>s.parent===parent && s.from && s.until && part.from<=s.until && part.to>=s.from))
+      issues.push('Wykorzystana część nachodzi na okres planowany dla tej samej osoby. Sprawdź daty w wywiadzie.');
+    if (parent==='B' && shareB && d.rate==='combined')
+      issues.push('Przy wcześniejszych częściach drugiego rodzica ustal z płatnikiem, ile z jego własnych tygodni jest jeszcze płatnych w stawce 70%.');
+  }
   for(const parent of ['A','B']){const first=segments.find(s=>s.parent===parent);if(first){const issue=zusDebtCheck(d,parent,first.from,rules);if(issue)issues.push(issue);}}
   if(supplementary.weeks&&zusDate(segments.find(s=>s.kind==='supplementary')?.from)<zusDate('2025-03-19'))issues.push('Uzupełniający wprowadzono 19.03.2025. Wariant przejściowy sprzed tej daty wymaga odrębnego sprawdzenia.');
   if(d.rate==='combined'&&d.kind==='birth'&&birthday&&['yes','no'].includes(d.firstYearParental)){
@@ -469,7 +587,7 @@ function zusResult(d) {
   if(result.issues.length)return `<div class="zus-result"><h2 tabindex="-1">Co trzeba jeszcze ustalić?</h2><ul>${result.issues.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>${d.insurance==='no'&&d.insuranceB==='yes'?`<section class="zus-next"><h3>Sprawdź własną ścieżkę drugiego rodzica</h3><p>Brak ubezpieczenia matki nie rozstrzyga automatycznie o prawach ojca. Ten wariant nie dolicza mu okresu macierzyńskiego. Zbierz potwierdzenie jego ubezpieczenia, daty i dotychczasowe okresy opieki, a następnie sprawdź odrębne prawo do rodzicielskiego i ojcowskiego z płatnikiem.</p>${zusSource('parental','Zasady urlopu rodzicielskiego')} <a href="#sprawa/urlop-ojcowski">Sprawa: urlop ojcowski</a></section>`:''}<p>Uzupełnij dane i przelicz ponownie. ${zusSource('insurance','Warunki ubezpieczenia i wyjątki w ZUS')}</p><a class="dashboard-link" href="#uprawnienia">Świadczenia i szczególne sytuacje ${icon('arrow',16)}</a></div>`;
   return `<div class="zus-result"><p class="home-kicker">Symulacja ${result.custom?'· zmienione parametry testowe':'· zasady sprawdzone 21.11.2026'}</p>
     <p class="zus-scenario-label"><strong>${d.dateMode==='planned'?'Wariant hipotetyczny':'Wariant na podanych danych'}</strong> · ${d.dateMode==='planned'?'zakładana':'podana rzeczywista'} data porodu / przyjęcia: ${esc(d.eventDate||'nie podano')}.${typeof state!=='undefined'&&zusCurrentEvidence().sample?` Przykład autorski — dane fikcyjne: ${esc(zusCurrentEvidence().sample)}.`:''}</p>
-    <h2 tabindex="-1">${result.fatherOnly?'Rodzicielski ubezpieczonego ojca':'Wasz wariant opieki'}</h2><p class="zus-version">Reguły: ${esc(zusRuleLabel())}. Plan zakłada brak zmian przepisów w jego trakcie; minimalną podstawę dobieramy osobno dla każdego roku wypłaty. Dane: ${d.dateMode==='planned'?'założenia podane przez Ciebie, wymagające późniejszego potwierdzenia':d.evidenceRequired?'potwierdzone przez Ciebie, bez weryfikacji urzędowej':'symulacja na podanych danych'}.</p><p>${result.fatherOnly?`Ojciec: ${result.shareB} tyg. rodzicielskiego · bez doliczania macierzyńskiego matki`:`${result.maternityDays} dni macierzyńskiego${Number.isInteger(result.maternity)?" ("+result.maternity+" tyg.)":""} · pula rodzicielska ${result.parental} tyg.`}</p>
+    <h2 tabindex="-1">${result.fatherOnly?'Rodzicielski ubezpieczonego ojca':'Wasz wariant opieki'}</h2><p class="zus-version">Reguły: ${esc(zusRuleLabel(zusRulesOn(d.eventDate)))}. Plan zakłada brak zmian przepisów w jego trakcie; minimalną podstawę dobieramy osobno dla każdego roku wypłaty. Dane: ${d.dateMode==='planned'?'założenia podane przez Ciebie, wymagające późniejszego potwierdzenia':d.evidenceRequired?'potwierdzone przez Ciebie, bez weryfikacji urzędowej':'symulacja na podanych danych'}.</p><p>${result.fatherOnly?`Ojciec: ${result.shareB} tyg. rodzicielskiego · bez doliczania macierzyńskiego matki`:`${result.maternityDays} dni macierzyńskiego${Number.isInteger(result.maternity)?" ("+result.maternity+" tyg.)":""} · pula rodzicielska ${result.parental} tyg.`}</p>
     ${result.minimumAdoption?'<p class="zus-notice">Zastosowano gwarantowane minimum 9 tygodni macierzyńskiego. Pula rodzicielska 38/62 tygodni nie oznacza automatycznie prawa do jej wykorzystania po granicy wieku.</p>':''}
     ${d.exception==='hospital'?`<p class="zus-notice">Uzupełniający: ${result.supplementary.weeks} tygodni przy ${result.supplementary.days} dniach hospitalizacji w oknie ${result.supplementary.windowFrom} – ${result.supplementary.windowUntil}. ${result.supplementary.weeks?'Liczymy 100% podstawy pierwszego rodzica, bezpośrednio po macierzyńskim.':'W podanych pobytach nie ustalono dodatkowych tygodni; sprawdź kompletne zaświadczenie.'} Daty liczymy od dnia po porodzie (dla dziecka donoszonego od 5. dnia); potwierdź granice z płatnikiem. ${zusSource('supplementary','Warunki uzupełniającego')}</p>`:''}
     ${result.fatherOnly?`<p class="zus-notice">Brak ubezpieczenia matki nie odbiera ojcu własnego uprawnienia do rodzicielskiego. Liczymy wybrany okres według ${zusRules.parentalRate}% jego podstawy, z puli najwyżej ${result.parental-zusRules.reservedWeeks} tygodni. Własne ${zusRules.reservedWeeks} tygodni ojca są już w tej puli. Zakładamy brak wcześniejszego wykorzystania rodzicielskiego i brak sytuacji szczególnych; płatnik musi potwierdzić prawo i okres. ${zusSource('parentalZus','Podział rodzicielskiego w ZUS')}</p>`:''}
@@ -540,6 +658,7 @@ function calculatorPage(r) {
     ${zusField('Początek rodzicielskiego pierwszego rodzica (opcjonalnie)','parentalStartA',d.parentalStartA||'','type="date"')}
     ${zusField('Początek rodzicielskiego drugiego rodzica (opcjonalnie)','parentalStartB',d.parentalStartB||'','type="date"')}
     <p class="zus-field-note">Bez własnych dat planujemy okresy kolejno: macierzyński, rodzicielski pierwszego i drugiego rodzica. Wpisz daty, jeśli chcecie opiekować się dzieckiem jednocześnie. Końce okresów policzymy z wybranych tygodni i etatu; dotychczas wykorzystane części wymagają odrębnego uwzględnienia.</p>
+    ${zusField('Liczba wcześniejszych części rodzicielskiego obojga rodziców','priorParts',d.priorParts??'','type="number" min="0" step="1"')}
     ${zusSelect('Wariant wypłaty','rate',{standard:'100% macierzyński + 70% rodzicielski',combined:'81,5% po wniosku w terminie'},d.rate)}
     ${zusField('Data wniosku o stawkę 81,5%','applicationDate',d.applicationDate,'type="date"')}
     ${zusSelect('Choć jeden dzień rodzicielskiego w stawce 81,5% w pierwszym roku życia?','firstYearParental',{unknown:'Do potwierdzenia',yes:'Tak — wykorzystany lub zaplanowany',no:'Nie — oblicz 70% i wyrównanie macierzyńskiego'},d.firstYearParental||'unknown')}
@@ -560,6 +679,9 @@ function calculatorPage(r) {
 function zusParametersPage(r) {
   return backLink(r)+pageHeading('Panel demonstracyjny','Parametry zasiłków','Ustaw parametry na tym urządzeniu i sprawdzaj ich wersję przy wyniku.')+
     `<div class="zus-page"><form id="zus-parameters"><div class="zus-fields">
+    ${zusField('Parametry własne dla zdarzeń od','policyFrom',zusRules.policyFrom,'type="date" required')}
+    ${zusField('Parametry własne dla zdarzeń do','policyTo',zusRules.policyTo,'type="date" required')}
+    ${zusField('Wspólny limit części rodzicielskiego','partsLimit',zusRules.partsLimit,'type="number" min="1" max="30" step="1" required')}
     ${zusField('Macierzyński (%)','maternityRate',zusRules.maternityRate,'type="number" min="0" max="100" step="0.1" required')}
     ${zusField('Rodzicielski (%)','parentalRate',zusRules.parentalRate,'type="number" min="0" max="100" step="0.1" required')}
     ${zusField('Wariant uśredniony (%)','combinedRate',zusRules.combinedRate,'type="number" min="0" max="100" step="0.1" required')}
@@ -569,7 +691,7 @@ function zusParametersPage(r) {
     ${zusField('Za życiem — jedno dziecko (tyg.)','specialSingle',zusRules.specialParentalWeeks[0],'type="number" min="18" max="150" step="1" required')}
     ${zusField('Za życiem — wieloraczki (tyg.)','specialMultiple',zusRules.specialParentalWeeks[1],'type="number" min="18" max="150" step="1" required')}
     ${[['reservedWeeks','Część nieprzenoszalna (tyg.)'],['adoptionMinWeeks','Minimalny okres przy przyjęciu (tyg.)'],['olderChildParentalWeeks','Rodzicielski przy minimum 9 tygodni (tyg.)'],['olderChildSpecialParentalWeeks','Za życiem przy minimum 9 tygodni (tyg.)'],['minimumYear','Rok minimalnego wynagrodzenia'],['minimumWage','Minimalne wynagrodzenie (zł)'],['contributionRate','Odliczenie składek (%)'],['parentalBenefitAmount','Świadczenie rodzicielskie netto (zł)'],['debtThresholdPercent','Próg długu (% minimalnego wynagrodzenia)']].map(([key,label])=>zusField(label,key,zusRules[key],'type="number" min="0" step="0.01" required')).join('')}
-    <p class="zus-field-note">Podana kwota minimalnego wynagrodzenia dotyczy całego wybranego roku: od 1 stycznia do 31 grudnia. Pozostałe reguły są wersją sprawdzoną ${esc(zusRules.version)}; nie mają tu daty automatycznego wygaśnięcia.</p></div>
+    <p class="zus-field-note">Podana kwota minimalnego wynagrodzenia dotyczy całego wybranego roku: od 1 stycznia do 31 grudnia. Daty parametrów własnych określają, dla których dat zdarzenia kalkulator stosuje ten zestaw. Poza zakresem wraca do ustawień standardowych.</p></div>
     <div class="case-actions"><button class="button primary" type="submit">Zastosuj w symulacji</button><button class="button secondary" data-zus-action="rules-reset" type="button">Przywróć sprawdzone wartości</button></div><p id="zus-parameters-status" role="status"></p></form>
     <p class="zus-field-note">Minimum pełnego etatu: ${zusMoney(zusMinimumBase())}. Próg długu: ${zusMoney(zusRound(zusRules.minimumWage*zusRules.debtThresholdPercent/100))}. Wartości pochodne wyliczamy automatycznie. Domyślne minima wynagrodzeń: 2025 — 4666 zł, 2026 — 4806 zł, 2027 — 4950 zł. Podany rok zastępuje jedną pozycję; pozostałe parametry opisują tę symulację, nie automatyczny silnik historycznego prawa. Produkcyjna zmiana reguł wymaga zatwierdzenia merytorycznego.</p><a class="dashboard-link" href="#kalkulator">Przetestuj kalkulator ${icon('right',16)}</a></div>`;
 }
@@ -628,7 +750,7 @@ document.addEventListener('submit',event=>{
     form.querySelectorAll('[data-topup-row]').forEach((node,i)=>{
       const row={gross:Number(node.dataset.gross),days:Number(node.dataset.days),monthDays:Number(node.dataset.monthDays)};
       const rawPit=values.get('pit-'+i),rawOther=values.get('other-'+i);
-      const out=zusTopupMonth(row,rawPit===''?'':Number(rawPit),rawOther===''?'':Number(rawOther),values.has('confirmed'));
+      const out=zusTopupMonth(row,rawPit===''?'':Number(rawPit),rawOther===''?'':Number(rawOther),values.has('confirmed'),zusRulesOn(zusDraft?.eventDate));
       node.querySelector('[data-topup-output]').textContent=out.issue||`Razem po PIT: ${zusMoney(out.net)}. Próg: ${zusMoney(out.target)}. Podwyższenie: ${zusMoney(out.topup)}. Razem netto z podwyższeniem: ${zusMoney(out.netWithTopup)}.`;
       if(!out.issue){computed++;total+=out.topup;}
     });
@@ -639,12 +761,24 @@ document.addEventListener('submit',event=>{
     event.preventDefault();if(!form.reportValidity())return;
     zusSaveDraft(zusRead(form));
     const result=document.querySelector('#zus-result');result.innerHTML=zusResult(zusDraft);
+    if(zusFromInterview() && !zusCalculation(zusDraft).issues.length) {
+      const patch=zusInterviewPatch(window.OtulaWywiad.getAnswers(),zusDraft);
+      if(patch && Object.keys(patch).length){
+        const apply=document.createElement('button');
+        apply.type='button'; apply.className='button secondary'; apply.textContent='Użyj tej podstawy i podziału w mojej sprawie';
+        apply.addEventListener('click',()=>{window.OtulaWywiad.updateCalculatorAnswers(patch);location.hash='moja-sprawa/wynik';});
+        result.append(apply);
+      }
+    }
     result.querySelector('h2').focus();result.scrollIntoView({behavior:'auto',block:'start'});
   }
   if(form.id==='zus-parameters') {
     event.preventDefault();if(!form.reportValidity())return;
     const d=new FormData(form),next=structuredClone(zusRules);
     for(const key of ['maternityRate','parentalRate','combinedRate','reservedWeeks','adoptionMinWeeks','olderChildParentalWeeks','olderChildSpecialParentalWeeks','minimumYear','minimumWage','contributionRate','parentalBenefitAmount','debtThresholdPercent'])next[key]=Number(d.get(key));
+    next.partsLimit=Number(d.get('partsLimit'));
+    next.policyFrom=String(d.get('policyFrom'));
+    next.policyTo=String(d.get('policyTo'));
     next.parentalWeeks=[Number(d.get('parentalSingle')),Number(d.get('parentalMultiple'))];
     next.specialParentalWeeks=[Number(d.get('specialSingle')),Number(d.get('specialMultiple'))];
     next.maternityWeeks=Array.from({length:5},(_,i)=>Number(d.get('maternityWeeks'+i)));

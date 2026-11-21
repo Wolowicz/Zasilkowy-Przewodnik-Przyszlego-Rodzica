@@ -9,6 +9,17 @@ calculatorPage = function (r) {
   const content = template.content;
   const form = content.querySelector('#zus-calculator');
   if (!form) return template.innerHTML;
+  if (r.id === 'wywiad') {
+    content.querySelector('.zus-own-start')?.remove();
+    content.querySelector('.zus-demo-choices')?.remove();
+    content.querySelector('.zus-dossier')?.remove();
+    const back=content.querySelector('.back-link');
+    if(back) {
+      const link=document.createElement('a');
+      link.className='back-link';link.href='#moja-sprawa/wynik';link.textContent='← Wróć do: moje świadczenia';
+      back.replaceWith(link);
+    }
+  }
   form.noValidate = true; // Reveal the correct step before native validation focuses it.
   form.dataset.wizardStep = '0';
   const page = content.querySelector('.zus-page');

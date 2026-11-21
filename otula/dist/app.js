@@ -71,7 +71,10 @@ function loadState() {
 function persist() {
   try {
     snapshotChild();
-    localStorage.setItem(storageKey, JSON.stringify(state));
+    const shared = JSON.parse(localStorage.getItem(storageKey) || '{}');
+    const next = {...state};
+    if (shared?.wywiad) next.wywiad = shared.wywiad;
+    localStorage.setItem(storageKey, JSON.stringify(next));
     storageWarning = false;
     return true;
   } catch {
@@ -101,6 +104,7 @@ function route(hash = location.hash) {
   if(page==='termin')return {page,id:/^[a-zA-Z0-9-]{1,80}$/.test(id||'')?id:'nowy'};
   if(page==='konto-demo')return {page:'e-uslugi',id:id==='wniosek'?'zasilek':''};
   if(page==='e-uslugi')return {page,id:/^[a-z-]{1,30}$/.test(id||'')?id:''};
+  if(page==='kalkulator' && id==='wywiad')return {page,id};
   if(page==='poradnik'||page==='pomoc')return {page,id:CARE_TOPICS.some(t=>t.id===id)||byId(id)?id:''};
   if (page === 'sprawa') return byId(id) ? { page, id } : { page: 'plan' };
   if (page === 'wsparcie') return { page, id: byId(id) ? id : '' };

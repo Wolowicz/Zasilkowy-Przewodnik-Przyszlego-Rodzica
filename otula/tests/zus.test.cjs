@@ -182,6 +182,37 @@ assert.ok(resultHtml.includes('Przykład autorski — dane fikcyjne'));
 assert.ok(resultHtml.includes('Do 2027-02-27'));
 assert.ok(resultHtml.includes('Pracownik składa wniosek o urlop pracodawcy'));
 vm.runInContext('zusResetDrafts()',context);
+// Confirm that a verified interview supplies the correct parent, independently of the demo/profile draft.
+const fatherInterview = {role:'father',event:'birth',eventDate:'2026-07-08',count:1,
+  insurance:'yes',otherInsurance:'no',work:'employee',baseKnown:'yes',benefitBase:6450,
+  parentalWeeks:6,otherPlannedWeeks:0,previousParental:'no',payerSize:'over20'};
+const prefills = context.zusInterviewInputs(fatherInterview);
+assert.equal(prefills.baseB,6450);
+assert.equal(prefills.baseA,'');
+assert.equal(prefills.insurance,'no');
+assert.equal(prefills.fatherWeeks,6);
+assert.equal(prefills.payerB,'employer');
+assert.equal(context.zusInterviewPatch(fatherInterview,prefills),null);
+const approved = {...prefills,baseB:6500,reviewBasis:true,reviewInsurance:true,reviewDates:true};
+assert.equal(context.zusInterviewPatch(fatherInterview,approved).benefitBase,6500);
+assert.equal(context.zusInterviewPatch(fatherInterview,{...approved,eventDate:'2027-01-01'}),null);
+context.location={hash:'#kalkulator/wywiad'};
+context.window.OtulaWywiad={getAnswers:()=>fatherInterview};
+const storedBefore=JSON.stringify([...storage.entries()]);
+context.zusCurrentDraft();
+context.zusSaveDraft(approved);
+assert.equal(JSON.stringify([...storage.entries()]),storedBefore,'temporary calculator edits do not persist answers without consent');
+assert.equal(context.zusCurrentDraft().baseB,6500);
+context.location.hash='';
+assert.ok(calc({priorParts:4,shareA:5,shareB:2}).issues.some(x=>x.includes('limit 5')));
+assert.equal(calc({priorParts:4,shareA:5,shareB:0}).issues.length,0);
+assert.ok(calc({priorApplicant:'A',priorParts:1,priorParentalParts:[{parent:'self',from:'2026-01-01',to:'2026-04-01'}]}).issues.some(x=>x.includes('Wykorzystane części')));
+const ownRules=vm.runInContext('({...ZUS_DEFAULT_RULES,partsLimit:3,policyFrom:"2026-07-01",policyTo:"2026-12-31"})',context);
+assert.equal(context.zusRulesOn('2026-06-30',ownRules).partsLimit,5);
+assert.equal(context.zusRulesOn('2026-07-01',ownRules).partsLimit,3);
+assert.equal(context.zusRulesOn('2027-01-01',ownRules).partsLimit,5);
+assert.ok(context.zusValidateRules({...ownRules,policyFrom:'2026-02-30'}).length);
+assert.ok(context.zusValidateRules({...ownRules,partsLimit:0}).length);
 console.log(checks+' autorskich przypadków kalkulatora OK');
 console.log('Szkice dzieci: izolacja UID, zmiana danych rodziny, reset i rola taty OK');
 console.log('Własny przypadek: zapis, odseparowane przykłady, dopasowanie świadczeń, wariant hipotetyczny i terminy hospitalizacji OK');
