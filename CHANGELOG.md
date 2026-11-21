@@ -8,6 +8,7 @@
 - Dopasowany ekran świadczeń odróżnia rodzaje wsparcia i udostępnia warunki w rozwinięciach. Zachowano rozróżnienie urlopu i zasiłku oraz pracodawcy jako adresata urlopu i podmiotu wypłacającego pieniądze.
 - Testy: 106 autorskich przypadków kalkulatora oraz regresje wspólnego profilu, zapisu, izolacji przykładów i hipotetycznych dat. Przegląd funkcjonalny: odświeżenie, zmiana dziecka, przejście z sytuacji do wyliczenia wcześniactwa. Nie jest to walidacja kwot na zestawach ZUS.
 - Dokument decyzji: `docs/SCIEZKA-RODZICA-I-ZUS.md`. Ekrany tej zmiany i pomiary szerokości: `otula/materialy/zrzuty-rodzic/`.
+- Opublikowano wersję Sites 24 pod dotychczasowym adresem. Na żywo potwierdzono nowy Start, kolejność menu i Centrum e-usług z zachowaniem istniejącego profilu. 36 widoków kontrolnych (12 tras × 320/390/1440 px) nie wykazało przewijania poziomego; konsola testowa bez błędów.
 
 ## 2026-11-21 — publikacja wersji konkursowej
 
