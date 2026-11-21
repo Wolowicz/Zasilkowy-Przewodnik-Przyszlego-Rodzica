@@ -14,8 +14,8 @@ const ZUS_DEFAULT_RULES = Object.freeze({
 });
 let zusRules = structuredClone(ZUS_DEFAULT_RULES);
 let zusDraft = null;
-let zusDemo = '';
 let zusDocumentUrl = '';
+let zusAutoSubmit = false; // przykład lub sprawa z zestawu: przelicz od razu po otwarciu kalkulatora
 const zusDrafts = new Map();
 const zusEvidence = new Map();
 function zusChildKey() { return state.children[state.active].uid; }
@@ -45,14 +45,20 @@ function zusResetDrafts() {
 function zusRuleLabel(rules=zusRules) {
   return rules.version+(JSON.stringify(rules)===JSON.stringify(ZUS_DEFAULT_RULES)?' · standard':' · parametry testowe '+[rules.maternityRate,rules.parentalRate,rules.combinedRate,...rules.parentalWeeks].join('/'));
 }
+function zusSprawaBanner(c) {
+  const d=c.zus?.decyzja||'przyznano';
+  return `<div class="zus-rozpoznano" role="status"><div><p class="home-kicker">Rozpoznano sprawę z zestawu ZUS</p><strong>${esc(c.tytul||'Sprawa ZUS')}</strong></div>
+    <span class="sprawa-decyzja ${d}">${d==='odmowa'?'Odmowa ZUS':d==='czesciowo'?'Częściowo':'Przyznano'}</span>
+    <div class="case-actions">${c.kalkulator?'<button class="button primary" type="button" data-zus-sprawa="wczytaj">Wczytaj dane do kalkulatora</button>':''}<button class="button secondary" type="button" data-zus-sprawa="porownaj">Porównaj z decyzją ZUS</button></div></div>`;
+}
 function zusDocumentPanel() {
   const evidence=zusCurrentEvidence();
   if(zusDocumentUrl)URL.revokeObjectURL(zusDocumentUrl);
   zusDocumentUrl=evidence.file?URL.createObjectURL(evidence.file):'';
   return `<section class="zus-dossier" aria-labelledby="dossier-title"><p class="home-kicker">Teczka sprawy · ${esc(childLabel(state.active))}</p><h2 id="dossier-title">Od dokumentu do planu</h2>
     <ol class="zus-steps"><li>Wybierz przykład lub PDF</li><li>Sprawdź i wpisz dane</li><li>Porównaj wynik</li><li>Zaplanuj dokumenty i pomoc</li></ol>
-    <p>PDF zostaje w pamięci tej karty przeglądarki. Otwórz dokument i przepisz potrzebne dane. Otula nie odczytuje go automatycznie i nie wysyła do AI.</p>
-    <label class="field">Twój dokument PDF (do 20 MB)<input id="zus-document" type="file" accept="application/pdf,.pdf"></label>
+    <label class="sprawa-drop sprawa-drop-mala">${icon('file',28)}<strong>Wgraj PDF sprawy</strong><span>Sprawę z zestawu ZUS rozpoznamy automatycznie, inną przepiszesz ręcznie</span><span class="button secondary">Wybierz plik</span><input id="zus-document" type="file" accept="application/pdf,.pdf"><small>${icon('lock',14)} Plik zostaje na tym urządzeniu</small></label>
+    ${evidence.sprawa?zusSprawaBanner(evidence.sprawa):''}
     <div id="zus-document-view">${evidence.file?`<p>${esc(evidence.file.name)}</p><a class="button secondary" href="${zusDocumentUrl}" target="_blank" rel="noopener">Otwórz lokalny PDF</a><button class="button secondary" type="button" data-zus-action="document-clear">Usuń dokument z teczki</button><iframe title="Podgląd dokumentu w przeglądarce" src="${zusDocumentUrl}"></iframe>`:'<p class="zus-field-note">Nie dodano pliku. Możesz też sprawdzić wariant na danych wpisanych ręcznie.</p>'}</div>
     ${evidence.sample?`<p class="zus-notice">Przykład autorski: ${esc(evidence.sample)}. Fikcyjne dane do demonstracji, nie przypadek udostępniony przez ZUS.</p>`:''}
     <details><summary>Gdzie szukać danych?</summary><ul><li>Ubezpieczenie: tytuł i okres podlegania w dokumentach ZUS/płatnika; samo zatrudnienie nie potwierdza każdego uprawnienia.</li><li>Podstawa: kwota ustalona przez płatnika, nie pensja netto ani dowolna kwota brutto.</li><li>Zdarzenie: data porodu/przyjęcia, liczba dzieci jednocześnie, szczególne okoliczności.</li><li>Podział: uzgodnione okresy obojga rodziców i właściwy wniosek.</li></ul></details>
@@ -162,7 +168,7 @@ function zusCalculation(d,rules=zusRules) {
   if(d.rate==='combined') {
     const event=parseDate(d.eventDate),application=parseDate(d.applicationDate);
     if(!event||!application)issues.push('Dla stawki 81,5% wpisz datę porodu/przyjęcia i złożenia wniosku.');
-    else if(daysBetween(event,application)>21||application<event)issues.push('Wybrany wniosek jest poza przedziałem 0–21 dni. Wybierz wariant 100% i 70% albo sprawdź sytuację z płatnikiem.');
+    else if(daysBetween(event,application)>21)issues.push('Wniosek o 81,5% trzeba złożyć najpóźniej 21 dni po porodzie lub przyjęciu. Wybierz wariant 100% i 70% albo sprawdź sytuację z płatnikiem.');
   }
   if(!fatherOnly&&d.workA==='business'&&d.debt!=='clear')issues.push('Przy działalności najpierw wyjaśnij zadłużenie składkowe z ZUS. Może wpływać na wypłatę.');
   if(d.insuranceB==='yes'&&d.workB==='business'&&d.debtB!=='clear')issues.push('Wyjaśnij stan zadłużenia składkowego drugiego rodzica prowadzącego działalność.');
@@ -202,22 +208,22 @@ function zusResult(d) {
     ${result.fatherOnly?`<p class="zus-notice">Brak ubezpieczenia matki nie odbiera ojcu własnego uprawnienia do rodzicielskiego. Liczymy wybrany okres według ${zusRules.parentalRate}% jego podstawy, z puli najwyżej ${result.parental-zusRules.reservedWeeks} tygodni. Własne ${zusRules.reservedWeeks} tygodni ojca są już w tej puli. Zakładamy brak wcześniejszego wykorzystania rodzicielskiego i brak sytuacji szczególnych; płatnik musi potwierdzić prawo i okres. ${zusSource('parentalZus','Podział rodzicielskiego w ZUS')}</p>`:''}
     <p class="zus-notice"><strong>Zakres kwoty:</strong> bez PIT i podwyższenia do świadczenia rodzicielskiego. Zmiany etatu, przerwy, wcześniejsze zakończenie urlopu oraz kwoty wypłacane w konkretnych miesiącach wymagają osobnego rozliczenia. Wynik nie odtwarza historii wypłat.</p>
     <div class="zus-total"><strong>${zusMoney(result.total)}</strong><span>Orientacyjna suma brutto zasiłków w poniższym wariancie</span></div>
-    <div class="zus-segments">${result.segments.map(s=>`<section><h3>${s.label}</h3><p>${s.days} dni · ${s.rate}% podstawy${s.fraction?' · praca '+s.fraction+' etatu':''}</p><strong>${zusMoney(s.daily)} / dzień</strong><span>Razem ${zusMoney(s.total)}</span></section>`).join('')}</div>
+    <div class="zus-segments">${result.segments.map(s=>`<section><h3>${s.label}</h3><p>${s.days} dni · ${String(s.rate).replace('.',',')}% podstawy${s.fraction?' · praca '+(s.fraction===.5?'½':s.fraction===.25?'¼':String(s.fraction).replace('.',','))+' etatu':''}</p><strong>${zusMoney(s.daily)} / dzień</strong><span>Razem ${zusMoney(s.total)}</span></section>`).join('')}</div>
     ${result.unused?`<p class="zus-notice">${result.unused} tygodni nie jest objętych tym wyliczeniem. ${result.fatherOnly?`${zusRules.reservedWeeks} tygodni zastrzeżonych matce nie przechodzi na ojca. Pozostała różnica, jeśli występuje, to niewybrana część jego puli.`:'Nieprzenoszalna część drugiego rodzica wymaga jego własnego uprawnienia.'}</p>`:''}
     <details class="zus-explain"><summary>Założenia i sposób liczenia</summary><p>Podstawa to kwota ustalona po odliczeniu składek, przed podatkiem. Stawka dzienna = podstawa / 30 × procent zasiłku, z zaokrągleniem do grosza. Kwota miesięczna zależy od liczby dni kalendarzowych. Symulacja nie obejmuje PIT ani podwyższenia do świadczenia rodzicielskiego.</p><p>${result.fatherOnly?'Liczymy wyłącznie rodzicielskie ojca przy nieubezpieczonej matce (art. 31 ust. 3h ustawy zasiłkowej). Nie oznacza to przejęcia macierzyńskiego ani prawa do 81,5%.':'Pierwszy rodzic korzysta z całego okresu macierzyńskiego. Rodzicielskie można wykorzystać kolejno lub równolegle. Stawka 81,5% zakłada wykorzystanie co najmniej jednego dnia rodzicielskiego w pierwszym roku.'} Kwoty nie obejmują wynagrodzenia za pracę ani osobnego urlopu ojcowskiego.</p><p>Praca u pracodawcy udzielającego urlopu trwa w stałym wymiarze przez cały wybrany okres rodzicielski i jego wydłużenie. Dni = pełnowymiarowe dni / (1 − etat), z pominięciem części dnia. Zasiłek maleje proporcjonalnie. Zmienne okresy pracy, przejęcie macierzyńskiego i skrócenie z powodu wieku wymagają odrębnego wyliczenia.</p>${result.ageLimit?`<p>Graniczny wiek dziecka przypada ${fmt(result.ageLimit)}. Zaplanuj wykorzystanie urlopu z uwzględnieniem właściwych terminów.</p>`:''}</details>
     <h3>Dokumenty i następny krok</h3><p>Wynik dotyczy dziecka wybranego w teczce i założeń widocznych powyżej. Zapisz go razem z wersją reguł.</p><p>${result.fatherOnly?`Ojciec kieruje dokumenty do ${payerB}.`:`Pierwszy rodzic kieruje dokumenty do ${payer}.${result.shareB?` Drugi rodzic: do ${payerB}.`:''}`} Przy zatrudnieniu u płatnika zgłaszającego ponad 20 osób do ubezpieczenia chorobowego wypłata zwykle należy do płatnika. Stan ustala się co do zasady na 30 listopada poprzedniego roku.</p>
     <ul><li>Przygotuj aktualny ZAM oraz dokumenty potwierdzające poród lub przyjęcie na wychowanie.</li><li>Pracownik uzgadnia urlop z pracodawcą. Do wypłaty przez ZUS potrzebne może być Z-3, a przy zleceniu Z-3a od płatnika.</li><li>Wniosek o urlop rodzicielski pracownika składa się co najmniej 21 dni przed rozpoczęciem. Wybór stawki 81,5% ma odrębny termin.</li></ul>
     <div class="source-box">${zusSource('amount','Stawki zasiłku')}${zusSource('duration','Wymiar i limity wieku')}${zusSource('parental','Podział i łączenie z pracą')}${zusSource('documents','Aktualne dokumenty')}</div>
-    <div class="case-actions"><a class="button secondary" href="#wsparcie/macierzynski">Poproś bliską osobę o pomoc</a><a class="button secondary" href="#terminy">Zaplanuj termin</a><a class="button primary" href="#konto-demo/wniosek">Przygotuj wniosek pokazowy ${icon('arrow',16)}</a><button class="button secondary" type="button" data-zus-action="print">Drukuj wynik / PDF</button></div></div>`;
+    <div class="case-actions"><a class="button secondary" href="#wsparcie/macierzynski">Poproś bliską osobę o pomoc</a><a class="button secondary" href="#terminy">Zaplanuj termin</a><a class="button primary" href="#e-uslugi/zasilek">Wniosek ZAM (symulacja) ${icon('arrow',16)}</a><button class="button secondary" type="button" data-zus-action="print">Drukuj wynik / PDF</button></div></div>`;
 }
 function calculatorPage(r) {
   const d=zusCurrentDraft();
-  if(typeof requestAnimationFrame==='function')requestAnimationFrame(zusSyncFields);
+  if(typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{zusSyncFields();if(zusAutoSubmit){zusAutoSubmit=false;document.querySelector('#zus-calculator')?.requestSubmit();}});
   const insurance={unknown:'Do sprawdzenia',yes:'Tak, potwierdzone',no:'Brak ubezpieczenia'};
   return backLink(r)+pageHeading('Zasiłki i urlopy','Zaplanujcie opiekę','Porównaj podział urlopu, okres wypłaty i kwoty dla obojga rodziców.')+
     `<div class="zus-page"><p class="zus-notice">Wynik jest orientacyjną symulacją. O prawie i wysokości świadczenia rozstrzyga ZUS lub uprawniony płatnik po sprawdzeniu dokumentów.</p>
-    <div class="zus-demo-choices"><span>Przykłady autorskie</span><button class="filter" data-zus-case="employee">Dwoje rodziców</button><button class="filter" data-zus-case="half">Powrót na pół etatu</button><button class="filter" data-zus-case="uninsured">Brak ubezpieczenia</button><a class="filter" href="#konto-demo">Dane pokazowe ZUS</a></div>
-    ${zusDocumentPanel()}<p class="zus-notice"><strong>Najpierw ustalcie role w wyliczeniu.</strong> W standardowej ścieżce porodu pierwszy rodzic to matka korzystająca z całego macierzyńskiego, drugi to ojciec. Rola wybrana przy wejściu do Otuli nie zmienia tego założenia. Przy adopcji/pieczy wskaż jako pierwszego opiekuna korzystającego z okresu na warunkach macierzyńskiego. Przejęcia i sytuacje szczególne wymagają odrębnego sprawdzenia.</p><form id="zus-calculator"><fieldset class="zus-fields"><legend>Dziecko i zdarzenie</legend>
+    <div class="zus-demo-choices"><span>Przykłady autorskie</span><button class="filter" data-zus-case="employee">Dwoje rodziców</button><button class="filter" data-zus-case="half">Powrót na pół etatu</button><button class="filter" data-zus-case="uninsured">Brak ubezpieczenia</button><a class="filter" href="#e-uslugi">Dane z ZUS (symulacja)</a><a class="filter" href="#sprawdz-sprawe">Sprawa z zestawu ZUS</a></div>
+    ${zusDocumentPanel()}<p class="zus-notice"><strong>Pierwszy rodzic</strong> korzysta z macierzyńskiego (przy porodzie – matka), <strong>drugi</strong> z pozostałej części rodzicielskiego.</p><form id="zus-calculator"><fieldset class="zus-fields"><legend>Dziecko i zdarzenie</legend>
     ${zusSelect('Wasza sytuacja','kind',{birth:'Urodzenie dziecka',adoption:'Przyjęcie w celu adopcji',foster:'Niezawodowa rodzina zastępcza'},d.kind)}
     ${zusSelect('Dzieci urodzone / przyjęte jednocześnie','count',{'0':'Wybierz liczbę dzieci','1':'Jedno','2':'Dwoje','3':'Troje','4':'Czworo','5':'Pięcioro lub więcej'},String(d.count))}
     ${zusField('Rzeczywista data porodu lub przyjęcia','eventDate',d.eventDate,'type="date"')}
@@ -257,27 +263,6 @@ function calculatorPage(r) {
     <div id="zus-result" aria-live="polite"></div><a class="dashboard-link" href="#uprawnienia">Świadczenia w ciąży i trudniejsze sytuacje ${icon('right',16)}</a>
     <a class="dashboard-link" href="#parametry">Parametry kalkulatora — panel demonstracyjny ${icon('right',16)}</a></div>`;
 }
-function zusDemoPage(r) {
-  const request=r.id==='wniosek';
-  return backLink(r)+pageHeading('Środowisko pokazowe',request?'Przećwicz wniosek':'Dane i e-usługi ZUS','W tym miejscu korzystasz z fikcyjnych danych i lokalnej symulacji usług.')+
-    `<div class="zus-page"><div class="zus-demo-choices"><a class="filter" href="#konto-demo">Dane pokazowe</a><a class="filter" href="#konto-demo/wniosek">Wniosek pokazowy</a><a class="filter" href="#kalkulator">Kalkulator</a></div>
-    ${request?`<form id="zus-demo-request"><div class="zus-fields">
-      ${zusSelect('Rodzaj dokumentu','document',{parental:'Wniosek o urlop rodzicielski',maternity:'Dane do wniosku ZAM',civil:'Wniosek o odpis aktu urodzenia'},'parental')}
-      ${zusSelect('Odbiorca','recipient',{employer:'Pracodawca',zus:'ZUS',usc:'Urząd stanu cywilnego'},'employer')}
-      ${zusField('Od dnia','from','','type="date" required')}
-      ${zusField('Do dnia','until','','type="date" required')}
-      <label class="field">Treść prośby<textarea name="message" rows="4" maxlength="2000" required>Proszę o udzielenie urlopu rodzicielskiego we wskazanym okresie.</textarea></label></div>
-      <button class="button primary" type="submit">Sprawdź i przygotuj podgląd</button></form><div id="zus-request-preview" aria-live="polite"></div>`:
-      `<button class="button primary" data-zus-action="login">mObywatel · uruchom symulację</button>
-      <div id="zus-demo-data">${zusDemo?zusDemoData():''}</div>
-      <div class="zus-notice"><strong>Możesz użyć własnych danych</strong><p>Przejdź do kalkulatora i wpisz je samodzielnie. W aplikacji pokazowej dane z ZUS służą do demonstracji.</p><a class="dashboard-link" href="#kalkulator">Wpisz dane ręcznie ${icon('arrow',16)}</a></div>`}
-      <p class="zus-field-note">Symulacja obejmuje tożsamość, dane ZUS, e-ZLA i przygotowanie dokumentu. Wynik nie oznacza złożenia wniosku w urzędzie.</p></div>`;
-}
-function zusDemoData() {
-  return `<div class="zus-result"><h2>Dane fikcyjnej osoby</h2><dl class="zus-facts"><dt>Ubezpieczenie chorobowe</dt><dd>Umowa o pracę · potwierdzone w przykładzie</dd><dt>Podstawa miesięczna</dt><dd>5 000 zł</dd><dt>Zadłużenie</dt><dd>0 zł · pokazowy stan na 21.11.2026</dd><dt>e-ZLA</dt><dd>01–14.11.2026 · kod B · przykład</dd></dl>
-    <button class="button primary" data-zus-case="employee">Użyj danych w kalkulatorze</button>
-    <details class="zus-explain"><summary>Zapytanie do eZUS — symulacja</summary><label class="field">Treść zapytania<textarea id="zus-question" rows="3" maxlength="1200" placeholder="Np. jakie dokumenty powinien przekazać mój płatnik?"></textarea></label><button class="button secondary" data-zus-action="question">Zapisz w pokazowej skrzynce</button><p id="zus-question-status" role="status"></p></details></div>`;
-}
 function zusParametersPage(r) {
   return backLink(r)+pageHeading('Panel demonstracyjny','Parametry zasiłków','Zmiany służą testowaniu reguł w tej sesji przeglądarki.')+
     `<div class="zus-page"><form id="zus-parameters"><div class="zus-fields">
@@ -293,8 +278,8 @@ function zusGuidePage(r) {
   return backLink(r)+pageHeading('Uprawnienia i pomoc','Co warto sprawdzić wcześniej','Informacje zweryfikowane w źródłach ZUS 21 listopada 2026 r.')+
     `<div class="zus-page zus-guide-list">
     <article><h2>Chorobowe w ciąży</h2><p>Przy niezdolności do pracy potwierdzonej przez lekarza świadczenie w ciąży wynosi 100% podstawy, a okres zasiłkowy może trwać do 270 dni. Ubezpieczenie obowiązkowe zwykle wymaga 30 dni wyczekiwania, dobrowolne 90 dni. Istnieją wyjątki i zasady wliczania poprzedniego ubezpieczenia.</p><p>e-ZLA trafia elektronicznie do ZUS i płatnika. Pracownica informuje pracodawcę o nieobecności. Gdy wypłaca ZUS, płatnik przekazuje właściwe zaświadczenie Z-3 lub Z-3a. Osoba prowadząca firmę składa wniosek ZAS-53. Kod B lub zaświadczenie o ciąży pozwala zastosować właściwą stawkę.</p><div class="source-box">${zusSource('sick','Warunki, dokumenty i terminy ZUS')}</div></article>
-    <article><h2>Świadczenie rehabilitacyjne</h2><p>Po wyczerpaniu zasiłku chorobowego można je otrzymać, jeżeli nadal nie można pracować, a dalsze leczenie lub rehabilitacja rokują odzyskanie zdolności do pracy. Ocenę przeprowadza ZUS. Świadczenie trwa maksymalnie 12 miesięcy i w ciąży wynosi 100% podstawy.</p><p>Przygotuj wniosek ZNp-7, zaświadczenie o stanie zdrowia OL-9 i dokumenty wymagane dla Twojej sytuacji. ZUS zaleca złożenie dokumentów co najmniej 6 tygodni przed końcem okresu zasiłkowego.</p><div class="source-box">${zusSource('rehabilitation','Świadczenie rehabilitacyjne w ZUS')}</div></article>
-    <article><h2>Zakończenie pracy w ciąży</h2><p>Gdy ubezpieczenie kończy się przed porodem, zbierz datę i podstawę rozwiązania umowy. Niektóre umowy terminowe przedłużają się do porodu. Śmierć pracodawcy, jego upadłość lub likwidacja mogą dawać szczególne uprawnienia.</p><p>Po utracie zatrudnienia z powodu śmierci, likwidacji lub upadłości pracodawcy, bez zapewnienia innej pracy, możliwy jest zasiłek w wysokości macierzyńskiego do dnia poprzedzającego poród. Za okres po porodzie sprawdza się odrębne warunki. Przygotuj świadectwo pracy i dokumenty potwierdzające okoliczności.</p><div class="source-box">${zusSource('insurance','Wyjątki po ustaniu ubezpieczenia')}${zusSource('documents','Wymagane dowody')}${zusSource('work','Ochrona zatrudnienia — PIP')}</div></article>
+    <article><h2>Świadczenie rehabilitacyjne</h2><p>Po wyczerpaniu zasiłku chorobowego można je otrzymać, jeżeli nadal nie można pracować, a dalsze leczenie lub rehabilitacja rokują odzyskanie zdolności do pracy. Ocenę przeprowadza ZUS. Świadczenie trwa maksymalnie 12 miesięcy. Wynosi 90% podstawy przez pierwsze 3 miesiące i 75% później, a w okresie ciąży – 100%.</p><p>Przygotuj wniosek ZNp-7, zaświadczenie o stanie zdrowia OL-9 i dokumenty wymagane dla Twojej sytuacji. ZUS zaleca złożenie dokumentów co najmniej 6 tygodni przed końcem okresu zasiłkowego.</p><div class="source-box">${zusSource('rehabilitation','Świadczenie rehabilitacyjne w ZUS')}</div></article>
+    <article><h2>Zakończenie pracy w ciąży</h2><p>Gdy ubezpieczenie kończy się przed porodem, zbierz datę i podstawę rozwiązania umowy. Niektóre umowy terminowe przedłużają się do porodu. Śmierć pracodawcy, jego upadłość lub likwidacja mogą dawać szczególne uprawnienia.</p><p>Po utracie zatrudnienia z powodu śmierci, likwidacji lub upadłości pracodawcy, bez zapewnienia innej pracy, możliwy jest zasiłek w wysokości macierzyńskiego do dnia porodu. Za okres po porodzie sprawdza się odrębne warunki. Przygotuj świadectwo pracy i dokumenty potwierdzające okoliczności.</p><div class="source-box">${zusSource('insurance','Wyjątki po ustaniu ubezpieczenia')}${zusSource('documents','Wymagane dowody')}${zusSource('work','Ochrona zatrudnienia — PIP')}</div></article>
     <article><h2>Wcześniactwo, hospitalizacja i utrata dziecka</h2><p>Wcześniactwo lub pobyt noworodka w szpitalu mogą dawać prawo do uzupełniającego urlopu macierzyńskiego. Wymiar zależy od tygodnia ciąży, masy urodzeniowej i czasu hospitalizacji. Przygotuj zaświadczenie szpitala i ustal termin wniosku z płatnikiem.</p><p>Po utracie ciąży lub dziecka zapytaj ZUS o dokumenty potwierdzające zdarzenie i właściwy skrócony okres świadczenia. Choroba, hospitalizacja albo śmierć matki mogą pozwalać drugiemu uprawnionemu opiekunowi przejąć opiekę i zasiłek. Takie przypadki wymagają indywidualnej oceny dokumentów.</p><div class="source-box">${zusSource('duration','ZUS — okresy i sytuacje szczególne')}${zusSource('documents','Dokumenty do zasiłku')}</div></article>
     <article><h2>Co może zmienić prawo lub kwotę?</h2><ul><li>Brak zgłoszenia do chorobowego lub zakończenie ubezpieczenia przed porodem.</li><li>Zadłużenie składkowe przy prowadzeniu działalności — sprawdź stan na właściwy dzień.</li><li>Zmiana etatu, przerwy w ubezpieczeniu i nieregularne składniki wynagrodzenia.</li><li>Umowa wykonywana pozornie albo nieuzasadnione podniesienie podstawy mogą podlegać weryfikacji ZUS.</li><li>Wniosek o stawkę 81,5% ma termin 21 dni. Jeżeli nie wykorzystano choć jednego dnia rodzicielskiego w pierwszym roku, zastosowanie mają odrębne zasady stawki i wyrównania.</li></ul><div class="source-box">${zusSource('amount','Wysokość i wyrównanie')}${zusSource('insurance','Warunki prawa do zasiłku')}</div></article>
     <article><h2>Aktualne formularze</h2><p>Od 24 października 2026 r. ZAM obejmuje również okresy wcześniej obsługiwane przez ZUR i ZAO. Z-3b co do zasady przestał być wymagany. ZUS czasowo udostępnił go 20 listopada w roli Płatnik dla pełnomocników z ograniczonym dostępem do usług eZUS. Dobierz formularz do aktualnej instrukcji i roli użytkownika.</p><div class="source-box">${zusSource('forms','Wzory formularzy ZUS')}${zusSource('documents','Instrukcja składania dokumentów')}</div></article>
@@ -308,24 +293,22 @@ document.addEventListener('click',event=>{
     if(sample.dataset.zusCase==='half')zusDraft.fractionA=.5;
     if(sample.dataset.zusCase==='uninsured')zusDraft.insurance='no';
     zusSaveDraft(zusDraft);
-    const evidence=zusCurrentEvidence();evidence.sample=sample.textContent.trim();evidence.file=null;
+    Object.assign(zusDraft,{reviewInsurance:true,reviewBasis:true,reviewDates:true});zusSaveDraft(zusDraft);zusAutoSubmit=true;
+    const evidence=zusCurrentEvidence();evidence.sample=sample.textContent.trim();evidence.file=null;evidence.sprawa=null;
     if(location.hash==='#kalkulator')render(true);else location.hash='kalkulator';
     return;
   }
   const action=event.target.closest('[data-zus-action]')?.dataset.zusAction;
-  if(action==='document-clear'){zusCurrentEvidence().file=null;render(true);}
-  if(action==='login'){zusDemo='synthetic';document.querySelector('#zus-demo-data').innerHTML=zusDemoData();}
-  if(action==='question') {
-    const text=document.querySelector('#zus-question').value.trim();
-    document.querySelector('#zus-question-status').textContent=text?'Wiadomość zapisana w pokazowej skrzynce tej sesji. To symulacja.':'Najpierw wpisz pytanie.';
-  }
+  if(action==='document-clear'){zusCurrentEvidence().file=null;zusCurrentEvidence().sprawa=null;render(true);}
+  const sprawa=event.target.closest('[data-zus-sprawa]')?.dataset.zusSprawa,c=zusCurrentEvidence().sprawa;
+  if(sprawa==='wczytaj'&&c?.kalkulator){zusSaveDraft({...zusInitial(),...c.kalkulator,reviewInsurance:true,reviewBasis:true,reviewDates:true});zusAutoSubmit=true;render(true);}
+  if(sprawa==='porownaj'&&c&&typeof sprawyPokaz==='function')sprawyPokaz(zusCurrentEvidence().file,c);
   if(action==='rules-reset'){zusRules=structuredClone(ZUS_DEFAULT_RULES);render(true);}
   if(action==='print') {
     document.body.classList.add('printing-zus');
     window.print();
     document.body.classList.remove('printing-zus');
   }
-  if(action==='request-send')document.querySelector('#zus-request-status').textContent='Symulacja zakończona. Dokument został oznaczony jako przekazany w pokazowym obiegu.';
 });
 document.addEventListener('submit',event=>{
   const form=event.target;
@@ -342,22 +325,8 @@ document.addEventListener('submit',event=>{
     zusRules.parentalWeeks=[Number(d.get('parentalSingle')),Number(d.get('parentalMultiple'))];
     document.querySelector('#zus-parameters-status').textContent='Zastosowano parametry testowe w tej sesji.';
   }
-  if(form.id==='zus-demo-request') {
-    event.preventDefault();if(!form.reportValidity())return;
-    const d=new FormData(form),civil=d.get('document')==='civil',from=parseDate(d.get('from')),until=parseDate(d.get('until'));
-    const target=document.querySelector('#zus-request-preview');
-    if(!civil&&(!from||!until||from>until)){target.textContent='Data końcowa musi przypadać tego samego dnia lub później.';return;}
-    const documentLabel=form.elements.document.selectedOptions[0].text;
-    target.innerHTML=`<div class="zus-result"><h2>Podgląd dokumentu pokazowego</h2><p><strong>${esc(documentLabel)}</strong></p><p>Odbiorca · ${esc(form.elements.recipient.selectedOptions[0].text)}</p>${civil?'':`<p>Okres ${fmt(from)} – ${fmt(until)}</p>`}<p class="zus-request-message">${esc(d.get('message'))}</p><button class="button primary" type="button" data-zus-action="request-send">Zasymuluj przekazanie</button><p id="zus-request-status" role="status"></p></div>`;
-  }
 });
 document.addEventListener('change',event=>{
-  if(event.target.form?.id==='zus-demo-request'&&event.target.name==='document') {
-    const form=event.target.form,civil=event.target.value==='civil';
-    form.elements.recipient.value=civil?'usc':event.target.value==='maternity'?'zus':'employer';
-    for(const key of ['from','until']){form.elements[key].disabled=civil;form.elements[key].closest('label').hidden=civil;}
-    form.elements.message.value=civil?'Proszę o wydanie skróconego odpisu aktu urodzenia dziecka.':event.target.value==='maternity'?'Proszę o ustalenie prawa i wypłatę zasiłku macierzyńskiego we wskazanym okresie.':'Proszę o udzielenie urlopu rodzicielskiego we wskazanym okresie.';
-  }
   if(event.target.id!=='zus-document')return;
   if(zusDocumentUrl)URL.revokeObjectURL(zusDocumentUrl);
   zusDocumentUrl='';
@@ -367,7 +336,12 @@ document.addEventListener('change',event=>{
   const form=document.querySelector('#zus-calculator');
   for(const key of ['reviewInsurance','reviewBasis','reviewDates'])form.elements[key].checked=false;
   zusSaveDraft(zusRead(form));document.querySelector('#zus-result').innerHTML='<p class="zus-notice">Dodano dokument. Sprawdź dane i potwierdź je przed przeliczeniem.</p>';
-  zusCurrentEvidence().file=file;zusCurrentEvidence().sample='';
+  zusCurrentEvidence().file=file;zusCurrentEvidence().sample='';zusCurrentEvidence().sprawa=null;
+  if(typeof sprawyRozpoznaj==='function')sprawyRozpoznaj(file).then(c=>{
+    if(!c||zusCurrentEvidence().file!==file)return;
+    zusCurrentEvidence().sprawa=c;
+    document.querySelector('#zus-document-view')?.insertAdjacentHTML('beforebegin',zusSprawaBanner(c));
+  }).catch(()=>{});
   zusDocumentUrl=URL.createObjectURL(file);
   target.innerHTML=`<p>${esc(file.name)}</p><a class="button secondary" href="${zusDocumentUrl}" target="_blank" rel="noopener">Otwórz lokalny dokument</a><button class="button secondary" type="button" data-zus-action="document-clear">Usuń dokument z teczki</button><iframe title="Podgląd dokumentu w przeglądarce" src="${zusDocumentUrl}"></iframe>`;
 });

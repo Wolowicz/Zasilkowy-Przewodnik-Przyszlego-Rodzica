@@ -23,7 +23,8 @@ r=calc({workB:'business',debtB:'clear'});assert.equal(r.issues.length,0);
 r=calc({evidenceRequired:true});assert.ok(r.issues.some(s=>s.includes('teczce')));
 r=calc({evidenceRequired:true,reviewInsurance:true,reviewBasis:true,reviewDates:true});assert.equal(r.issues.length,0);assert.equal(r.total,Math.round(r.total*100)/100);
 r=calc({rate:'combined',applicationDate:'2026-11-22'});assert.equal(r.issues.length,0);
-r=calc({rate:'combined',applicationDate:'2026-10-31'});assert.ok(r.issues.length);
+r=calc({rate:'combined',applicationDate:'2026-10-31'});assert.equal(r.issues.length,0,'wniosek o 81,5% przed porodem jest dopuszczalny (art. 30a ust. 1 – tylko górna granica 21 dni)');
+r=calc({rate:'combined',applicationDate:'2026-11-23'});assert.ok(r.issues.length,'22. dzień po porodzie jest po terminie');
 
 // Synthetic father-only variants, based on public rules; no official case data.
 const father={insurance:'no',insuranceB:'yes',fatherWeeks:32,baseA:0,shareA:NaN,fractionA:NaN,workA:'business',debt:'unknown',coverageEnd:'2020-01-01'};

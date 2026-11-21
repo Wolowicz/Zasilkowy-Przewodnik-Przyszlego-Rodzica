@@ -34,6 +34,8 @@ Repozytorium jest **prywatne**. Linki do jego plików wymagają dostępu nadaneg
 | Moje terminy | Kalendarz miesiąca; własne wydarzenia, edycja i usuwanie; eksport ICS z alarmem |
 | Kalkulator | Jawne reguły, warianty wypłat, podział rodzicielskiego, własne 9 tygodni, stała praca do ½ etatu; osobne szkice dzieci i potwierdzenie danych z teczki |
 | Karta wsparcia | Edytowalna prośba do bliskiej osoby, kopiowanie i ręczne udostępnianie |
+| Centrum e-usług | Symulacja: logowanie mObywatel z kodem, dane z ZUS (także brak ubezpieczenia), zaświadczenie o zadłużeniu, e-ZLA, wiadomość eZUS, wnioski o urlopy i ZAM, odpis aktu urodzenia – z potwierdzeniem i numerem |
+| Sprawdź sprawę ZUS | Wgranie PDF z zestawu testowego: rozpoznanie po skrócie pliku, decyzja ZUS i porównanie z kalkulatorem; dane spraw tylko w postaci zaszyfrowanej |
 | Podręcznik | Przygotowanie do porodu, połóg, karmienie, sen i codzienne czynności ze źródłami |
 | Asystent AI | Przycisk w rogu; panel obok sprawy na dużym ekranie, osobny ekran na telefonie; kontekst sprawy, źródła i cytaty, przerwanie oczekiwania oraz jawny tryb zastępczy |
 | Raport | Plan i terminy w PDF lub Wordzie |

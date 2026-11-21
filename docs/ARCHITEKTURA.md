@@ -39,7 +39,7 @@ Pliki frontendu są klasycznymi skryptami współdzielącymi zakres globalny. Ko
 
 ## Routing i zachowanie telefonu
 
-Trasy mają postać `#start`, `#plan`, `#sprawa/<id>`, `#wsparcie/<id>`, `#terminy`, `#termin/<id>`, `#kalkulator`, `#konto-demo`, `#parametry`. Stan nawigacji pozwala wrócić z ekranu podrzędnego. Nie zastępuj tras oknami modalnymi: systemowe „wstecz” powinno zachować sens na telefonie. Sekwencja powitania nie pokazuje zakładek aplikacji przed ukończeniem wyborów.
+Trasy mają postać `#start`, `#plan`, `#sprawa/<id>`, `#wsparcie/<id>`, `#terminy`, `#termin/<id>`, `#kalkulator`, `#sprawdz-sprawe`, `#e-uslugi/<usługa>` (dawne `#konto-demo` przekierowuje tutaj), `#uprawnienia`, `#parametry`. Stan nawigacji pozwala wrócić z ekranu podrzędnego. Nie zastępuj tras oknami modalnymi: systemowe „wstecz” powinno zachować sens na telefonie. Sekwencja powitania nie pokazuje zakładek aplikacji przed ukończeniem wyborów.
 
 ## Dane lokalne
 
@@ -70,3 +70,13 @@ Lokalny adapter nie zmienia plików wdrożenia. Podczas serwowania `family.js` p
 - Reguły poza AI: powtarzalne obliczenia i testy; nadal potrzebna kompletność prawna i aktualizacja parametrów.
 - ICS: interoperacyjność bez konta i serwera powiadomień; kosztem import oraz brak synchronizacji.
 - Osobny serwer AI: sekret nie jest publiczny; utrzymanie wymaga kontroli źródeł, kosztów, limitów i dostawców.
+
+## Moduły dodane 21.11.2026 (wieczór)
+
+| Plik | Rola |
+| --- | --- |
+| `otula/dist/e-uslugi.js`, `e-uslugi.css` | Centrum e-usług: symulacja logowania mObywatel (kod weryfikacyjny), pobrania danych z ZUS, zaświadczenia o zadłużeniu na wybrany dzień, e-ZLA, wiadomości eZUS, wniosków o urlopy i ZAM oraz odpisu aktu urodzenia. Trzy fikcyjne osoby (etat, działalność z zadłużeniem, zlecenie bez chorobowego). Dane można przenieść do kalkulatora (`zusSaveDraft`). |
+| `otula/dist/sprawy-zus.js`, `sprawy-zus.css` | „Sprawdź sprawę ZUS”: PDF z zestawu testowego → SHA-256 w przeglądarce → odszyfrowanie opisu sprawy → decyzja ZUS, fakty i porównanie okres po okresie (stawka, dni, kwota dzienna = podstawa / 30 × stawka × (1 − wymiar pracy)). Ta sama funkcja rozpoznaje plik wgrany w teczce kalkulatora. |
+| `otula/dist/sprawy-zus-dane.js` | Wyłącznie szyfrogram AES-GCM. Klucz i indeks wyprowadzone z SHA-256 oryginalnego PDF; bez pliku danych nie da się odczytać. Generuje `scripts/sprawy-zus/zaszyfruj.mjs`. |
+| `otula/dist/ui-czytelnosc.css` | Jednolite sekcje rozwijane (karta z przyciskiem +/– zamiast trójkąta ▶), minimalne rozmiary krojów, kompaktowy przycisk asystenta na telefonie. |
+| `otula/tests/sprawy.test.cjs` | Szyfrowanie i odszyfrowanie spraw, odrzucenie obcego lub zmienionego pliku, brak jawnych danych w aplikacji. |

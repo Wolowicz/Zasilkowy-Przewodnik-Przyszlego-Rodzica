@@ -11,13 +11,13 @@ const tabs = {
 };
 const titles = {
   termin:'Termin', formularze:'Formularze ZUS',
-  kalkulator:'Kalkulator zasiłków', 'konto-demo':'Dane pokazowe ZUS', parametry:'Parametry kalkulatora', uprawnienia:'Uprawnienia i wsparcie',
+  kalkulator:'Kalkulator zasiłków', 'konto-demo':'Centrum e-usług', 'e-uslugi':'Centrum e-usług', 'sprawdz-sprawe':'Sprawdź sprawę ZUS', parametry:'Parametry kalkulatora', uprawnienia:'Uprawnienia i wsparcie',
   narzedzia:'Narzędzia', rodzina:'Moja rodzina', raport:'Raport rodzinny', poradnik:'Podręcznik rodzica', pomoc:'Zapytaj AI', slowniczek:'Słowniczek urzędowy',
   powitanie: 'Powitanie', dzieci: 'Dzieci w rodzinie', praca: 'Sytuacja zawodowa',
   start: 'Start', plan: 'Mój plan', terminy: 'Moje terminy', biblioteka: 'Biblioteka spraw', wsparcie: 'Karta wsparcia',
   sprawa: 'Sprawa', sytuacja: 'Moja sytuacja', 'o-przewodniku': 'O przewodniku', dane: 'Dane na urządzeniu'
 };
-const parents = { termin:'terminy', formularze:'terminy', kalkulator:'start', 'konto-demo':'kalkulator', parametry:'kalkulator', uprawnienia:'kalkulator', sprawa: 'plan', sytuacja: 'start', 'o-przewodniku': 'start', dane: 'start', wsparcie: 'plan' };
+const parents = { termin:'terminy', formularze:'terminy', kalkulator:'start', 'konto-demo':'kalkulator', 'e-uslugi':'kalkulator', 'sprawdz-sprawe':'kalkulator', parametry:'kalkulator', uprawnienia:'kalkulator', sprawa: 'plan', sytuacja: 'start', 'o-przewodniku': 'start', dane: 'start', wsparcie: 'plan' };
 const storageKey = 'otula-plan-v1';
 const trailKey = 'otula-trail';
 const main = document.querySelector('#main');
@@ -98,7 +98,8 @@ function route(hash = location.hash) {
   if (page === 'etap' || page === 'data') return {page:'dzieci'};
   if(page==='poradnik' && id==='codzienne-czynnosci')return {page,id};
   if(page==='termin')return {page,id:/^[a-zA-Z0-9-]{1,80}$/.test(id||'')?id:'nowy'};
-  if(page==='konto-demo')return {page,id:id==='wniosek'?id:''};
+  if(page==='konto-demo')return {page:'e-uslugi',id:id==='wniosek'?'zasilek':''};
+  if(page==='e-uslugi')return {page,id:/^[a-z-]{1,30}$/.test(id||'')?id:''};
   if(page==='poradnik'||page==='pomoc')return {page,id:CARE_TOPICS.some(t=>t.id===id)||byId(id)?id:''};
   if (page === 'sprawa') return byId(id) ? { page, id } : { page: 'plan' };
   if (page === 'wsparcie') return { page, id: byId(id) ? id : '' };
@@ -223,7 +224,11 @@ function frame(r) {
   sidebar.innerHTML = `<div class="brand-block">${brand()}<div class="brand-subtitle">Twój plan rodzicielstwa</div></div>
     <nav aria-label="Nawigacja główna"><div class="nav-label">Twoja przestrzeń</div>${navLinks(active, 'nav-item')}
     <a href="#sytuacja" class="nav-item ${active === 'sytuacja' ? 'selected' : ''}">${icon('person', 20)}<span>Moja sytuacja</span></a>
-    <a href="#kalkulator" class="nav-item ${active==='kalkulator'?'selected':''}">${icon('wallet',20)}<span>Kalkulator zasiłków</span></a>${familyNavigation(active)}</nav>`;
+    <a href="#kalkulator" class="nav-item ${active==='kalkulator'?'selected':''}">${icon('wallet',20)}<span>Kalkulator zasiłków</span></a>
+    <a href="#sprawdz-sprawe" class="nav-item ${active==='sprawdz-sprawe'?'selected':''}">${icon('file',20)}<span>Sprawdź sprawę ZUS</span></a>
+    <a href="#e-uslugi" class="nav-item ${active==='e-uslugi'?'selected':''}">${icon('shield',20)}<span>Centrum e-usług</span></a>
+    <a href="#uprawnienia" class="nav-item ${active==='uprawnienia'?'selected':''}">${icon('heart',20)}<span>Świadczenia w ciąży</span></a>
+    <a href="#parametry" class="nav-item ${active==='parametry'?'selected':''}">${icon('adjust',20)}<span>Panel parametrów</span></a>${familyNavigation(active)}</nav>`;
   document.querySelector('.footer').innerHTML = `<a href="#o-przewodniku">${icon('help',18)} O przewodniku</a><a href="#dane">${icon('lock',18)} Dane i usuwanie profilu</a><button class="text-button" data-action="invite">${icon('share',18)} Zaproś znajomych</button><span id="invite-link"></span>`;
   const crumbs = [['start', 'Start']];
   if (r.page === 'sprawa') crumbs.push(['plan', 'Mój plan'], ['', byId(r.id).title]);
@@ -237,6 +242,10 @@ function frame(r) {
   mobileNavigation.innerHTML = `<div class="mobile-nav-heading"><strong>W czym pomóc?</strong><button type="button" class="icon-button" data-action="close-menu" aria-label="Zamknij menu">${icon('close',22)}</button></div>
     <div class="mobile-nav-links">${navLinks(active,'nav-item')}
     <a href="#kalkulator" class="nav-item" ${active==='kalkulator'?'aria-current="page"':''}>${icon('wallet',20)}<span>Kalkulator zasiłków</span></a>
+    <a href="#sprawdz-sprawe" class="nav-item" ${active==='sprawdz-sprawe'?'aria-current="page"':''}>${icon('file',20)}<span>Sprawdź sprawę ZUS</span></a>
+    <a href="#e-uslugi" class="nav-item" ${active==='e-uslugi'?'aria-current="page"':''}>${icon('shield',20)}<span>Centrum e-usług</span></a>
+    <a href="#uprawnienia" class="nav-item" ${active==='uprawnienia'?'aria-current="page"':''}>${icon('heart',20)}<span>Świadczenia w ciąży</span></a>
+    <a href="#parametry" class="nav-item" ${active==='parametry'?'aria-current="page"':''}>${icon('adjust',20)}<span>Panel parametrów</span></a>
     <a href="#formularze" class="nav-item" ${active==='formularze'?'aria-current="page"':''}>${icon('files',20)}<span>Dokumenty i formularze</span></a>
     ${familyTools.map(tool=>`<a class="nav-item" href="#${tool.id}" ${active===tool.id?'aria-current="page"':''}>${icon(tool.glyph,20)}<span>${tool.label}</span></a>`).join('')}
     <a href="#sytuacja" class="nav-item" ${active==='sytuacja'?'aria-current="page"':''}>${icon('adjust',20)}<span>Moja sytuacja</span></a>
@@ -589,7 +598,7 @@ function render(focus = false) {
   const r = route();
   document.body.classList.toggle('arriving', (r.page === 'start' && !state.onboarded) || ['powitanie','dzieci','praca'].includes(r.page));
   frame(r);
-  const pages = { termin:calendarEditor, formularze:formsPage, kalkulator:calculatorPage, "konto-demo":zusDemoPage, parametry:zusParametersPage, uprawnienia:zusGuidePage, narzedzia:toolsPage, slowniczek:glossaryPage, rodzina:childrenPage, raport:reportPage, poradnik:handbook, pomoc:helpPage, powitanie: arrival, dzieci: arrival, praca: arrival, start, plan: planPage, terminy: deadlinesPage, biblioteka: library, wsparcie: support, sytuacja: situation, 'o-przewodniku': about, dane: dataPage };
+  const pages = { termin:calendarEditor, formularze:formsPage, kalkulator:calculatorPage, 'e-uslugi':eUslugiPage, 'sprawdz-sprawe':sprawdzSprawePage, parametry:zusParametersPage, uprawnienia:zusGuidePage, narzedzia:toolsPage, slowniczek:glossaryPage, rodzina:childrenPage, raport:reportPage, poradnik:handbook, pomoc:helpPage, powitanie: arrival, dzieci: arrival, praca: arrival, start, plan: planPage, terminy: deadlinesPage, biblioteka: library, wsparcie: support, sytuacja: situation, 'o-przewodniku': about, dane: dataPage };
   main.innerHTML = r.page === 'sprawa' ? backLink(r) + casePage(r.id) : pages[r.page](r);
   if (['plan','terminy','sytuacja','wsparcie'].includes(r.page)) main.insertAdjacentHTML('afterbegin',childSwitch());
   if (r.page === 'biblioteka') main.insertAdjacentHTML('afterbegin','<div class="library-tools"><a href="#slowniczek">Słowniczek</a><a href="#pomoc">Zapytaj AI</a></div>');

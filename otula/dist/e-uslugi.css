@@ -1,0 +1,68 @@
+/* Centrum e-usług (symulacja) – układ: lista usług + panel; okna logowania jak w prawdziwym przepływie. */
+.eu-sym { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; background: #fff3c4; color: #5b4416; font-size: 12px; font-weight: 750; letter-spacing: .02em; white-space: nowrap; }
+.eu-okno { max-width: 560px; margin: 8px 0 24px; border-radius: 24px; background: #fff; border: 1px solid var(--line, #eadfda); box-shadow: 0 16px 40px #5a2e4014; overflow: hidden; }
+.eu-okno-pasek { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 20px; background: #f7eef1; font-weight: 750; color: #5b3046; }
+.eu-mob .eu-okno-pasek { background: #e9eef8; color: #24365c; }
+.eu-okno-tresc { padding: 24px 22px 26px; }
+.eu-okno-tresc h2 { font: 400 clamp(25px, 3vw, 32px)/1.15 var(--serif, 'DM Serif Text', serif); margin: 0 0 8px; }
+.eu-kod { margin: 18px 0 20px; font: 700 44px/1 'DM Sans', sans-serif; letter-spacing: .3em; color: #24365c; text-align: center; padding: 16px; border-radius: 18px; background: #f3f6fb; }
+.eu-ladowanie { display: grid; justify-items: center; text-align: center; gap: 8px; padding: 40px 22px; }
+.eu-spinner { width: 44px; height: 44px; border-radius: 50%; border: 4px solid #f0dde3; border-top-color: #7a3d57; animation: eu-kreci 0.9s linear infinite; }
+@keyframes eu-kreci { to { transform: rotate(360deg); } }
+.eu-osoby { display: grid; gap: 8px; margin: 14px 0 18px; }
+.eu-osoby legend { font-weight: 700; margin-bottom: 8px; }
+.eu-osoby label { position: relative; }
+.eu-osoby input { position: absolute; opacity: 0; }
+.eu-osoby span { display: grid; gap: 2px; padding: 12px 14px; border: 1px solid #ded4d3; border-radius: 14px; cursor: pointer; font-size: 14px; color: #6d5560; }
+.eu-osoby b { color: var(--ink, #45293a); font-size: 15.5px; }
+.eu-osoby input:checked + span { border-color: #7a3d57; background: #fbeef2; box-shadow: inset 0 0 0 1px #7a3d57; }
+.eu-osoby input:focus-visible + span { outline: 3px solid #97496c; outline-offset: 2px; }
+.eu-mob-btn { width: 100%; justify-content: center; min-height: 52px; font-size: 16px; }
+
+.eu-konto { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 16px; border-radius: 18px; background: #fff; border: 1px solid var(--line, #eadfda); margin-bottom: 18px; }
+.eu-konto small { display: block; color: #7a6269; }
+.eu-konto .text-button { margin-left: auto; }
+.eu-avatar { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; background: #7a3d57; color: #fff; font-weight: 750; font-size: 18px; }
+.eu-uklad { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 20px; align-items: start; }
+.eu-menu { display: grid; gap: 6px; }
+.eu-menu a { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 10px 14px; border-radius: 14px; background: #fff; border: 1px solid var(--line, #eadfda); color: var(--ink, #45293a); font-weight: 650; }
+.eu-menu a .icon { color: #7a3d57; flex: none; }
+.eu-menu a.on { background: #7a3d57; border-color: #7a3d57; color: #fff; } .eu-menu a.on .icon { color: #fff; }
+.eu-panel { background: #fff; border: 1px solid var(--line, #eadfda); border-radius: 24px; padding: clamp(18px, 3vw, 30px); min-height: 320px; }
+.eu-panel h2 { font: 400 clamp(25px, 3vw, 32px)/1.15 var(--serif, 'DM Serif Text', serif); margin: 0 0 12px; }
+.eu-status { display: inline-flex; padding: 9px 16px; border-radius: 999px; font-weight: 750; background: #e3eedb; color: #355a2e; margin-bottom: 14px; }
+.eu-status.brak { background: #f8dde2; color: #8a2e46; }
+.eu-dane { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin: 0 0 16px; }
+.eu-dane div { padding: 12px 14px; border-radius: 14px; background: #fcf7f4; }
+.eu-dane dt { font-size: 12px; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; color: #8a6a76; }
+.eu-dane dd { margin: 4px 0 0; font-weight: 650; }
+.eu-uwaga { padding: 12px 16px; border-radius: 14px; background: #fff6e1; font-size: 15px; }
+.eu-postep { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 10px; }
+.eu-postep li { display: flex; align-items: center; gap: 12px; color: #9b8288; font-weight: 650; }
+.eu-postep li::before { content: ''; width: 22px; height: 22px; border-radius: 50%; border: 3px solid #eadfda; flex: none; }
+.eu-postep li.teraz { color: var(--ink, #45293a); } .eu-postep li.teraz::before { border-color: #7a3d57; border-right-color: transparent; animation: eu-kreci .9s linear infinite; }
+.eu-postep li.ok { color: #355a2e; } .eu-postep li.ok::before { border-color: #9bbf8b; background: #9bbf8b; }
+.eu-form { display: grid; gap: 14px; max-width: 520px; margin-bottom: 14px; }
+.eu-form .button { justify-self: start; }
+.eu-para { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.eu-dokument { margin: 14px 0; padding: 16px 18px; border-radius: 16px; border: 1px solid #e6d6c4; background: #fffcf6; }
+.eu-dokument header { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.eu-dokument header span { font-family: ui-monospace, monospace; font-size: 13px; color: #6d5560; }
+.eu-dokument small { color: #7a6269; }
+.eu-upo { border-color: #c9dcc0; background: #f6fbf3; }
+.eu-green { color: #355a2e; } .eu-red { color: #8a2e46; }
+.eu-lista { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 8px; }
+.eu-lista li { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 14px; background: #fcf7f4; }
+.eu-lista small { display: block; color: #7a6269; }
+.eu-kodzla { flex: none; padding: 6px 10px; border-radius: 10px; background: #7a3d57; color: #fff; font-weight: 750; font-size: 13px; }
+.eu-watek { margin: 12px 0; display: grid; gap: 8px; }
+.eu-watek p { margin: 0; padding: 12px 14px; border-radius: 14px; background: #fcf7f4; }
+.eu-watek b { display: block; font-size: 13px; color: #7a6269; }
+.eu-watek .eu-odp { background: #eef3fb; margin-left: 24px; }
+@media (max-width: 900px) {
+  .eu-uklad { grid-template-columns: 1fr; }
+  .eu-menu { grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; padding-bottom: 4px; }
+  .eu-menu a { min-height: 46px; white-space: nowrap; }
+}
+@media (max-width: 520px) { .eu-para { grid-template-columns: 1fr; } .eu-kod { font-size: 36px; } }
+@media (prefers-reduced-motion: reduce) { .eu-spinner, .eu-postep li.teraz::before { animation: none; } }

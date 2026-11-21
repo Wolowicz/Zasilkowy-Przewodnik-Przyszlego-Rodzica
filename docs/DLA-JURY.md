@@ -46,9 +46,9 @@ Wagi pochodzą z s. 16 [briefu ZUS](https://mudnibfuppwadjkynscc.supabase.co/sto
 | Sytuacje szczególne | Częściowo | Wykrycie i skierowanie do indywidualnej analizy |
 | Praca w trakcie rodzicielskiego | Częściowo | Stały wymiar do ½ etatu przez całą część i jej wydłużenie |
 | Adopcja i piecza | Częściowo | Standardowa ścieżka z datami; skrócone okresy do weryfikacji |
-| mObywatel, ubezpieczenie, e-ZLA, saldo | Demonstracja | Fikcyjne dane, bez połączenia z urzędem |
-| Dokumenty i wnioski | Częściowo / demonstracja | Linki, lokalny podgląd PDF, próbny formularz i skrzynka |
-| OCR dokumentu | Do wykonania | Użytkownik sam przepisuje potwierdzone dane |
+| mObywatel, ubezpieczenie, e-ZLA, zadłużenie, eZUS | Symulacja z pełnym przebiegiem | `#e-uslugi`: logowanie z kodem, pobieranie krok po kroku, zaświadczenie na dzień powstania prawa, e-ZLA (kod B), wiadomość do ZUS; trzy fikcyjne osoby, w tym brak ubezpieczenia i zadłużenie |
+| Dokumenty i wnioski | Symulacja | Wnioski o urlop (macierzyński, rodzicielski z pracą, ojcowski, wychowawczy), ZAM do płatnika albo ZUS, odpis aktu urodzenia – z potwierdzeniem i numerem; nic nie jest wysyłane |
+| Sprawy z zestawu ZUS (upload PDF) | Mechanizm działa; dane spraw do dołączenia | `#sprawdz-sprawe` i teczka kalkulatora rozpoznają PDF po skrócie SHA-256, pokazują decyzję ZUS i porównanie z kalkulatorem. Dane spraw są szyfrowane kluczem z pliku – w aplikacji i repozytorium nie ma ich jawnej kopii (zakaz rozpowszechniania materiałów ZUS) |
 | Parametry reguł | Demonstracja | Pamięć sesji, wynik oznaczony jako testowy |
 | Asystent | Działa zależnie od dostawców | Panel na dużym ekranie lub ekran na telefonie; kontekst sprawy, źródła, cytaty i tryby zastępcze; sekret tylko na serwerze |
 | Oficjalne materiały ZUS | Otrzymane; walidacja częściowa | Sześć materiałów ogólnych i 87 skanów spraw; próba czterech: trzy częściowe zgodności, jedna poza modelem, zero zamkniętych walidacji kwoty |

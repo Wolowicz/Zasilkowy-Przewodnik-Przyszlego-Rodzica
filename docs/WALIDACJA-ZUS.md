@@ -93,3 +93,24 @@ Testy w `otula/tests/zus.test.cjs` są **autorskimi scenariuszami syntetycznymi*
 Dla otrzymanych spraw ZUS prowadzić lokalną, niepublikowaną kartę: anonimowy identyfikator, ustalone dane, oczekiwane rozstrzygnięcie, wynik aplikacji, różnica w dniach/kwocie, przyczyna, poprawka i wynik ponownego testu. Repozytorium może zawierać agregat liczby spraw i rodzaju usterek oraz własne pozbawione danych osobowych testy reguł; nie powinno zawierać skanów, dokumentów ani przepisanych danych rodzin.
 
 Za zweryfikowany uznajemy tylko konkretny scenariusz z porównanym wynikiem. Brak wymaganej informacji oznacza „nie można zweryfikować”, a nie wynik pozytywny.
+
+## Przegląd reguł względem materiałów ZUS — 21.11.2026, wieczór
+
+Drugi, niezależny przegląd porównał około 70 wartości ilościowych z wyciągów ustawy zasiłkowej, Kodeksu pracy, rozporządzeń i tabeli okresów z kodem `zus.js` i `catalog.js`. **Standardowa ścieżka jest poprawna**: wymiary 20/31/33/35/37 i 41/43, Za życiem 65/67, 9 tygodni drugiego rodzica po 70%, 81,5% dla matki i dla części ojca ponad 9 tygodni, łączenie z pracą przy stałym etacie, limity wieku 7/10/14 oraz próg płatnika „ponad 20 ubezpieczonych”.
+
+| # | Ustalenie | Stan |
+| --- | --- | --- |
+| B3 | Wniosek o 81,5% złożony przed porodem był odrzucany; ustawa (art. 30a ust. 1) określa tylko górną granicę 21 dni po porodzie | **Poprawione**, test w `zus.test.cjs` |
+| B7 | „Zasiłek w wysokości macierzyńskiego do dnia poprzedzającego poród” – ustawa: „do dnia porodu” (art. 30 ust. 3) | **Poprawione** |
+| B8 | Świadczenie rehabilitacyjne opisane tylko jako 100% w ciąży – brakowało 90% (3 mies.) i 75% (art. 19 ust. 1) | **Poprawione** |
+| B1 | Brak minimalnej podstawy dla pełnego etatu i podwyższenia do kwoty świadczenia rodzicielskiego (art. 45, 47; art. 31 ust. 3a–3c) | Otwarte – kwoty niskich podstaw mogą być zaniżone; wynik to opisuje |
+| B2 | 81,5% bez dnia rodzicielskiego w 1. roku życia: wyrównanie do 100% (art. 31 ust. 3g, ust. 4) | Otwarte |
+| B4 | Adopcja/piecza: minimum 9 tygodni, pula 38/62, rozdzielenie limitów wieku | Otwarte |
+| B5 | Wcześniactwo/hospitalizacja blokuje cały wynik zamiast dodać urlop uzupełniający (100%) | Otwarte |
+| B6 | Zadłużenie: próg, data stanu, osoby współpracujące | Częściowo: zaświadczenie na dzień powstania prawa w `#e-uslugi`; reguła progu otwarta |
+| B9 | Drugi rodzic zawsze bierze całą resztę puli | Otwarte |
+| B10 | Łączenie z pracą tylko stałym wymiarem przez cały okres | Otwarte (znane ograniczenie) |
+| B11 | Panel parametrów: 5 pól, bez dat obowiązywania | Otwarte |
+| B12–B13 | Termin ojcowskiego przy adopcji; lista dokumentów rodzicielskiego | Otwarte |
+
+Przykładowe sprawy z zestawu ZUS odczytano lokalnym OCR (Windows, bez wysyłania). Ich opisy są przygotowywane poza repozytorium i trafiają do aplikacji wyłącznie zaszyfrowane kluczem z oryginalnego pliku (`scripts/sprawy-zus/zaszyfruj.mjs`): juror z plikiem może sprawdzić wyliczenie, a nikt bez pliku nie odczyta danych.

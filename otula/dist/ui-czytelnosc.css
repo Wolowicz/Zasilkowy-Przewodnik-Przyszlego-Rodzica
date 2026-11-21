@@ -1,0 +1,71 @@
+/* Czytelne sekcje rozwijane – bez trójkątów ▶.
+   Każde <details> w aplikacji wygląda jak karta z tytułem i okrągłym przyciskiem +/–.
+   Sekcje, które mają własną ikonę (chevron), zachowują ją – zmieniamy tylko te bez ikony.
+   Plik jest niezależny od reszty stylów, więc nie koliduje z bieżącymi zmianami w style.css/zus.css. */
+
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::marker { content: ''; }
+
+details:has(> summary:not(:has(> .icon))) {
+  background: #fff;
+  border: 1px solid var(--line, #eadfda);
+  border-radius: 16px;
+  padding: 0 18px;
+  margin: 14px 0;
+}
+details > summary:not(:has(> .icon)) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 56px;
+  padding: 10px 0;
+  cursor: pointer;
+  font-weight: 650;
+  font-size: 16px;
+  line-height: 1.3;
+  color: var(--ink, #45293a);
+}
+details > summary:not(:has(> .icon))::after {
+  content: '';
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f6e5e9 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a3d57' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center / 16px no-repeat;
+  transition: background-color .15s;
+}
+details[open] > summary:not(:has(> .icon))::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a3d57' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E");
+}
+details > summary:not(:has(> .icon)):hover::after { background-color: #f0d6dd; }
+details > summary:not(:has(> .icon)):focus-visible { outline: 3px solid #97496c; outline-offset: 4px; border-radius: 10px; }
+details[open]:has(> summary:not(:has(> .icon))) { padding-bottom: 16px; }
+details[open] > summary:not(:has(> .icon)) { border-bottom: 1px solid var(--line, #eadfda); margin-bottom: 12px; }
+
+/* sekcje zagnieżdżone w kartach – lżejsze, bez podwójnej ramki */
+.answer-list details:has(> summary:not(:has(> .icon))),
+details details:has(> summary:not(:has(> .icon))) {
+  border: 0; border-bottom: 1px solid var(--line, #eadfda); border-radius: 0; padding: 0; margin: 0; background: transparent;
+}
+
+@media (max-width: 679px) {
+  details > summary:not(:has(> .icon)) { font-size: 15px; min-height: 52px; }
+  details:has(> summary:not(:has(> .icon))) { padding: 0 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  details > summary::after { transition: none; }
+}
+
+/* Czytelność na telefonie (audyt 21.11): minimalne rozmiary krojów i cele dotyku */
+.small-label { font-size: 12px; }
+.institution { font-size: 12px; }
+.filter { font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; }
+.text-button { font-size: 14px; }
+@media (max-width: 679px) {
+  /* „Zapytaj Otulę” jako okrągła ikona – nie zasłania kart i wyników */
+  .assistant-launcher { padding: 0; width: 56px; min-height: 56px; justify-content: center; border-radius: 50%; }
+  .assistant-launcher span:not(.icon) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  #main { padding-bottom: 96px; }
+}

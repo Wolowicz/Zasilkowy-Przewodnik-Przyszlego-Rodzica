@@ -1,0 +1,63 @@
+/* Ekran „Sprawdź sprawę ZUS” – krótko, czytelnie, bez rozwijanych trójkątów. */
+.sprawa-kroki { display: flex; gap: 8px; list-style: none; padding: 0; margin: 0 0 22px; flex-wrap: wrap; }
+.sprawa-kroki li { display: inline-flex; align-items: center; gap: 9px; padding: 8px 16px 8px 8px; border-radius: 999px; background: #fff; border: 1px solid var(--line, #eadfda); font-weight: 650; font-size: 15px; color: #7a6269; }
+.sprawa-kroki b { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #f3e9ec; color: #7a3d57; font-size: 14px; }
+.sprawa-kroki li.now { border-color: #c98ea0; color: var(--ink, #45293a); }
+.sprawa-kroki li.now b { background: #7a3d57; color: #fff; }
+.sprawa-kroki li.done b { background: #dfe9d3; color: #3f5a38; }
+
+.sprawa-drop { position: relative; display: grid; justify-items: center; gap: 10px; text-align: center; padding: 42px 24px; border: 2px dashed #d9b6c0; border-radius: 24px; background: #fffaf6; cursor: pointer; color: #7a3d57; transition: background .15s, border-color .15s; }
+.sprawa-drop:hover, .sprawa-drop.nad { background: #fbeef2; border-color: #7a3d57; }
+.sprawa-drop strong { font: 400 clamp(24px, 3vw, 32px)/1.15 var(--serif, 'DM Serif Text', serif); color: var(--ink, #45293a); }
+.sprawa-drop span:not(.button) { color: #8a6a76; font-size: 14px; }
+.sprawa-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.sprawa-drop small { display: inline-flex; align-items: center; gap: 6px; color: #7a6269; font-size: 13px; }
+.sprawa-drop:focus-within { outline: 3px solid #97496c; outline-offset: 4px; }
+
+.sprawa-card { background: #fff; border: 1px solid var(--line, #eadfda); border-radius: 24px; padding: clamp(18px, 3vw, 30px); margin: 18px 0; box-shadow: 0 8px 26px #5a2e400d; }
+.sprawa-card h2 { font: 400 clamp(25px, 3vw, 34px)/1.15 var(--serif, 'DM Serif Text', serif); margin: 4px 0 10px; }
+.sprawa-card h3 { font-size: 17px; margin: 22px 0 10px; }
+.sprawa-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.sprawa-decyzja { flex: none; padding: 9px 16px; border-radius: 999px; font-weight: 750; font-size: 15px; background: #e3eedb; color: #355a2e; }
+.sprawa-decyzja.odmowa { background: #f8dde2; color: #8a2e46; }
+.sprawa-decyzja.czesciowo { background: #fbefcc; color: #6f5317; }
+.sprawa-tagi { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.sprawa-tagi span { padding: 5px 12px; border-radius: 999px; background: #fbf1ea; color: #6d4b3d; font-size: 13px; font-weight: 650; }
+.sprawa-powod { margin: 12px 0 0; padding: 12px 16px; border-radius: 14px; background: #fff6e1; font-size: 15px; }
+.sprawa-fakty { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; margin: 18px 0 0; }
+.sprawa-fakt { padding: 12px 14px; border-radius: 14px; background: #fcf7f4; }
+.sprawa-fakt dt { font-size: 12px; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; color: #8a6a76; }
+.sprawa-fakt dd { margin: 4px 0 0; font-weight: 650; font-size: 15.5px; }
+.sprawa-por { display: grid; gap: 8px; }
+.sprawa-wiersz { display: grid; grid-template-columns: minmax(130px, 1fr) 1fr 1fr auto; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #fcf7f4; }
+.sprawa-k { font-weight: 700; }
+.sprawa-v { font-weight: 650; } .sprawa-v small { display: block; font-size: 11px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: #8a6a76; }
+.sprawa-uwaga { margin: 10px 0 0; font-size: 14px; color: #6d5560; }
+.sprawa-card table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 460px; }
+.sprawa-card th, .sprawa-card td { text-align: left; padding: 11px 10px; border-bottom: 1px solid var(--line, #eadfda); }
+.sprawa-card thead th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #8a6a76; }
+.sprawa-status { padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 750; background: #eeeae8; color: #625858; white-space: nowrap; }
+.sprawa-status.zgodne { background: #e3eedb; color: #355a2e; }
+.sprawa-status.rozne { background: #fbefcc; color: #6f5317; }
+.sprawa-ryzyka { margin: 0; padding-left: 20px; } .sprawa-ryzyka li { margin: 5px 0; }
+.sprawa-pdf { width: 100%; height: min(78vh, 900px); border: 1px solid var(--line, #eadfda); border-radius: 16px; margin-top: 18px; background: #f6f1ee; }
+.sprawa-nieznana { display: flex; gap: 16px; align-items: flex-start; } .sprawa-nieznana > .icon { flex: none; color: #7a3d57; margin-top: 6px; }
+.sprawa-blad { border-color: #ebc4cd; background: #fdf1f3; }
+.sprawa-zakres { margin-top: 26px; } .sprawa-zakres h2 { font: 400 22px/1.2 var(--serif, 'DM Serif Text', serif); }
+@media (max-width: 679px) {
+  .sprawa-drop { padding: 30px 16px; }
+  .sprawa-kroki li { font-size: 14px; padding: 6px 12px 6px 6px; gap: 7px; }
+  .sprawa-kroki b { width: 24px; height: 24px; }
+  .sprawa-wiersz { grid-template-columns: 1fr 1fr; }
+  .sprawa-k { grid-column: 1 / -1; }
+  .sprawa-wiersz .sprawa-status { grid-column: 1 / -1; justify-self: start; }
+  .sprawa-fakty { grid-template-columns: 1fr 1fr; }
+}
+
+/* wersja w kalkulatorze (teczka sprawy) */
+.sprawa-drop-mala { padding: 24px 18px; gap: 6px; margin: 12px 0; }
+.sprawa-drop-mala strong { font-size: clamp(20px, 2.4vw, 24px); }
+.zus-rozpoznano { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin: 12px 0; padding: 16px 18px; border-radius: 18px; background: #f6fbf3; border: 1px solid #c9dcc0; }
+.zus-rozpoznano > div:first-child { flex: 1 1 240px; }
+.zus-rozpoznano strong { font-size: 17px; }
+.zus-rozpoznano .case-actions { flex-basis: 100%; margin: 0; }

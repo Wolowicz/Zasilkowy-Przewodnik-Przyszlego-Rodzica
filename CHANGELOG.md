@@ -1,5 +1,13 @@
 # Historia zmian
 
+## 2026-11-21 (wieczór) — symulacje e-usług, sprawy z zestawu ZUS i czytelność
+
+- Centrum e-usług (`#e-uslugi`) z pełnym przebiegiem symulacji: logowanie mObywatel z kodem, pobieranie danych z ZUS, zaświadczenie o zadłużeniu na dzień powstania prawa, e-ZLA, wiadomość eZUS, wnioski o urlopy i ZAM, odpis aktu urodzenia; trzy fikcyjne osoby. Zastępuje dawne „Dane pokazowe ZUS” (stary adres przekierowuje).
+- „Sprawdź sprawę ZUS” (`#sprawdz-sprawe`) i rozpoznawanie PDF w teczce kalkulatora: skrót SHA-256 pliku, decyzja ZUS i porównanie okres po okresie. Dane spraw szyfrowane kluczem z oryginalnego pliku (`scripts/sprawy-zus/zaszyfruj.mjs`); test `otula/tests/sprawy.test.cjs`.
+- Bez trójkątów ▶: sekcje rozwijane jako karty z przyciskiem +/–; krótsze objaśnienia, strefa upuszczania PDF zamiast surowego pola pliku, minimalne rozmiary krojów, kompaktowy przycisk asystenta na telefonie.
+- Kalkulator: przykłady liczą się od razu; polski zapis „81,5%” i „½ etatu”; w menu „Sprawdź sprawę ZUS”, „Centrum e-usług”, „Świadczenia w ciąży” i „Panel parametrów”.
+- Reguły: wniosek o 81,5% przed porodem jest dopuszczalny (B3), zasiłek w wysokości macierzyńskiego do dnia porodu (B7), stawki świadczenia rehabilitacyjnego 90%/75% (B8). Wyniki przeglądu i otwarte pozycje: `docs/WALIDACJA-ZUS.md`.
+
 ## 2026-11-21 — poprawki UX i przegląd materiałów ZUS
 
 - Mobilne menu zamiast dwóch rzędów zakładek, spójne kroki powitania i proporcje ilustracji, układ komputerowy oraz podpis „Twój plan rodzicielstwa”.
