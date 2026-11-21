@@ -11,13 +11,13 @@ const tabs = {
 };
 const titles = {
   termin:'Termin', formularze:'Formularze ZUS',
-  kalkulator:'Kalkulator zasiłków', 'konto-demo':'Centrum e-usług', 'e-uslugi':'Centrum e-usług', 'sprawdz-sprawe':'Sprawdź sprawę ZUS', parametry:'Parametry kalkulatora', uprawnienia:'Uprawnienia i wsparcie',
-  narzedzia:'Narzędzia', rodzina:'Moja rodzina', raport:'Raport rodzinny', poradnik:'Podręcznik rodzica', pomoc:'Zapytaj AI', slowniczek:'Słowniczek urzędowy',
+  kalkulator:'Kalkulator zasiłków', 'konto-demo':'Centrum e-usług', 'e-uslugi':'Centrum e-usług', 'sprawdz-sprawe':'Sprawdź sprawę ZUS', parametry:'Parametry kalkulatora', uprawnienia:'Jakie świadczenia?',
+  narzedzia:'Więcej możliwości', rodzina:'Moja rodzina', raport:'Raport rodzinny', poradnik:'Podręcznik rodzica', pomoc:'Zapytaj AI', slowniczek:'Słowniczek urzędowy',
   powitanie: 'Powitanie', dzieci: 'Dzieci w rodzinie', praca: 'Sytuacja zawodowa',
   start: 'Start', plan: 'Mój plan', terminy: 'Moje terminy', biblioteka: 'Biblioteka spraw', wsparcie: 'Karta wsparcia',
   sprawa: 'Sprawa', sytuacja: 'Moja sytuacja', 'o-przewodniku': 'O przewodniku', dane: 'Dane na urządzeniu'
 };
-const parents = { termin:'terminy', formularze:'terminy', kalkulator:'start', 'konto-demo':'kalkulator', 'e-uslugi':'kalkulator', 'sprawdz-sprawe':'kalkulator', parametry:'kalkulator', uprawnienia:'kalkulator', sprawa: 'plan', sytuacja: 'start', 'o-przewodniku': 'start', dane: 'start', wsparcie: 'plan' };
+const parents = { termin:'terminy', formularze:'terminy', kalkulator:'start', 'konto-demo':'kalkulator', 'e-uslugi':'start', 'sprawdz-sprawe':'kalkulator', parametry:'kalkulator', uprawnienia:'kalkulator', sprawa: 'plan', sytuacja: 'e-uslugi', 'o-przewodniku': 'start', dane: 'start', wsparcie: 'plan' };
 const storageKey = 'otula-plan-v1';
 const trailKey = 'otula-trail';
 const main = document.querySelector('#main');
@@ -219,17 +219,24 @@ function navLinks(active, cls, short = false) {
   return entries.map(([id, [label, shortLabel, glyph]]) =>
     `<a href="#${id}" class="${cls} ${active === id ? 'selected' : ''}" ${active === id ? 'aria-current="page"' : ''}>${icon(glyph,20)}<span>${short ? shortLabel : label}</span></a>`).join('');
 }
+const parentNavigation = [
+  ['start','Start','home'], ['e-uslugi','Centrum e-usług','shield'],
+  ['uprawnienia','Jakie świadczenia?','heart'], ['kalkulator','Ile mogę otrzymać?','wallet'],
+  ['formularze','Dokumenty i wnioski','files'],
+  ['terminy','Moje terminy','calendar']
+];
+function parentNavLinks(active) {
+  return parentNavigation.map(([id,label,glyph])=>`<a href="#${id}" class="nav-item ${active===id?'selected':''}" ${active===id?'aria-current="page"':''}>${icon(glyph,20)}<span>${label}</span></a>`).join('');
+}
+function extraNavLinks(active) {
+  return [['plan','Moje kolejne kroki','plan'],['raport','Pobierz mój plan','download'],['wsparcie','Poproś bliskich o pomoc','mail'],['narzedzia','Więcej możliwości','menu']].map(([id,label,glyph])=>
+    `<a href="#${id}" class="nav-item ${active===id?'selected':''}" ${active===id?'aria-current="page"':''}>${icon(glyph,20)}<span>${label}</span></a>`).join('');
+}
 function frame(r) {
-  const active = ({sprawa:'plan',slowniczek:'biblioteka'})[r.page] || r.page;
+  const active = ({sprawa:'plan',slowniczek:'biblioteka',sytuacja:'e-uslugi',rodzina:'e-uslugi'})[r.page] || r.page;
   sidebar.innerHTML = `<div class="brand-block">${brand()}<div class="brand-subtitle">Twój plan rodzicielstwa</div></div>
-    <nav aria-label="Nawigacja główna"><div class="nav-label">Twoja przestrzeń</div>${navLinks(active, 'nav-item')}
-    <a href="#sytuacja" class="nav-item ${active === 'sytuacja' ? 'selected' : ''}">${icon('person', 20)}<span>Moja sytuacja</span></a>
-    <div class="nav-label nav-section">Zasiłki ZUS</div>
-    <a href="#kalkulator" class="nav-item ${active==='kalkulator'?'selected':''}">${icon('wallet',20)}<span>Kalkulator zasiłków</span></a>
-    <a href="#sprawdz-sprawe" class="nav-item ${active==='sprawdz-sprawe'?'selected':''}">${icon('file',20)}<span>Sprawdź sprawę ZUS</span></a>
-    <a href="#e-uslugi" class="nav-item ${active==='e-uslugi'?'selected':''}">${icon('shield',20)}<span>Centrum e-usług</span></a>
-    <a href="#uprawnienia" class="nav-item ${active==='uprawnienia'?'selected':''}">${icon('heart',20)}<span>Świadczenia w ciąży</span></a>
-    <a href="#parametry" class="nav-item ${active==='parametry'?'selected':''}">${icon('adjust',20)}<span>Panel parametrów</span></a>${familyNavigation(active)}</nav>`;
+    <nav aria-label="Nawigacja główna"><div class="nav-label">Świadczenia i formalności</div>${parentNavLinks(active)}
+    <div class="nav-label nav-section">Plan i wsparcie</div>${extraNavLinks(active)}</nav>`;
   document.querySelector('.footer').innerHTML = `<a href="#o-przewodniku">${icon('help',18)} O przewodniku</a><a href="#dane">${icon('lock',18)} Dane i usuwanie profilu</a><button class="text-button" data-action="invite">${icon('share',18)} Zaproś znajomych</button><span id="invite-link"></span>`;
   const crumbs = [['start', 'Start']];
   if (r.page === 'sprawa') crumbs.push(['plan', 'Mój plan'], ['', byId(r.id).title]);
@@ -241,16 +248,7 @@ function frame(r) {
     <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" data-action="toggle-menu">${icon('menu',22)}<span>Menu</span></button>`;
   mobileNavigation.hidden = true;
   mobileNavigation.innerHTML = `<div class="mobile-nav-heading"><strong>W czym pomóc?</strong><button type="button" class="icon-button" data-action="close-menu" aria-label="Zamknij menu">${icon('close',22)}</button></div>
-    <div class="mobile-nav-links">${navLinks(active,'nav-item')}
-    <a href="#kalkulator" class="nav-item" ${active==='kalkulator'?'aria-current="page"':''}>${icon('wallet',20)}<span>Kalkulator zasiłków</span></a>
-    <a href="#sprawdz-sprawe" class="nav-item" ${active==='sprawdz-sprawe'?'aria-current="page"':''}>${icon('file',20)}<span>Sprawdź sprawę ZUS</span></a>
-    <a href="#e-uslugi" class="nav-item" ${active==='e-uslugi'?'aria-current="page"':''}>${icon('shield',20)}<span>Centrum e-usług</span></a>
-    <a href="#uprawnienia" class="nav-item" ${active==='uprawnienia'?'aria-current="page"':''}>${icon('heart',20)}<span>Świadczenia w ciąży</span></a>
-    <a href="#parametry" class="nav-item" ${active==='parametry'?'aria-current="page"':''}>${icon('adjust',20)}<span>Panel parametrów</span></a>
-    <a href="#formularze" class="nav-item" ${active==='formularze'?'aria-current="page"':''}>${icon('files',20)}<span>Dokumenty i formularze</span></a>
-    ${familyTools.map(tool=>`<a class="nav-item" href="#${tool.id}" ${active===tool.id?'aria-current="page"':''}>${icon(tool.glyph,20)}<span>${tool.label}</span></a>`).join('')}
-    <a href="#sytuacja" class="nav-item" ${active==='sytuacja'?'aria-current="page"':''}>${icon('adjust',20)}<span>Moja sytuacja</span></a>
-    <a href="#rodzina" class="nav-item" ${active==='rodzina'?'aria-current="page"':''}>${icon('person',20)}<span>Moja rodzina</span></a></div>`;
+    <div class="mobile-nav-links">${parentNavLinks(active)}<div class="nav-label">Plan i wsparcie</div>${extraNavLinks(active)}</div>`;
   document.title = (r.page === 'sprawa' ? byId(r.id).title : titles[r.page]) + ' · Otula';
 }
 function setMobileMenu(open, restoreFocus = false) {
@@ -430,28 +428,20 @@ function dashboardCalendar() {
 function start() {
   if (!state.onboarded) return arrival();
   const all=plan(), remaining=all.filter(item=>!state.done.includes(item.id));
-  const [next,...later]=remaining, done=all.length-remaining.length;
+  const [next]=remaining, done=all.length-remaining.length;
   const pregnancy=state.stage==='pregnancy';
-  const supporting=role()==='bliska';
-  const artClass=supporting?'with-support':pregnancy && role()==='mama'?'with-mother':'with-family';
-  const art=supporting
-    ? '<img class="support-art" src="./assets/wsparcie-babci.webp" width="1440" height="576" alt="Babcia obejmuje dorosłą córkę.">'
-    : `<div class="feature-art" aria-hidden="true"></div><img class="mobile-feature-art" src="./assets/${artClass==='with-mother'?'otula-hero':'powitanie-rodziny'}.webp" width="${artClass==='with-mother'?1260:1440}" height="${artClass==='with-mother'?840:576}" alt="">`;
-  const topics=(pregnancy?['plan-porodu','torba-porodowa']:['wypis-noworodka','glod-i-sytosc']).map(id=>CARE_TOPICS.find(t=>t.id===id));
-  const title=next?next.title:all.length?'Wszystkie sprawy odhaczone':'Wybierz sprawy dla rodziny';
-  const copy=next?next.short:all.length?'W planie możesz wrócić do dokumentów i sprawdzić wykonane kroki.':'W bibliotece znajdziesz dokumenty i świadczenia, które możesz dodać do planu dziecka.';
-  return `<div class="home-dashboard"><header class="dashboard-head"><div><div class="home-date">${dateTodayLabel()}</div><h1 tabindex="-1">Rodzinny plan</h1><p class="dashboard-stage">${icon(pregnancy?'sprout':'heart',17)} ${GUIDE.stages[state.stage]} <span>·</span> ${esc(GUIDE.roles[role()].short)}</p></div>${dashboardFamily()}</header>
-  <nav class="home-shortcuts" aria-label="Najważniejsze sprawy"><a href="#plan">${icon('plan',21)} Mój plan</a><a href="#terminy">${icon('calendar',21)} Moje terminy</a><a href="#wsparcie">${icon('mail',21)} Karta wsparcia</a></nav>
-  <a class="benefit-launch" href="#kalkulator"><span class="setup-bloom">${icon('wallet',23)}</span><span><strong>Zasiłki i podział opieki</strong><small>Policz wariant dla obojga rodziców</small></span>${icon('right',18)}</a><div class="dashboard-panels"><section class="home-feature ${artClass}">${art}<div class="feature-copy">
-  <div class="home-kicker">${next?'Następna sprawa':'Twój plan'}</div><h2>${title}</h2><p>${copy}</p>
-  <a class="button primary" href="#${next?'sprawa/'+next.id:all.length?'plan':'biblioteka'}">${next?'Otwórz sprawę':all.length?'Przejrzyj plan':'Wybierz sprawę'} ${icon('arrow',16)}</a></div></section>
+  const benefits=typeof zusBenefitsForSituation==='function'?zusBenefitsForSituation().slice(0,3):[];
+  return `<div class="home-dashboard"><header class="dashboard-head"><div><div class="home-date">${dateTodayLabel()}</div><h1 tabindex="-1">Co możesz otrzymać?</h1><p class="dashboard-stage">${icon(pregnancy?'sprout':'heart',17)} ${GUIDE.stages[state.stage]} <span>·</span> ${esc(GUIDE.roles[role()].short)}</p></div>${dashboardFamily()}</header>
+  ${benefits.length?`<section aria-label="Świadczenia w Twojej sytuacji"><div class="zus-guide-cards">${benefits.map(item=>`<article class="home-progress"><span class="chip">${esc(item.status)}</span><h2>${esc(item.title)}</h2><p>${esc(item.summary)}</p><a class="dashboard-link" href="${esc(item.href)}">Sprawdź szczegóły ${icon('right',16)}</a></article>`).join('')}</div></section>`:''}
+  <section class="home-progress"><div class="home-progress-head"><div><h2>Ile pieniędzy i co przygotować?</h2><p>Oblicz kwotę dla swojej rodziny, a potem sprawdź potrzebne dokumenty.</p></div></div>
+  <a class="button primary" href="#kalkulator">Oblicz zasiłek macierzyński ${icon('arrow',16)}</a>
+  <a class="dashboard-link" href="#e-uslugi">Moje dane i e-usługi ${icon('arrow',16)}</a></section>
+  <div class="dashboard-panels">
   ${dashboardCalendar()}
-  <section class="home-progress"><div class="home-progress-head"><h2>Postęp w planie</h2><span>${done} z ${all.length} gotowych</span></div>
+  <section class="home-progress"><div class="home-progress-head"><h2>Twoje kolejne kroki</h2><span>${done} z ${all.length} gotowych</span></div>
   <progress value="${done}" max="${Math.max(1,all.length)}" aria-label="Gotowe sprawy" aria-valuetext="${done} z ${all.length}"></progress>
-  ${later.length?`<h3>Kolejne sprawy</h3><div class="next-list">${later.slice(0,2).map(item=>row(item)).join('')}</div>`:''}
-  ${next?`<a class="dashboard-link" href="#plan">Cały plan ${icon('arrow',16)}</a>`:''}</section>
-  <section class="home-reading"><div class="home-kicker">${icon('book',16)} Z podręcznika rodzica</div><h2>${pregnancy?'Przed porodem':'Pierwsze tygodnie'}</h2>
-  ${topics.map(t=>`<a href="#poradnik/${t.id}">${esc(t.title)} ${icon('right',15)}</a>`).join('')}</section></div></div>`;
+  ${remaining.length?`<div class="next-list">${remaining.slice(0,2).map(item=>row(item)).join('')}</div>`:''}
+  ${next?`<a class="dashboard-link" href="#plan">Cały plan ${icon('arrow',16)}</a>`:''}</section></div></div>`;
 }
 function profileSummary() {
   return `<div class="profile-summary">${icon(GUIDE.roles[role()].icon)}<span><b>${GUIDE.roles[role()].short}</b> · ${GUIDE.stages[state.stage]} · ${GUIDE.work[state.work]}</span><a class="text-button" href="#sytuacja">Zmień</a></div>`;
@@ -566,14 +556,14 @@ function support(r) {
 }
 function situation(r) {
   const roleLabels = Object.fromEntries(Object.entries(GUIDE.roles).map(([k, v]) => [k, `${icon(v.icon, 19)} ${v.label}`]));
-  return `${backLink(r)}${pageHeading('Twoje ustawienia', 'Moja sytuacja', 'Na tej podstawie Otula dobiera sprawy, terminy i formy w Karcie wsparcia. Zmiany zapisują się od razu.')}
+  return `${backLink(r)}${pageHeading('Centrum e-usług · Twoje dane', 'Twoja sytuacja', 'Zmień dane w jednym miejscu — wykorzystamy je w świadczeniach, terminach i kalkulatorze.')}
     <a class="text-button" href="#powitanie">Wróć do ekranu powitalnego</a><form id="profile-form" class="settings">
       <fieldset><legend>Kto korzysta z przewodnika?</legend>${radios('role', roleLabels, role(), 'choice-tiles')}</fieldset>
       <fieldset><legend>Na jakim jesteś etapie?</legend>${radios('stage', { pregnancy: `${icon('sprout', 19)} Ciąża`, birth: `${icon('heart', 19)} Po narodzinach` }, state.stage, 'choice-tiles two')}</fieldset>
       <label class="field"><span id="date-label">${dateLabel()} <small>(opcjonalnie)</small></span><input id="date-input" name="date" type="date" min="1000-01-01" max="9999-12-31" value="${state.date}"></label>
       <label class="field"><span>Sytuacja zawodowa</span><select name="work">${options(GUIDE.work, state.work)}</select></label>
       <p class="privacy-note">${icon('lock', 16)} Wybory i postęp zapisują się tylko w tej przeglądarce.</p>
-      <a class="button primary" href="#plan">Pokaż mój plan ${icon('arrow', 17)}</a>
+      <a class="button primary" href="#e-uslugi">Gotowe, przejdź dalej ${icon('arrow', 17)}</a>
     </form>`;
 }
 function about(r) {

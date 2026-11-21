@@ -110,3 +110,10 @@ Subtelny: 150–200 ms, `ease`, tylko przejścia koloru, cienia i przesunięć o
 - Jedna pigułka „Symulacja” identyfikuje ekran pokazowy; ważne założenia obliczeń pozostają dostępne w rozwijanych szczegółach. Oznaczenie nie może sugerować prawdziwego logowania lub wysyłania do urzędu.
 
 - Przy szerokości do 400 px ilustracja nagłówka i treść zajmują osobne wiersze; pełna szerokość tekstu ma pierwszeństwo przed dekoracją. Dla strony głównej wykorzystujemy istniejący obraz `.mobile-feature-art` z zachowaniem proporcji.
+
+
+## 13. Pierwszy ekran rodzica
+
+Start pokazuje najpierw maksymalnie trzy dopasowane świadczenia (istniejąca siatka `.zus-guide-cards`, karty `.home-progress` i status `.chip`). Każda karta zawiera nazwę, krótki warunek i następny krok. Nie używamy statusu „przysługuje” na podstawie samej roli lub umowy. Główne działanie prowadzi do własnego wyliczenia; przykłady demonstracyjne są opcjonalne. Centrum e-usług jest przed kalkulatorem, a edycja sytuacji jest częścią tego samego procesu, bez drugiej pozycji menu.
+
+Na szerokim ekranie trzy karty mieszczą się w jednym rzędzie; na telefonie układają się pionowo. Ich nagłówki mają 25 px. Pod nimi jest jedno główne działanie „Oblicz zasiłek macierzyński”, a następnie termin i dwa najbliższe kroki. Nie dodajemy tu reklamy funkcji ani rozbudowanej sekcji poradnika. Przykłady, parametry i dodatkowe materiały są dostępne w „Więcej możliwości”.
