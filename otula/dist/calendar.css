@@ -19,6 +19,18 @@
 .month-day:hover { background:var(--line); }
 .month-day[aria-pressed=true] { background:var(--berry);color:white; }
 .month-day[aria-pressed=true] i { background:#fff;border-color:#fff; }
+.profile-summary .text-button { min-width:44px; min-height:44px; }
+@media(max-width:380px) {
+  #main .calendar-layout { grid-template-columns:minmax(0,1fr); }
+  .calendar-layout .month-card {
+    box-sizing:border-box;
+    width:calc(100vw - 8px);
+    justify-self:center;
+    padding-inline:1px;
+  }
+  .month-card .month-grid { gap:0; }
+  .month-card :is(.month-heading,.month-tools,.month-legend) { margin-inline:8px; }
+}
 .month-legend { display:flex;flex-wrap:wrap;gap:14px;font-size: 14px;color:var(--muted);margin:14px 0 0; }
 .cal-agenda h2 { font:400 29px/1.2 var(--serif); }
 .cal-agenda-heading { justify-content:space-between;margin-bottom:16px; }

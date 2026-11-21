@@ -317,7 +317,7 @@ function weeksLabel(days) {
   return `${w} tyg.${d ? ` i ${d} ${d === 1 ? 'dzień' : 'dni'}` : ''}`;
 }
 function supportMini() {
-  return `<a class="support-mini" href="#wsparcie"><span class="letter-art" aria-hidden="true"><i>♥</i></span>
+  return `<a class="support-mini" href="#wsparcie"><span class="letter-art" aria-hidden="true"><i>${icon('heart',14)}</i></span>
     <span><strong>Karta wsparcia</strong><small>Uprzejmie poproś bliską osobę o pomoc</small></span>${icon('right', 15)}</a>`;
 }
 function heading(title, link, label) {
