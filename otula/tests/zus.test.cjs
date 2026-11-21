@@ -38,6 +38,14 @@ r=calc({...father,fractionB:.5});assert.equal(r.issues.length,0);assert.equal(r.
 for(const data of [{fatherWeeks:33},{fatherWeeks:0},{fatherWeeks:1.5},{insurance:'unknown'},{insuranceB:'unknown'},{insuranceB:'no'},{baseB:0},{rate:'combined'},{kind:'adoption'},{exception:'hospital'},{eventDate:''},{workB:'business',debtB:'unknown'},{workPattern:'variable'}])assert.ok(calc({...father,...data}).issues.length,JSON.stringify(data));
 r=calc({workPattern:'variable'});assert.ok(r.issues.some(s=>s.includes('odcinkami')));assert.equal(r.total,undefined);
 r=calc({insurance:'no',insuranceB:'no'});assert.ok(r.issues.length);assert.equal(r.total,undefined);
+r=calc({shareA:20,shareB:9});assert.equal(r.issues.length,0);assert.equal(r.unused,12);assert.equal(r.shareB,9);assert.equal(r.perParent.B.days,63);
+r=calc({shareA:0,shareB:1});assert.equal(r.issues.length,0);assert.equal(r.segments.at(-1).days,7);assert.equal(r.unused,40);
+r=calc({shareA:32,shareB:10});assert.ok(r.issues.some(s=>s.includes('wspólną pulę')));
+r=calc({shareA:20,shareB:-1});assert.ok(r.issues.length);
+r=calc({shareA:20,shareB:9,parentalStartA:'2027-03-21',parentalStartB:'2027-03-21'});assert.equal(r.issues.length,0);assert.equal(r.segments[0].until,'2027-03-20');assert.equal(r.segments[1].from,'2027-03-21');assert.equal(r.segments[2].from,'2027-03-21');assert.equal(r.segments[2].until,'2027-05-22');
+r=calc({parentalStartA:'2026-11-01'});assert.ok(r.issues.some(s=>s.includes('po jego okresie')));
+r=calc({parentalStartB:'2026-10-31'});assert.ok(r.issues.length);
+r=calc({parentalStartB:'2032-12-31'});assert.ok(r.issues.length);
 
 // Drafts follow stable child IDs, not list positions, and never cross family profiles.
 context.state={active:0,role:'mama',work:'employee',children:[{uid:'child-a',stage:'birth',date:'2026-11-01',multiple:false},{uid:'child-b',stage:'pregnancy',date:'2027-03-09',multiple:true}]};

@@ -46,9 +46,9 @@ function zusRuleLabel(rules=zusRules) {
   return rules.version+(JSON.stringify(rules)===JSON.stringify(ZUS_DEFAULT_RULES)?' · standard':' · parametry testowe '+[rules.maternityRate,rules.parentalRate,rules.combinedRate,...rules.parentalWeeks].join('/'));
 }
 function zusSprawaBanner(c) {
-  const d=c.zus?.decyzja||'przyznano';
+  const d=c.zus?.decyzja||'nieustalona';
   return `<div class="zus-rozpoznano" role="status"><div><p class="home-kicker">Rozpoznano sprawę z zestawu ZUS</p><strong>${esc(c.tytul||'Sprawa ZUS')}</strong></div>
-    <span class="sprawa-decyzja ${d}">${d==='odmowa'?'Odmowa ZUS':d==='czesciowo'?'Częściowo':'Przyznano'}</span>
+    <span class="sprawa-decyzja ${esc(d)}">${d==='odmowa'?'Odmowa ZUS':d==='czesciowo'?'Częściowo':d==='przyznano'?'Przyznano':'Rozstrzygnięcie nieustalone'}</span>
     <div class="case-actions">${c.kalkulator?'<button class="button primary" type="button" data-zus-sprawa="wczytaj">Wczytaj dane do kalkulatora</button>':''}<button class="button secondary" type="button" data-zus-sprawa="porownaj">Porównaj z decyzją ZUS</button></div></div>`;
 }
 function zusDocumentPanel() {
@@ -99,7 +99,8 @@ function zusMoney(value) {
 function zusInitial() {
   const child=state.children[state.active];
   return {kind:'birth',count:child.multiple?0:1,multiple:child.multiple,special:false,insurance:'unknown',insuranceB:'unknown',
-    baseA:'',baseB:'',shareA:32,fatherWeeks:32,fractionA:0,fractionB:0,rate:'standard',workPattern:'constant',
+    baseA:'',baseB:'',shareA:32,shareB:9,fatherWeeks:32,fractionA:0,fractionB:0,rate:'standard',workPattern:'constant',
+    parentalStartA:'',parentalStartB:'',
     eventDate:child.stage==='birth'?child.date:'',childDob:child.stage==='birth'?child.date:'',
     deferred:false,payer:state.role==='mama'&&state.work==='business'?'zus':'unknown',payerB:state.role==='tata'&&state.work==='business'?'zus':'unknown',exception:'none',
     workA:state.role==='mama'?state.work:'any',workB:state.role==='tata'?state.work:'any',coverageEnd:'',debt:'unknown',debtB:'unknown',applicationDate:'',reviewInsurance:false,reviewBasis:false,reviewDates:false};
@@ -118,13 +119,43 @@ function zusRead(form) {
   // Preserve the other path's draft; disabled controls cannot block browser validation.
   for(const el of form.elements)if(el.name&&el.disabled&&(el.type!=='checkbox'||el.checked))d.set(el.name,el.value);
   const value=Object.fromEntries(d);
-  for(const key of ['count','baseA','baseB','shareA','fatherWeeks','fractionA','fractionB'])value[key]=Number(d.get(key));
+  for(const key of ['count','baseA','baseB','shareA','shareB','fatherWeeks','fractionA','fractionB'])value[key]=Number(d.get(key));
   value.special=d.has('special');value.deferred=d.has('deferred');
   for(const key of ['reviewInsurance','reviewBasis','reviewDates'])value[key]=d.has(key);
   value.multiple=state.children[state.active].multiple;value.evidenceRequired=true;
   return value;
 }
 function zusFatherOnly(d) { return d.kind==='birth'&&d.insurance==='no'&&d.insuranceB==='yes'; }
+function zusDate(value) {
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(value||'')))return null;
+  const date=new Date(value+'T12:00:00Z');
+  return Number.isFinite(date.getTime())&&date.toISOString().slice(0,10)===value?date:null;
+}
+function zusIso(date) { return date?date.toISOString().slice(0,10):''; }
+function zusAddDays(date,days) { if(!date)return null;const next=new Date(date);next.setUTCDate(next.getUTCDate()+days);return next; }
+function zusRound(value) { return Math.round((value+Number.EPSILON)*100)/100; }
+function zusTimeline(segments,d,maternityDays,ageLimit) {
+  const issues=[],event=zusDate(d.eventDate);
+  const fromA=zusDate(d.parentalStartA),fromB=zusDate(d.parentalStartB);
+  if(d.parentalStartA&&!fromA)issues.push('Popraw datę rozpoczęcia rodzicielskiego pierwszego rodzica.');
+  if(d.parentalStartB&&!fromB)issues.push('Popraw datę rozpoczęcia rodzicielskiego drugiego rodzica.');
+  const maternityEnd=zusAddDays(event,maternityDays-1);
+  let nextA=fromA||zusAddDays(event,maternityDays),nextB=fromB;
+  for(const s of segments){
+    if(s.kind==='maternity')s.from=zusIso(event);
+    else if(s.parent==='A')s.from=zusIso(nextA);
+    else {if(!nextB)nextB=nextA||event;s.from=zusIso(nextB);}
+    const start=zusDate(s.from),end=zusAddDays(start,s.days-1);s.until=zusIso(end);
+    if(s.kind!=='maternity'){
+      if(s.parent==='A')nextA=zusAddDays(end,1);else nextB=zusAddDays(end,1);
+      if(start&&event&&start<event)issues.push('Rodzicielskie nie może zacząć się przed porodem lub przyjęciem dziecka.');
+      if(s.parent==='A'&&start&&maternityEnd&&start<=maternityEnd)issues.push('Rodzicielskie pierwszego rodzica musi zacząć się po jego okresie macierzyńskim.');
+      if(end&&ageLimit&&end>=ageLimit)issues.push('Zaplanowany rodzicielski przekracza właściwą granicę wieku dziecka. Skróć wybrany okres lub popraw daty.');
+      if(d.kind==='birth'&&end&&event&&end.getUTCFullYear()>event.getUTCFullYear()+6)issues.push('Rodzicielskie musi zakończyć się najpóźniej z końcem roku 6. urodzin dziecka.');
+    }
+  }
+  return [...new Set(issues)];
+}
 function zusCalculation(d,rules=zusRules) {
   const issues=[];
   const fatherOnly=zusFatherOnly(d);
@@ -161,7 +192,9 @@ function zusCalculation(d,rules=zusRules) {
   const maximum=parental-rules.reservedWeeks;
   if(!fatherOnly&&d.shareA>maximum)issues.push(`Pierwszy rodzic może w tym wariancie wykorzystać najwyżej ${maximum} tygodni rodzicielskich. ${rules.reservedWeeks} tygodni jest zastrzeżone dla drugiego rodzica.`);
   const shareA=fatherOnly?0:d.shareA;
-  const shareB=fatherOnly?d.fatherWeeks:d.insuranceB==='yes'?parental-d.shareA:0;
+  const shareB=fatherOnly?d.fatherWeeks:d.insuranceB==='yes'?(d.shareB??parental-d.shareA):0;
+  if(!fatherOnly&&(!Number.isInteger(shareB)||shareB<0))issues.push('Podaj pełną, nieujemną liczbę tygodni rodzicielskich drugiego rodzica.');
+  if(shareA+shareB>parental)issues.push(`Suma tygodni obojga rodziców przekracza wspólną pulę ${parental} tygodni.`);
   if(fatherOnly&&(!Number.isInteger(shareB)||shareB<1||shareB>maximum))issues.push(`Wpisz od 1 do ${maximum} pełnych tygodni rodzicielskiego ojca. W tej puli są już jego własne ${rules.reservedWeeks} tygodni; części matki nie można przejąć.`);
   if(!fatherOnly&&shareB>maximum)issues.push(`Drugi rodzic może wykorzystać najwyżej ${maximum} tygodni. Zwiększ udział pierwszego rodzica.`);
   if(fatherOnly&&d.rate==='combined')issues.push('Samodzielny rodzicielski ojca przy nieubezpieczonej matce liczymy według 70%. Wybierz wariant standardowy; przejęcia uprawnień w szczególnych sytuacjach wymagają odrębnego ustalenia.');
@@ -182,21 +215,24 @@ function zusCalculation(d,rules=zusRules) {
   if(issues.length)return {issues,maternity,parental};
   const maternityRate=d.rate==='combined'?rules.combinedRate:rules.maternityRate;
   const parentalRate=d.rate==='combined'?rules.combinedRate:rules.parentalRate;
-  const segment=(label,weeks,base,rate,fraction)=> {
+  const segment=(label,weeks,base,rate,fraction,parent,kind)=> {
     const days=Math.floor(weeks*7/(1-fraction)+1e-8);
     const daily=Math.round(base/30*rate/100*(1-fraction)*100)/100;
-    return {label,days,daily,total:Math.round(days*daily*100)/100,rate,fraction};
+    return {label,days,daily,total:Math.round(days*daily*100)/100,rate,fraction,parent,kind,base};
   };
-  const segments=fatherOnly?[]:[segment('Pierwszy rodzic · okres macierzyński',maternity,d.baseA,maternityRate,0)];
-  if(shareA)segments.push(segment('Pierwszy rodzic · rodzicielski',shareA,d.baseA,parentalRate,d.fractionA));
-  if(fatherOnly)segments.push(segment('Ojciec · własny rodzicielski',shareB,d.baseB,rules.parentalRate,d.fractionB));
+  const segments=fatherOnly?[]:[segment('Pierwszy rodzic · okres macierzyński',maternity,d.baseA,maternityRate,0,'A','maternity')];
+  if(shareA)segments.push(segment('Pierwszy rodzic · rodzicielski',shareA,d.baseA,parentalRate,d.fractionA,'A','parental'));
+  if(fatherOnly)segments.push(segment('Ojciec · własny rodzicielski',shareB,d.baseB,rules.parentalRate,d.fractionB,'B','parental'));
   else if(shareB) {
-    segments.push(segment('Drugi rodzic · własne 9 tygodni',rules.reservedWeeks,d.baseB,rules.parentalRate,d.fractionB));
-    if(shareB>rules.reservedWeeks)segments.push(segment('Drugi rodzic · pozostały rodzicielski',shareB-rules.reservedWeeks,d.baseB,parentalRate,d.fractionB));
+    segments.push(segment('Drugi rodzic · część nieprzenoszalna',Math.min(shareB,rules.reservedWeeks),d.baseB,rules.parentalRate,d.fractionB,'B','parental'));
+    if(shareB>rules.reservedWeeks)segments.push(segment('Drugi rodzic · pozostały rodzicielski',shareB-rules.reservedWeeks,d.baseB,parentalRate,d.fractionB,'B','parental'));
   }
+  issues.push(...zusTimeline(segments,d,maternity*7,ageLimit));
+  if(issues.length)return {issues,maternity,parental};
+  const perParent=Object.fromEntries(['A','B'].map(parent=>[parent,{days:segments.filter(s=>s.parent===parent).reduce((n,s)=>n+s.days,0),total:zusRound(segments.filter(s=>s.parent===parent).reduce((n,s)=>n+s.total,0))}]));
   return {issues:[],fatherOnly,maternity,parental,shareA,shareB,unused:parental-shareA-shareB,segments,
     total:Math.round(segments.reduce((sum,s)=>sum+Math.round(s.total*100),0))/100,
-    ageLimit,custom:JSON.stringify(rules)!==JSON.stringify(ZUS_DEFAULT_RULES)};
+    perParent,ageLimit,custom:JSON.stringify(rules)!==JSON.stringify(ZUS_DEFAULT_RULES)};
 }
 function zusResult(d) {
   const result=zusCalculation(d);
@@ -208,7 +244,8 @@ function zusResult(d) {
     ${result.fatherOnly?`<p class="zus-notice">Brak ubezpieczenia matki nie odbiera ojcu własnego uprawnienia do rodzicielskiego. Liczymy wybrany okres według ${zusRules.parentalRate}% jego podstawy, z puli najwyżej ${result.parental-zusRules.reservedWeeks} tygodni. Własne ${zusRules.reservedWeeks} tygodni ojca są już w tej puli. Zakładamy brak wcześniejszego wykorzystania rodzicielskiego i brak sytuacji szczególnych; płatnik musi potwierdzić prawo i okres. ${zusSource('parentalZus','Podział rodzicielskiego w ZUS')}</p>`:''}
     <p class="zus-notice"><strong>Zakres kwoty:</strong> bez PIT i podwyższenia do świadczenia rodzicielskiego. Zmiany etatu, przerwy, wcześniejsze zakończenie urlopu oraz kwoty wypłacane w konkretnych miesiącach wymagają osobnego rozliczenia. Wynik nie odtwarza historii wypłat.</p>
     <div class="zus-total"><strong>${zusMoney(result.total)}</strong><span>Orientacyjna suma brutto zasiłków w poniższym wariancie</span></div>
-    <div class="zus-segments">${result.segments.map(s=>`<section><h3>${s.label}</h3><p>${s.days} dni · ${String(s.rate).replace('.',',')}% podstawy${s.fraction?' · praca '+(s.fraction===.5?'½':s.fraction===.25?'¼':String(s.fraction).replace('.',','))+' etatu':''}</p><strong>${zusMoney(s.daily)} / dzień</strong><span>Razem ${zusMoney(s.total)}</span></section>`).join('')}</div>
+    <div class="zus-segments">${result.segments.map(s=>`<section><h3>${s.label}</h3>${s.from?`<p>${s.from} – ${s.until}</p>`:'<p>Bez daty — porównanie wymiaru</p>'}<p>${s.days} dni · ${String(s.rate).replace('.',',')}% podstawy${s.fraction?' · praca '+(s.fraction===.5?'½':s.fraction===.25?'¼':String(s.fraction).replace('.',','))+' etatu':''}</p><strong>${zusMoney(s.daily)} / dzień</strong><span>Razem ${zusMoney(s.total)}</span></section>`).join('')}</div>
+    <p>Pierwszy rodzic: ${result.perParent.A.days} dni, ${zusMoney(result.perParent.A.total)}. Drugi rodzic: ${result.perParent.B.days} dni, ${zusMoney(result.perParent.B.total)}. Daty końca obejmują ostatni dzień wypłaty. Nakładanie się okresów rodziców jest dozwolone; zużywa sumę ich tygodni.</p>
     ${result.unused?`<p class="zus-notice">${result.unused} tygodni nie jest objętych tym wyliczeniem. ${result.fatherOnly?`${zusRules.reservedWeeks} tygodni zastrzeżonych matce nie przechodzi na ojca. Pozostała różnica, jeśli występuje, to niewybrana część jego puli.`:'Nieprzenoszalna część drugiego rodzica wymaga jego własnego uprawnienia.'}</p>`:''}
     <details class="zus-explain"><summary>Założenia i sposób liczenia</summary><p>Podstawa to kwota ustalona po odliczeniu składek, przed podatkiem. Stawka dzienna = podstawa / 30 × procent zasiłku, z zaokrągleniem do grosza. Kwota miesięczna zależy od liczby dni kalendarzowych. Symulacja nie obejmuje PIT ani podwyższenia do świadczenia rodzicielskiego.</p><p>${result.fatherOnly?'Liczymy wyłącznie rodzicielskie ojca przy nieubezpieczonej matce (art. 31 ust. 3h ustawy zasiłkowej). Nie oznacza to przejęcia macierzyńskiego ani prawa do 81,5%.':'Pierwszy rodzic korzysta z całego okresu macierzyńskiego. Rodzicielskie można wykorzystać kolejno lub równolegle. Stawka 81,5% zakłada wykorzystanie co najmniej jednego dnia rodzicielskiego w pierwszym roku.'} Kwoty nie obejmują wynagrodzenia za pracę ani osobnego urlopu ojcowskiego.</p><p>Praca u pracodawcy udzielającego urlopu trwa w stałym wymiarze przez cały wybrany okres rodzicielski i jego wydłużenie. Dni = pełnowymiarowe dni / (1 − etat), z pominięciem części dnia. Zasiłek maleje proporcjonalnie. Zmienne okresy pracy, przejęcie macierzyńskiego i skrócenie z powodu wieku wymagają odrębnego wyliczenia.</p>${result.ageLimit?`<p>Graniczny wiek dziecka przypada ${fmt(result.ageLimit)}. Zaplanuj wykorzystanie urlopu z uwzględnieniem właściwych terminów.</p>`:''}</details>
     <h3>Dokumenty i następny krok</h3><p>Wynik dotyczy dziecka wybranego w teczce i założeń widocznych powyżej. Zapisz go razem z wersją reguł.</p><p>${result.fatherOnly?`Ojciec kieruje dokumenty do ${payerB}.`:`Pierwszy rodzic kieruje dokumenty do ${payer}.${result.shareB?` Drugi rodzic: do ${payerB}.`:''}`} Przy zatrudnieniu u płatnika zgłaszającego ponad 20 osób do ubezpieczenia chorobowego wypłata zwykle należy do płatnika. Stan ustala się co do zasady na 30 listopada poprzedniego roku.</p>
@@ -246,7 +283,11 @@ function calculatorPage(r) {
     ${zusSelect('Zadłużenie drugiego rodzica przy działalności','debtB',{unknown:'Do sprawdzenia',clear:'Potwierdzono brak przeszkody do wypłaty',debt:'Zadłużenie wymaga wyjaśnienia'},d.debtB||'unknown')}</fieldset>
     <fieldset class="zus-fields"><legend>Podział opieki</legend>
     ${zusField('Tygodnie rodzicielskiego pierwszego rodzica','shareA',d.shareA,'type="number" min="0" max="58" step="1" required')}
+    ${zusField('Tygodnie rodzicielskiego drugiego rodzica','shareB',d.shareB??9,'type="number" min="0" max="58" step="1"')}
     ${zusField('Tygodnie rodzicielskiego ojca — łącznie z jego własną częścią','fatherWeeks',d.fatherWeeks??32,'type="number" min="1" max="58" step="1"')}
+    ${zusField('Początek rodzicielskiego pierwszego rodzica (opcjonalnie)','parentalStartA',d.parentalStartA||'','type="date"')}
+    ${zusField('Początek rodzicielskiego drugiego rodzica (opcjonalnie)','parentalStartB',d.parentalStartB||'','type="date"')}
+    <p class="zus-field-note">Bez własnych dat planujemy okresy kolejno: macierzyński, rodzicielski pierwszego i drugiego rodzica. Wpisz daty, jeśli chcecie opiekować się dzieckiem jednocześnie. Końce okresów policzymy z wybranych tygodni i etatu; dotychczas wykorzystane części wymagają odrębnego uwzględnienia.</p>
     ${zusSelect('Wariant wypłaty','rate',{standard:'100% macierzyński + 70% rodzicielski',combined:'81,5% po wniosku w terminie'},d.rate)}
     ${zusField('Data wniosku o stawkę 81,5%','applicationDate',d.applicationDate,'type="date"')}
     ${zusSelect('Kto wypłaca zasiłek pierwszego rodzica','payer',{unknown:'Potwierdzę w kadrach',employer:'Uprawniony pracodawca',zus:'ZUS'},d.payer)}
@@ -370,7 +411,7 @@ function zusSyncFields() {
   const combinedOption=form.elements.rate.querySelector('option[value="combined"]');
   combinedOption.hidden=fatherOnly;combinedOption.disabled=fatherOnly;
   if(fatherOnly&&d.rate==='combined'){form.elements.rate.value='standard';d.rate='standard';}
-  const visible={childDob:d.kind!=='birth',deferred:d.kind==='foster',debt:!fatherOnly&&d.workA==='business',debtB:d.workB==='business'&&d.insuranceB==='yes',applicationDate:d.rate==='combined',baseB:d.insuranceB!=='no',fractionB:d.insuranceB!=='no',workB:d.insuranceB!=='no',payerB:d.insuranceB!=='no',baseA:!fatherOnly,workA:!fatherOnly,coverageEnd:!fatherOnly,shareA:!fatherOnly,payer:!fatherOnly,fractionA:!fatherOnly,fatherWeeks:fatherOnly};
+  const visible={childDob:d.kind!=='birth',deferred:d.kind==='foster',debt:!fatherOnly&&d.workA==='business',debtB:d.workB==='business'&&d.insuranceB==='yes',applicationDate:d.rate==='combined',baseB:d.insuranceB!=='no',fractionB:d.insuranceB!=='no',workB:d.insuranceB!=='no',payerB:d.insuranceB!=='no',baseA:!fatherOnly,workA:!fatherOnly,coverageEnd:!fatherOnly,shareA:!fatherOnly,shareB:!fatherOnly&&d.insuranceB!=='no',parentalStartA:!fatherOnly,parentalStartB:d.insuranceB!=='no',payer:!fatherOnly,fractionA:!fatherOnly,fatherWeeks:fatherOnly};
   for(const [key,show] of Object.entries(visible)){
     form.elements[key].closest('label').hidden=!show;
     form.elements[key].disabled=!show;
