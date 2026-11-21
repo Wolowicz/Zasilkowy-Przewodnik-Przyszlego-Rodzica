@@ -2,11 +2,12 @@
 /* Pytania i uprawnienia pochodzą wyłącznie z OtulaWywiadReguly.
    Żadnego wysyłania odpowiedzi, danych formularza ani dokumentów do AI. */
 (function (root) {
-  const STORAGE_KEY = 'otula-wywiad-v1';
+  const STORAGE_KEY = 'otula-plan-v1';
   const PREFIX = '#moja-sprawa';
   const LOGIN = 'https://www.zus.pl/ezus/logowanie?jezyk=pl';
   const GROUPS = [['rodzina', 'Twoja rodzina'], ['ubezpieczenie', 'Ubezpieczenie'], ['okresy', 'Czas opieki'], ['kwota', 'Kwota']];
-  const state = { answers: {}, loaded: false, saved: false, container: null, defaults: null, message: '', focus: false, lastHash: null };
+  const state = { answers: {}, statuses: {}, letter: {}, loaded: false, saved: false, container: null, defaults: null, message: '', focus: false, lastHash: null, search: '' };
+  const model = () => root.OtulaWywiadModel;
   const esc = value => String(value == null ? '' : value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const engine = () => root.OtulaWywiadReguly;
   const cleanScalar = value => (typeof value === 'number' && Number.isFinite(value)) || (typeof value === 'string' && value.length <= 120);
@@ -14,27 +15,31 @@
     try { const u = new URL(value); return u.protocol === 'https:' && (u.hostname === 'zus.pl' || u.hostname.endsWith('.zus.pl') || u.hostname === 'gov.pl' || u.hostname.endsWith('.gov.pl')) ? u.href : ''; } catch (_) { return ''; }
   };
   const link = (url, title, cls = 'text-button') => safeUrl(url) ? `<a class="${cls}" href="${esc(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${esc(title)} <span aria-hidden="true">↗</span></a>` : '';
-  function questionList(answers = state.answers) { return engine().questions(answers) || []; }
+  function questionList(answers = state.answers) {
+    const list = engine().questions(answers) || [];
+    if (!answers.situation) return list;
+    return list.filter(q => q.id !== 'role' && (q.id !== 'event' || ['loss','adoption-foster'].includes(answers.situation))).map(q => q.id === 'event' ? { ...q, options:q.options.filter(o => (answers.situation === 'loss' ? ['loss','childDeath'] : ['adoption','foster']).includes(o.value)) } : q);
+  }
   function prune(answers) {
-    let data = Object.fromEntries(Object.entries(answers || {}).filter(([key, value]) => !['__proto__', 'constructor', 'prototype'].includes(key) && cleanScalar(value)));
+    let data = model().cleanAnswers(answers);
     if (typeof engine().prune === 'function') data = engine().prune(data);
     // Only keys from reachable questions are retained, never identifying PDF fields.
-    const allowed = new Set(questionList(data).map(q => q.id));
+    const allowed = new Set(engine().questions(data).map(q => q.id).concat(['situation','extraSituations']));
     return Object.fromEntries(Object.entries(data).filter(([key]) => allowed.has(key)));
   }
   function load() {
     if (state.loaded) return;
     state.loaded = true;
     try {
-      const item = JSON.parse(root.localStorage.getItem(STORAGE_KEY));
-      if (item && item.version === 1 && item.answers && typeof item.answers === 'object') {
-        state.answers = prune(item.answers); state.saved = true;
-      }
+      const item = model().read(root.localStorage, prune);
+      state.answers = item.answers; state.statuses = item.statuses; state.letter = item.letter; state.saved = item.consent;
+      if (item.migrated) model().write(root.localStorage, item, prune);
     } catch (_) { state.message = 'Zapis na urządzeniu jest niedostępny; możesz korzystać z wywiadu bez zapisywania.'; }
   }
   function save() {
     try {
-      root.localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, answers: prune(state.answers), updatedAt: new Date().toISOString() }));
+      const data = model().write(root.localStorage, { answers:state.answers, statuses:state.statuses, letter:state.letter, consent:true }, prune);
+      root.dispatchEvent(new CustomEvent('otula-profile-updated', { detail:{wywiad:data} }));
       state.saved = true; state.message = 'Odpowiedzi zapisane na tym urządzeniu.';
     } catch (_) { state.message = 'Nie udało się zapisać odpowiedzi; nadal możesz dokończyć wywiad.'; }
   }
@@ -44,25 +49,16 @@
   }
   function commitAnswer(id, answer) {
     const previous = state.answers[id];
-    if (previous !== undefined && previous !== answer) {
-      if (id === 'event') {
-        state.answers = Object.fromEntries(['role', 'behalf'].filter(key => state.answers[key] !== undefined).map(key => [key, state.answers[key]]));
-        state.message = 'Zmieniono zdarzenie; daty, ubezpieczenie i okresy sprawdzimy ponownie dla nowej sytuacji.';
-      } else if (id === 'role' || id === 'behalf') {
-        const family = ['role', 'event', 'eventDate', 'childDob', 'count', 'otherSurviving', 'lossDocument', 'funeralCosts', 'adoptionCourt', 'fosterType', 'schoolDeferred', 'hospital', 'gestationWeeks', 'birthWeight', 'hospitalFrom', 'hospitalUntil', 'hospitalMore', 'hospitalFrom2', 'hospitalUntil2', 'hospitalMoreThanTwo', 'hospitalConfirmed', 'zaZyciem'];
-        state.answers = Object.fromEntries(family.filter(key => state.answers[key] !== undefined).map(key => [key, state.answers[key]]));
-        state.message = 'Zmieniono osobę; sytuację zawodową, ubezpieczenie i kwotę ustalimy dla niej osobno.';
-      } else if (id === 'work') {
-        for (const q of questionList()) if (q.group !== 'rodzina' && q.id !== 'work') delete state.answers[q.id];
-        state.message = 'Zmieniono pracę; sprawdzimy ponownie ubezpieczenie, okresy i podstawę.';
-      }
+    if (previous !== undefined && JSON.stringify(previous) !== JSON.stringify(answer) && ['role','behalf','event','work'].includes(id)) {
+      state.statuses = {};
+      state.message = 'Zmieniono sytuację; niepasujące odpowiedzi i statusy zostały wyczyszczone.';
     }
-    state.answers[id] = answer;
+    state.answers = model().transition(state.answers, id, answer);
     changed();
   }
   function clear() {
-    state.answers = {}; state.saved = false; state.message = 'Odpowiedzi zostały usunięte.';
-    try { root.localStorage.removeItem(STORAGE_KEY); } catch (_) { state.message = 'Wyczyszczono bieżące odpowiedzi; zapis na urządzeniu usuń w ustawieniach danych przeglądarki.'; }
+    state.answers = {}; state.statuses = {}; state.letter = {}; state.saved = false; state.message = 'Odpowiedzi, statusy i dane pisma zostały usunięte.';
+    try { model().clear(root.localStorage); root.dispatchEvent(new CustomEvent('otula-profile-updated', {detail:{wywiad:null}})); } catch (_) { state.message = 'Wyczyszczono bieżące odpowiedzi; zapis na urządzeniu usuń w ustawieniach danych przeglądarki.'; }
   }
   function route() {
     const h = root.location.hash;
@@ -91,24 +87,73 @@
     const option = (q.options || []).find(o => String(o.value) === String(value));
     if (option) return option.label;
     if (q.type === 'date' && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value.split('-').reverse().join('.');
+    if (Array.isArray(value)) return value.length ? `${value.length} ${value.length === 1 ? 'wpis' : 'wpisów'} — otwórz, aby sprawdzić daty` : 'Brak wpisów';
     return String(value) + (q.unit ? ' ' + q.unit : '');
   }
-  function renderLanding() {
-    const questions = questionList();
-    const next = questions.find(q => state.answers[q.id] === undefined);
-    const started = Object.keys(state.answers).length > 0;
-    state.container.innerHTML = `<section class="zus-page wywiad-page"><article class="zus-result wywiad-welcome"><div><h1 id="wywiad-title" tabindex="-1">Sprawdź, jakie wsparcie możesz otrzymać</h1><p>Opowiedz o swojej sytuacji, a Otula dobierze świadczenia, potrzebne dokumenty i kolejne kroki.</p><button type="button" class="button primary" data-wywiad="begin">${started ? 'Kontynuuj moją sprawę' : 'Sprawdź moją sytuację'} <span aria-hidden="true">→</span></button></div><img src="assets/otula-hero.webp" alt="" width="720" height="720"></article><p class="wywiad-help">Nie znasz odpowiedzi? Możesz pominąć pytanie i wrócić do niego później.</p>${!started && state.defaults ? '<div class="zus-notice"><p>Masz już zapisany profil rodziny w Otuli.</p><button type="button" class="text-button" data-wywiad="import">Użyj zapisanej roli i sytuacji</button></div>' : ''}${started ? '<button type="button" class="text-button" data-wywiad="results">Zobacz dotychczasowe odpowiedzi i świadczenia</button>' : ''}${notice()}${storageControls()}</section>`;
-    bind({ begin: () => go(next ? ['pytanie', next.id] : ['wynik']), results: () => go(['wynik']) });
+  function symbol(name, size = 24) { return typeof root.icon === 'function' ? root.icon(name, size) : (typeof icon === 'function' ? icon(name, size) : ''); }
+  function glossary(q) { return root.OtulaSlownik?.buttonFor(q) || ''; }
+  function crumbs(current) { return `<nav class="wywiad-crumbs" aria-label="Ścieżka"><a href="${PREFIX}">Sytuacje</a><span aria-hidden="true">/</span><span aria-current="page">${esc(current)}</span></nav>`; }
+  function nextQuestion() { return questionList().find(q => state.answers[q.id] === undefined); }
+  function renderLanding(additional = false) {
+    const role = state.answers.role || state.defaults?.role;
+    if (!state.answers.role && role) state.answers.role = role;
+    const primary = model().situations.find(s => s.id === state.answers.situation);
+    const roles = [['mother','Mama','heart','rose'],['father','Tata','person','gold'],['guardian','Opiekun','family','sage'],['supporter','Pomagam komuś','flower','peach']];
+    state.container.innerHTML = `<section class="wywiad-page wywiad-dashboard">${additional ? `${crumbs('Dodatkowa sytuacja')}<a class="back-link text-button" href="${PREFIX}">← Wróć do: sytuacje</a>` : ''}<header class="page-intro"><h1 id="wywiad-title" tabindex="-1">${additional ? 'Co jeszcze Was dotyczy?' : 'Co się u Was dzieje?'}</h1><p>Wybierz sytuację, a pokażemy świadczenia, dokumenty i następny krok.</p></header><div class="wywiad-role"><span>${role ? 'Sprawdzamy dla:' : 'Dla kogo sprawdzamy wsparcie?'}</span><div class="filters">${roles.map(([id,label,ico,color])=>`<button type="button" class="filter ${role===id?'active':''}" aria-pressed="${role===id}" data-role="${id}">${symbol(ico,18)} ${label}</button>`).join('')}</div></div>${primary ? `<div class="wywiad-current"><p><strong>Główna sytuacja:</strong> ${esc(model().title(primary,role))}</p>${(state.answers.extraSituations||[]).map(id=>{const extra=model().situations.find(s=>s.id===id);return `<span class="chip rose">${esc(extra?model().title(extra,role):id)}</span>`;}).join('')}<div class="case-actions"><button type="button" class="button primary" data-wywiad="continue-case">${nextQuestion()?'Kontynuuj odpowiedzi':'Pokaż moje świadczenia'}</button><button type="button" class="button secondary" data-wywiad="results">Zobacz, co już wiadomo</button></div></div>` : ''}<label class="search-box wywiad-search">${symbol('search',22)}<span class="sr-only">Wyszukaj sytuację lub sprawę</span><input id="wywiad-search" type="search" placeholder="np. poronienie, dług składkowy, wezwanie z ZUS" value="${esc(state.search)}" autocomplete="off"></label><div id="wywiad-search-results"></div><div id="wywiad-conflict" role="status"></div>${primary&&!additional?`<a class="text-button" href="${PREFIX}/dodaj">Dodaj drugą sytuację</a>`:''}${notice()}${storageControls()}</section>`;
+    const drawTiles = () => {
+      const list = role ? model().tiles(role,state.search,additional).filter(s=>!additional||s.id!==state.answers.situation) : [];
+      const catalog = typeof GUIDE !== 'undefined' ? GUIDE.cases : [];
+      const library = model().library(state.search,catalog);
+      const region = state.container.querySelector('#wywiad-search-results');
+      region.innerHTML = `${!role?'<p class="zus-notice">Wybierz rolę powyżej, aby zobaczyć pasujące sytuacje.</p>':`<div class="wywiad-tiles">${list.map(s=>`<button type="button" class="wywiad-tile catalog-card ${s.color}" data-situation="${s.id}"><span class="tile-icon ${s.color}">${symbol(s.icon,26)}</span><span>${esc(model().title(s,role))}</span><span aria-hidden="true">→</span></button>`).join('')}</div>${!list.length?'<p class="zus-notice">Nie ma takiej sytuacji w tej grupie; spróbuj krótszego hasła.</p>':''}`}${library.length?`<section class="wywiad-library"><h2>W Bibliotece spraw</h2><div class="case-list">${library.map(c=>`<a class="case-row" href="#sprawa/${encodeURIComponent(c.id)}"><span class="tile-icon ${esc(c.color||'rose')}">${symbol(c.icon||'files',22)}</span><span class="case-copy"><strong>${esc(c.title||c.name)}</strong></span><span aria-hidden="true">→</span></a>`).join('')}</div></section>`:''}`;
+      region.querySelectorAll('[data-situation]').forEach(button=>button.onclick=()=>chooseSituation(button.dataset.situation,additional));
+    };
+    state.container.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>{commitAnswer('role',b.dataset.role);state.search='';renderLanding(additional);});
+    state.container.querySelector('#wywiad-search').addEventListener('input',e=>{state.search=e.target.value;drawTiles();});
+    drawTiles();
+    bind({ 'continue-case':()=>{if(state.answers.situation==='zus-letter'&&!state.answers.event)return go(['pismo','kind']);const q=nextQuestion();go(q?['pytanie',q.id]:['wynik']);},results:()=>go(['wynik']) });
+  }
+  function chooseSituation(id, additional=false, confirm=false) {
+    const selection=model().choose(state.answers,id,additional&&!confirm);
+    if(selection.conflict){state.container.querySelector('#wywiad-conflict').innerHTML=`<div class="zus-notice"><p>Ta sytuacja dotyczy innego zdarzenia; możesz rozpocząć dla niej nowy przebieg zamiast obecnej głównej sytuacji.</p><button type="button" class="button secondary" id="wywiad-confirm-situation">Zmień główną sytuację i odpowiedzi</button></div>`;state.container.querySelector('#wywiad-confirm-situation').onclick=()=>chooseSituation(id,false,true);return;}
+    if(!additional&&state.answers.situation!==id)state.statuses={};
+    state.answers=selection.answers;state.search='';changed();
+    if(id==='zus-letter')return go(['pismo','kind']);
+    const q=['loss','adoption-foster'].includes(id)?questionList().find(q=>q.id==='event'):nextQuestion();
+    go(q?['pytanie',q.id]:['wynik']);
+  }
+  function mountRecords(container,q,value) {
+    let rows=Array.isArray(value)?value.map(row=>({...row})):[];
+    const read = (strict=false) => {
+      if(strict&&!rows.length)return null;
+      const next=[];
+      for(const row of container.querySelectorAll('[data-record-row]')){
+        const data={};
+        for(const f of q.fields||[]){const el=row.querySelector(`[data-record-field="${f.id}"]`);if(el.disabled)continue;if(strict&&(!el.checkValidity()||(!f.optional&&!el.value))){el.focus();return null;}if(el.value)data[f.id]=f.type==='number'?Number(el.value):el.value;}
+        next.push(data);
+      }
+      return next;
+    };
+    const draw=()=>{
+      container.innerHTML=`<div class="wywiad-record-list">${rows.map((row,i)=>`<fieldset class="wywiad-record" data-record-row="${i}"><legend>${esc(q.recordLabel||q.unitLabel||'Wpis')} ${i+1}</legend><div class="wywiad-record-fields">${(q.fields||[]).map(f=>`<label class="field"><span>${esc(f.title||f.label||f.id)}</span>${f.type==='choice'?`<select data-record-field="${esc(f.id)}" ${f.optional?'':'required'}><option value="">Wybierz</option>${(f.options||[]).map(o=>`<option value="${esc(o.value)}"${String(row[f.id])===String(o.value)?' selected':''}>${esc(o.label)}</option>`).join('')}</select>`:`<input data-record-field="${esc(f.id)}" type="${f.type==='date'?'date':'number'}" value="${esc(row[f.id]??'')}" ${f.optional?'':'required'}${f.min!==undefined?` min="${esc(f.min)}"`:''}${f.max!==undefined?` max="${esc(f.max)}"`:''}${f.type==='number'?` step="${esc(f.step||'any')}" inputmode="decimal"`:''} autocomplete="off">`}</label>`).join('')}</div><button class="text-button" type="button" data-record-remove="${i}">Usuń wpis ${i+1}</button></fieldset>`).join('')}</div><button class="button secondary" type="button" data-record-add${rows.length>=(q.maxItems||100)?' disabled':''}>+ ${esc(q.addLabel||'Dodaj kolejny wpis')}</button>${rows.length?'<p class="wywiad-help">Sprawdź wszystkie odcinki — nie pomijaj wcześniejszych części ani przeniesień.</p>':'<p class="wywiad-help">Dodaj pierwszy wpis albo pomiń pytanie, jeśli nie masz jeszcze pełnych danych.</p>'}`;
+      container.querySelector('[data-record-add]').onclick=()=>{rows=read()||rows;rows.push({});draw();container.querySelector('[data-record-row]:last-child input, [data-record-row]:last-child select')?.focus();};
+      container.querySelectorAll('[data-record-remove]').forEach(b=>b.onclick=()=>{rows=read()||rows;rows.splice(Number(b.dataset.recordRemove),1);draw();container.querySelector('[data-record-add]').focus();});
+      const syncConditions=()=>{for(const row of container.querySelectorAll('[data-record-row]'))for(const f of q.fields||[]){const cond=f.visibleWhen||(f.id==='deathDate'?{field:'alive',value:'no'}:null);if(!cond)continue;const control=row.querySelector(`[data-record-field="${f.id}"]`),dependent=row.querySelector(`[data-record-field="${cond.field}"]`);const show=dependent?.value===cond.value;control.closest('label').hidden=!show;control.disabled=!show;if(!show)control.value='';}};
+      container.onchange=syncConditions;syncConditions();
+    };
+    draw();return{read};
   }
   function renderQuestion(q, questions) {
     const position = questions.findIndex(item => item.id === q.id);
     const value = state.answers[q.id];
     const choices = q.type === 'choice';
+    const records = q.type === 'records';
     const options = (q.options || []).filter(option => option.value !== 'unknown');
-    const input = choices ? `<div class="wywiad-choices" role="group" aria-labelledby="wywiad-title">${options.map((option, i) => `<button type="button" class="filter wywiad-choice${String(value) === String(option.value) ? ' active' : ''}" aria-pressed="${String(value) === String(option.value)}" data-option="${i}"><span>${esc(option.label)}</span><span class="wywiad-choice-mark" aria-hidden="true">${String(value) === String(option.value) ? '✓' : ''}</span></button>`).join('')}</div>` : `<label class="field wywiad-input" for="wywiad-value"><span>${esc(q.inputLabel || (q.type === 'date' ? 'Data' : 'Wpisz wartość'))}${q.unit ? ` (${esc(q.unit)})` : ''}</span><input id="wywiad-value" name="answer" type="${q.type === 'date' ? 'date' : 'number'}" value="${value === 'unknown' || value === undefined ? '' : esc(value)}"${q.min !== undefined ? ` min="${esc(q.min)}"` : ''}${q.max !== undefined ? ` max="${esc(q.max)}"` : ''}${q.type !== 'date' ? ` step="${esc(q.step || 'any')}" inputmode="decimal"` : ''} aria-describedby="wywiad-help wywiad-error" autocomplete="off" required></label>`;
+    const input = records ? '<div id="wywiad-records"></div>' : choices ? `<div class="wywiad-choices" role="group" aria-labelledby="wywiad-title">${options.map((option, i) => `<button type="button" class="filter wywiad-choice${String(value) === String(option.value) ? ' active' : ''}" aria-pressed="${String(value) === String(option.value)}" data-option="${i}"><span>${esc(option.label)}</span><span class="wywiad-choice-mark" aria-hidden="true">${String(value) === String(option.value) ? '✓' : ''}</span></button>`).join('')}</div>` : `<label class="field wywiad-input" for="wywiad-value"><span>${esc(q.inputLabel || (q.type === 'date' ? 'Data' : 'Wpisz wartość'))}${q.unit ? ` (${esc(q.unit)})` : ''}</span><input id="wywiad-value" name="answer" type="${q.type === 'date' ? 'date' : 'number'}" value="${value === 'unknown' || value === undefined ? '' : esc(value)}"${q.min !== undefined ? ` min="${esc(q.min)}"` : ''}${q.max !== undefined ? ` max="${esc(q.max)}"` : ''}${q.type !== 'date' ? ` step="${esc(q.step || 'any')}" inputmode="decimal"` : ''} aria-describedby="wywiad-help wywiad-error" autocomplete="off" required></label>`;
     const canImport = position === 0 && state.defaults && Object.keys(state.answers).length === 0;
-    state.container.innerHTML = `<section class="zus-page wywiad-page"><button type="button" class="back-link text-button" data-wywiad="back"><span aria-hidden="true">←</span> ${position > 0 ? 'Wróć do poprzedniego pytania' : 'Wróć do początku'}</button>${progress(q, questions)}<form class="zus-result wywiad-question" novalidate><p class="small-label">Twoja sytuacja, krok po kroku</p><h1 id="wywiad-title" tabindex="-1">${esc(q.title || q.label)}</h1><p id="wywiad-help" class="wywiad-help">${esc(q.help || q.hint || 'Wybierz odpowiedź, która pasuje do Twojej sytuacji.')}</p>${input}<p id="wywiad-error" class="wywiad-error" role="alert"></p>${value === 'unknown' ? '<p class="wywiad-help">To pytanie zostało pominięte — możesz je teraz uzupełnić.</p>' : ''}<div class="wywiad-actions"><button type="submit" class="button primary">Dalej <span aria-hidden="true">→</span></button><button type="button" class="button secondary" data-wywiad="skip">Nie wiem — pomiń</button></div></form>${canImport ? '<div class="zus-notice"><p>Masz już zapisaną rolę i sytuację rodziny w Otuli.</p><button type="button" class="text-button" data-wywiad="import">Użyj tych odpowiedzi</button></div>' : ''}<button type="button" class="text-button" data-wywiad="results">Zobacz, co już wiadomo</button>${notice()}${storageControls()}</section>`;
+    state.container.innerHTML = `<section class="zus-page wywiad-page">${crumbs('Twoje odpowiedzi')}<button type="button" class="back-link text-button" data-wywiad="back"><span aria-hidden="true">←</span> ${position > 0 ? 'Wróć do: poprzednie pytanie' : 'Wróć do: sytuacje'}</button>${progress(q, questions)}<form class="zus-result wywiad-question" novalidate><p class="small-label">Twoja sytuacja, krok po kroku</p><h1 id="wywiad-title" tabindex="-1">${esc(q.title || q.label)}</h1><p id="wywiad-help" class="wywiad-help">${esc(q.help || q.hint || 'Wybierz odpowiedź, która pasuje do Twojej sytuacji.')}</p>${glossary(q)}${input}<p id="wywiad-error" class="wywiad-error" role="alert"></p>${value === 'unknown' ? '<p class="wywiad-help">To pytanie zostało pominięte — możesz je teraz uzupełnić.</p>' : ''}<div class="wywiad-actions"><button type="submit" class="button primary">Dalej <span aria-hidden="true">→</span></button><button type="button" class="button secondary" data-wywiad="skip">Nie wiem jeszcze</button></div></form>${canImport ? '<div class="zus-notice"><p>Masz już zapisaną rolę i sytuację rodziny w Otuli.</p><button type="button" class="text-button" data-wywiad="import">Użyj tych odpowiedzi</button></div>' : ''}<button type="button" class="text-button" data-wywiad="results">Zobacz, co już wiadomo</button>${notice()}${storageControls()}</section>`;
     let selected = value;
+    const recordEditor = records ? mountRecords(state.container.querySelector('#wywiad-records'), q, value) : null;
     state.container.querySelectorAll('[data-option]').forEach(button => button.addEventListener('click', () => {
       selected = options[Number(button.dataset.option)].value;
       state.container.querySelectorAll('[data-option]').forEach(b => {
@@ -126,8 +171,12 @@
     state.container.querySelector('form').addEventListener('submit', event => {
       event.preventDefault();
       const error = state.container.querySelector('#wywiad-error');
-      if (choices) {
-        if (selected === undefined || selected === 'unknown') { error.textContent = 'Wybierz odpowiedź albo „Nie wiem — pomiń”.'; return; }
+      if (records) {
+        const data = recordEditor.read(true);
+        if (!data) { error.textContent = 'Uzupełnij każdy wpis albo wybierz „Nie wiem jeszcze”.'; return; }
+        advance(data);
+      } else if (choices) {
+        if (selected === undefined || selected === 'unknown') { error.textContent = 'Wybierz odpowiedź albo „Nie wiem jeszcze”.'; return; }
         advance(selected);
       } else {
         const field = state.container.querySelector('#wywiad-value');
@@ -137,7 +186,8 @@
     });
     bind({ back: () => go(position > 0 ? ['pytanie', questions[position - 1].id] : []), skip: () => advance('unknown'), results: () => {
       if (choices && selected !== undefined) commitAnswer(q.id, selected);
-      if (!choices) {
+      if (records) { const data = recordEditor.read(true); if (data) commitAnswer(q.id, data); else { state.container.querySelector('#wywiad-error').textContent = 'Sprawdź wpisy przed pokazaniem wyniku albo pomiń pytanie.'; return; } }
+      if (!choices && !records) {
         const field = state.container.querySelector('#wywiad-value');
         if (field.value && field.checkValidity()) commitAnswer(q.id, q.type === 'date' ? field.value : Number(field.value));
         else { delete state.answers[q.id]; changed(); }
@@ -156,13 +206,29 @@
   }
   function canPrepare(doc, result) {
     const code = String(doc.code || '').toUpperCase();
-    return !result.planned && !result.pdfContext?.planned && ['ZAM', 'ZAS-53'].includes(code) && /rodzic|opiekun|ubezpieczon|wnioskodawc/i.test(doc.owner || '');
+    return !result.planned && !result.pdfContext?.planned && (['ZAM', 'ZAS-53'].includes(code) && /rodzic|opiekun|ubezpieczon|wnioskodawc|\bTy\b/i.test(doc.owner || '') || /^LEAVE-(MATERNITY|PARENTAL|PATERNITY|CHILDCARE|LOSS)$/.test(code));
   }
+  const money = value => new Intl.NumberFormat('pl-PL',{style:'currency',currency:'PLN'}).format(value);
   function resultCard(result, i) {
     const docs = Array.isArray(result.documents) ? result.documents : [];
-    const amount = typeof result.amount === 'number' ? new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(result.amount) : display(result.amount);
     const missing = Array.isArray(result.missing) ? result.missing : [];
-    return `<article class="zus-result wywiad-benefit" aria-labelledby="benefit-${i}"><div class="wywiad-card-heading"><span class="chip ${['eligible', 'possible'].includes(result.status) ? 'sage' : 'gold'}">${esc(statusLabel(result.status))}</span><h2 id="benefit-${i}">${esc(result.title)}</h2></div><p>${esc(display(result.why || result.summary))}</p><dl class="wywiad-facts"><div><dt>Co możesz otrzymać</dt><dd>${esc(amount || display(result.gain) || 'Kwota wymaga dodatkowych danych.')}</dd></div>${result.period ? `<div><dt>Za jaki czas</dt><dd>${esc(display(result.period))}</dd></div>` : ''}</dl>${result.gain && amount ? `<p class="wywiad-help">${esc(display(result.gain))}</p>` : ''}${missing.length ? `<div class="zus-notice"><strong>Co jeszcze sprawdzić</strong><ul>${missing.map(text => `<li>${esc(text)}</li>`).join('')}</ul></div>` : ''}${docs.length ? `<details><summary>Dokumenty i kto je przygotowuje (${docs.length})</summary><ul class="wywiad-documents">${docs.map((doc, j) => `<li><span class="chip rose">${esc(doc.owner || 'Do ustalenia')}</span><strong>${esc(doc.text || doc.label || doc.code || 'Dokument')}</strong><div class="case-actions">${canPrepare(doc, result) ? `<button class="button secondary" type="button" data-document="${i}:${j}">Przygotuj ${esc(doc.code)} do podpisu</button>` : ''}${link(doc.url, 'Otwórz oficjalny formularz')}</div></li>`).join('')}</ul></details>` : ''}<div class="wywiad-next">${result.nextStep ? `<p><strong>Następny krok:</strong> ${esc(result.nextStep)}</p>` : ''}${link(result.url, 'Sprawdź zasady w urzędzie')}${Array.isArray(result.sources) ? result.sources.map(source => link(typeof source === 'string' ? source : source.url, typeof source === 'string' ? 'Źródło urzędowe' : source.title || source.label || 'Źródło urzędowe')).join('') : ''}</div></article>`;
+    const blockers = result.blockers || missing.map(text=>({kind:'missing',text}));
+    const check = result.check || {state:missing.length?'missing':'info',label:statusLabel(result.status),disclaimer:'To wskazówka, nie decyzja ZUS'};
+    const color = check.state==='ok'?'sage':check.state==='risk'?'rose':'gold';
+    const primary = docs.findIndex(d=>canPrepare(d,result));
+    const amount = result.estimate ? `${money(result.estimate.daily)} za dzień${Number.isFinite(result.estimate.total)?` · razem ${money(result.estimate.total)}`:''}` : display(result.amount)||'Brakuje potwierdzonej podstawy od płatnika.';
+    const toEmployer = state.answers.work==='employee' && (result.id==='childcare'||(state.answers.employmentEnded!=='yes'&&state.answers.payerSize!=='upTo20'));
+    const otherPerson = result.parent && result.parent!==(state.answers.role==='supporter'?state.answers.behalf:state.answers.role);
+    const online = ['municipal','za-zyciem-payment'].includes(result.id)?'https://empatia.gov.pl/':primary>=0&&!toEmployer&&!otherPerson?LOGIN:result.url;
+    const onlineLabel = ['municipal','za-zyciem-payment'].includes(result.id)?'Złóż online':toEmployer?(state.answers.payerSize==='over20'||result.id==='childcare'?'Jak przekazać do kadr':'Ustal odbiorcę wniosku'):otherPerson?'Ustal odbiorcę drugiego rodzica':primary>=0?'Złóż online':'Sprawdź dalszy krok';
+    const ownStatus = state.statuses[result.id];
+    return `<article class="zus-result wywiad-benefit" aria-labelledby="benefit-${i}"><div class="wywiad-card-heading"><div class="wywiad-result-title"><span class="tile-icon ${['loss','transfer'].includes(result.id)?'rose':'peach'}">${symbol(result.id==='loss'?'heart':'wallet',26)}</span><h2 id="benefit-${i}">${esc(result.title)}</h2></div><span class="chip ${color}">${esc(check.label)}</span></div><p>${esc(display(result.why||result.summary))}</p>${glossary(result.id)}<dl class="wywiad-facts"><div><dt>Co i za jaki okres</dt><dd>${esc(display(result.period)||'Okres wymaga uzupełnienia dat.')}</dd></div><div><dt>Ile — brutto, bez PIT</dt><dd>${esc(amount)}</dd></div></dl>${result.recipient?`<p class="wywiad-help"><strong>Adresat:</strong> ${esc(result.recipient)}</p>`:''}<div class="wywiad-check ${color}"><strong>${esc(check.label)}</strong>${blockers.length?`<ul>${blockers.slice(0,4).map(b=>`<li><b>${b.kind==='risk'?'Ryzyko':b.kind==='document'?'Dokument':'Do ustalenia'}:</b> ${esc(b.text)}</li>`).join('')}</ul>`:'<p>Podane odpowiedzi nie wskazują brakujących warunków w sprawdzanym zakresie.</p>'}<p>${esc(check.disclaimer||'To wskazówka, nie decyzja ZUS')}</p></div>${blockers.length>4?`<details><summary>Pozostałe informacje do sprawdzenia (${blockers.length-4})</summary><ul>${blockers.slice(4).map(b=>`<li>${esc(b.text)}</li>`).join('')}</ul></details>`:''}${docs.length?`<details><summary>Kto co przygotowuje (${docs.length})</summary><ul class="wywiad-documents">${docs.map((doc,j)=>`<li><span class="chip rose">${esc(doc.owner||'Do ustalenia')}</span><strong>${esc(doc.text||doc.label||doc.code||'Dokument')}</strong><div class="case-actions">${canPrepare(doc,result)?`<button class="button secondary" type="button" data-document="${i}:${j}">Uzupełnij ${doc.code.startsWith('LEAVE-')?'wniosek do pracodawcy':esc(doc.code)}</button>`:''}${link(doc.url,'Otwórz źródłowy formularz lub instrukcję')}</div></li>`).join('')}</ul></details>`:''}<div class="wywiad-result-actions">${primary>=0?`<button type="button" class="button primary" data-document="${i}:${primary}">Pobierz uzupełniony wniosek</button>`:''}${link(online,result.id==='krus'?'Przejdź do informacji KRUS':onlineLabel, 'button secondary')}</div>${state.answers.work==='employee'?'<p class="wywiad-help">Online w eZUS składasz sprawę o zasiłek; wniosek o urlop przekazujesz pracodawcy jego kanałem.</p>':''}${result.supportRequest?`<details><summary>Prośba z Karty wsparcia</summary><p class="wywiad-support-request">${esc(result.supportRequest)}</p><a class="text-button" href="#wsparcie">Dostosuj Kartę wsparcia</a></details>`:''}<details><summary>Źródła i szczegóły</summary>${result.gain?`<p>${esc(result.gain)}</p>`:''}${link(result.url,'Przeczytaj zasadę w źródle urzędowym')}</details><details class="wywiad-status"><summary><span data-status-label>Status sprawy · ${esc(ownStatus||'nie ustawiono')}</span></summary><p class="wywiad-help">Zmień go po wykonaniu kroku lub otrzymaniu pisma — komplet dokumentów nie potwierdza wypłaty.</p><div class="filters" role="group" aria-label="Status: ${esc(result.title)}">${model().statuses.map(value=>`<button type="button" class="filter${ownStatus===value?' active':''}" aria-pressed="${ownStatus===value}" data-case-status="${esc(result.id)}" data-status-value="${esc(value)}">${value}</button>`).join('')}</div></details></article>`;
+  }
+  function summaryMarkup(results) {
+    const summary = engine().summarize ? engine().summarize(state.answers,results) : {total:null,byParent:{},missing:[],partial:true};
+    const names={mother:'Mama',father:'Tata',guardian:'Opiekun',supporter:'Bliska osoba'};
+    const periods=results.flatMap(r=>(r.pdfContext?.periods||[]).map(p=>({title:r.title,...p})));
+    return `<aside class="wywiad-summary"><section class="zus-result"><h2>${summary.total!==null?(summary.partial?'Policzona część wsparcia':'Razem możesz otrzymać'):'Uzupełnijmy kwotę'}</h2>${summary.total!==null?`<strong class="wywiad-summary-total">ok. ${money(summary.total)}</strong>`:'<p>Brakuje danych do wspólnej kwoty.</p>'}<span class="chip gold">Orientacyjnie, brutto, bez PIT</span>${Object.entries(summary.byParent||{}).map(([parent,total])=>`<p><strong>${esc(names[parent]||'Ta osoba')}:</strong> ${money(total)}</p>`).join('')}${summary.partial?'<p class="wywiad-help">Nie dodajemy świadczeń bez ustalonych kwot ani nakładających się okresów.</p>':''}${summary.missing?.length?`<details><summary>Brakuje: ${summary.missing.length} informacji</summary><ul>${summary.missing.slice(0,8).map(text=>`<li>${esc(text)}</li>`).join('')}</ul></details><button type="button" class="button secondary" data-wywiad="continue">Uzupełnij</button>`:''}${['birth','adoption','foster'].includes(state.answers.event)?'<a class="button secondary" href="#kalkulator/wywiad">Zobacz podział w kalkulatorze</a>':''}</section><section class="zus-result"><h2>Daty do zapamiętania</h2>${state.letter.deadline&&state.letter.deadline!=='unknown'?`<p><strong>Termin z pisma:</strong> ${esc(state.letter.deadline)}</p><a class="text-button" href="${PREFIX}/pismo/result">Pokaż pismo i przypomnienie</a>`:''}${periods.length?`<ul>${periods.map(p=>`<li><strong>${esc(p.title)}</strong><br>${esc(p.from)} – ${esc(p.to)}</li>`).join('')}</ul>`:'<p>Daty pojawią się po ustaleniu okresów lub terminu z pisma.</p>'}</section></aside>`;
   }
   function handoff(results) {
     const municipal = results.some(r => ['municipal', 'za-zyciem-payment'].includes(r.id));
@@ -171,29 +237,34 @@
     return `<section class="zus-result wywiad-handoff"><p class="small-label">Złożenie dokumentów</p><h2>Gdzie załatwić Twoją sprawę</h2><div class="zus-segments">${municipal ? `<section><h3>Świadczenie z gminy</h3><p>Złóż wniosek przez Emp@tię albo w gminie lub OPS właściwym dla miejsca zamieszkania.</p>${link('https://empatia.gov.pl/', 'Przejdź do Emp@tii', 'button secondary')}${link('https://www.gov.pl/web/gov/uzyskaj-swiadczenie-rodzicielskie', 'Sprawdź dokumenty i właściwy urząd')}</section>` : ''}${employment ? `<section><h3>${state.answers.work === 'employee' ? 'Urlop i dokumenty od pracodawcy' : 'Dokumenty od zleceniodawcy'}</h3><p>${state.answers.work === 'employee' ? 'Wniosek o urlop przekaż pracodawcy, a z kadrami ustal płatnika zasiłku i potrzebne zaświadczenie.' : 'Poproś zleceniodawcę o właściwe zaświadczenie płatnika do Twojej sprawy.'}</p><p class="wywiad-help">Skorzystaj z kanału przyjmowania dokumentów wskazanego przez płatnika.</p></section>` : ''}${krus ? `<section><h3>Sprawa w KRUS</h3><p>Dokumenty i sposób złożenia sprawdź w usłudze KRUS.</p>${link('https://www.gov.pl/web/krus/zasilek-macierzynski', 'Przejdź do informacji KRUS', 'button secondary')}</section>` : ''}<section><h3>Dokument kierowany do ZUS</h3><p>Jeśli adresatem Twojego wniosku jest ZUS, przejdź do eZUS i wybierz właściwy formularz.</p>${link(LOGIN, 'Przejdź do eZUS', 'button secondary')}<p class="wywiad-help">Przez login.gov.pl możesz użyć mObywatela, jeśli ta metoda jest dostępna.</p></section><section><h3>Dokument na papierze</h3><p>Przygotuj formularz przy świadczeniu, sprawdź go, wydrukuj i podpisz przed przekazaniem właściwemu adresatowi.</p><p class="wywiad-help">Zaświadczenia pracodawcy lub lekarza przygotowuje wskazana osoba.</p></section></div><p class="wywiad-help wywiad-handoff-note">Wniosek elektroniczny podpisujesz i wysyłasz w serwisie instytucji; Otula przygotowuje dokumenty, ale ich nie składa.</p></section>`;
   }
   function renderResults() {
-    const results = engine().assess(state.answers) || [];
+    const results = state.answers.event ? engine().assess(state.answers)||[] : [];
     const questions = questionList();
-    const unknown = questions.filter(q => state.answers[q.id] === undefined || state.answers[q.id] === 'unknown');
-    const answered = questions.filter(q => state.answers[q.id] !== undefined);
-    const next = unknown[0] || questions[0];
-    state.container.innerHTML = `<section class="zus-page wywiad-page"><button class="back-link text-button" type="button" data-wywiad="back"><span aria-hidden="true">←</span> Wróć do odpowiedzi</button><header class="page-intro"><p class="small-label">Twoja sytuacja → Twoje świadczenia</p><h1 id="wywiad-title" tabindex="-1">Co możesz otrzymać?</h1><p>Oto świadczenia i dokumenty dobrane do Twoich odpowiedzi.</p><span class="chip gold">Orientacyjnie</span></header>${unknown.length ? `<div class="zus-notice"><p>${unknown.length} ${unknown.length === 1 ? 'informacja wymaga' : 'informacji wymaga'} uzupełnienia; brak odpowiedzi nie oznacza odmowy.</p><button type="button" class="button primary" data-wywiad="continue">Uzupełnij brakujące informacje</button></div>` : ''}<div aria-live="polite">${results.length ? results.map(resultCard).join('') : '<div class="zus-result"><h2>Zacznijmy od Twojej sytuacji</h2><p>Odpowiedz na pierwsze pytania, aby zobaczyć właściwe świadczenia.</p><button type="button" class="button primary" data-wywiad="continue">Przejdź do pytań</button></div>'}</div>${handoff(results)}<details><summary>Sprawdź lub zmień odpowiedzi (${answered.length})</summary><dl class="wywiad-answers">${answered.map(q => `<div><dt>${esc(q.title || q.label)}</dt><dd><span>${esc(answerLabel(q, state.answers[q.id]))}</span><button type="button" class="text-button" data-edit="${esc(q.id)}" aria-label="Zmień: ${esc(q.title || q.label)}">Zmień</button></dd></div>`).join('')}</dl></details>${notice()}${storageControls()}</section>`;
-    bind({ back: () => go(next ? ['pytanie', next.id] : []), continue: () => go(next ? ['pytanie', next.id] : []) });
-    state.container.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => go(['pytanie', b.dataset.edit])));
-    state.container.querySelectorAll('[data-document]').forEach(b => b.addEventListener('click', () => {
-      const [i, j] = b.dataset.document.split(':').map(Number);
-      go(['dokument', results[i].id, results[i].documents[j].code]);
-    }));
+    const unknown = questions.filter(q=>state.answers[q.id]===undefined||state.answers[q.id]==='unknown');
+    const answered = questions.filter(q=>state.answers[q.id]!==undefined);
+    const next=unknown[0]||questions[0];
+    const hasLetter = state.answers.situation==='zus-letter'||(state.answers.extraSituations||[]).includes('zus-letter')||Object.keys(state.letter).length>0;
+    state.container.innerHTML=`<section class="wywiad-page">${crumbs('Świadczenia i dokumenty')}<a class="back-link text-button" href="${PREFIX}">← Wróć do: sytuacje</a><header class="page-intro"><h1 id="wywiad-title" tabindex="-1">Twoje świadczenia i dokumenty</h1><p>Sprawdź okres, kwotę i to, kto przygotowuje dokumenty.</p></header>${hasLetter?`<section class="zus-result wywiad-case-letter"><h2>Pismo z ZUS</h2><p>${state.letter.deadline&&state.letter.deadline!=='unknown'?`Termin wpisany z pisma: ${esc(state.letter.deadline)}`:'Uzupełnij rodzaj pisma i termin wskazany przez urząd.'}</p><a class="button secondary" href="${PREFIX}/pismo/${Object.keys(state.letter).length?'result':'kind'}">Otwórz pismo i następny krok</a></section>`:''}<div class="wywiad-results-layout"><div class="wywiad-results-main">${results.length?results.map(resultCard).join(''):'<div class="zus-result"><h2>Dobierz świadczenie do sytuacji</h2><a class="button primary" href="#moja-sprawa">Wybierz sytuację</a></div>'}</div>${summaryMarkup(results)}</div>${handoff(results)}<details><summary>Sprawdź lub zmień odpowiedzi (${answered.length})</summary><dl class="wywiad-answers">${answered.map(q=>`<div><dt>${esc(q.title||q.label)}</dt><dd><span>${esc(answerLabel(q,state.answers[q.id]))}</span><button type="button" class="text-button" data-edit="${esc(q.id)}" aria-label="Zmień: ${esc(q.title||q.label)}">Zmień</button></dd></div>`).join('')}</dl></details><a class="text-button" href="${PREFIX}/dodaj">Dodaj drugą sytuację</a><div id="wywiad-loss-support"></div>${notice()}${storageControls()}</section>`;
+    bind({continue:()=>go(next?['pytanie',next.id]:[])});
+    state.container.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>go(['pytanie',b.dataset.edit]));
+    state.container.querySelectorAll('[data-document]').forEach(b=>b.onclick=()=>{const[i,j]=b.dataset.document.split(':').map(Number);go(['dokument',results[i].id,results[i].documents[j].code]);});
+    state.container.querySelectorAll('[data-case-status]').forEach(b=>b.onclick=()=>{state.statuses[b.dataset.caseStatus]=b.dataset.statusValue;if(state.saved)save();const region=b.closest('.wywiad-status');region.querySelector('[data-status-label]').textContent='Status sprawy · '+b.dataset.statusValue;region.querySelectorAll('[data-case-status]').forEach(other=>{other.classList.toggle('active',other===b);other.setAttribute('aria-pressed',String(other===b));});});
+    if(['loss','childDeath'].includes(state.answers.event)&&root.OtulaPismo)root.OtulaPismo.renderLossSupport(state.container.querySelector('#wywiad-loss-support'));
   }
   function renderDocument(parts) {
     const results = engine().assess(state.answers) || [];
     const result = results.find(item => item.id === parts[1]);
     const doc = result && (result.documents || []).find(item => item.code === parts[2]);
-    const handler = doc && (doc.code === 'ZAS-53' || result.pdfContext?.formCode === 'ZAS-53') ? root.OtulaChorobowe : root.OtulaWniosek;
+    const leaveKind = doc?.code?.startsWith('LEAVE-') ? doc.code.slice(6).toLowerCase() : null;
+    const handler = leaveKind ? root.OtulaUrlopy : doc && (doc.code === 'ZAS-53' || result.pdfContext?.formCode === 'ZAS-53') ? root.OtulaChorobowe : root.OtulaWniosek;
     if (!result || !doc || !canPrepare(doc, result) || !handler || typeof handler.render !== 'function') {
       state.container.innerHTML = `<section class="zus-page wywiad-page"><a href="${PREFIX}/wynik" class="back-link text-button">← Wróć do świadczeń</a><div class="zus-result"><h1 id="wywiad-title">Przygotowanie dokumentu</h1><p>Ten dokument otworzysz w oficjalnym serwisie; wróć do listy świadczeń, aby wybrać formularz.</p>${doc ? link(doc.url, 'Otwórz oficjalny formularz', 'button primary') : ''}</div></section>`;
       return;
     }
-    handler.render(state.container, { ...(result.pdfContext || {}), answers: { ...state.answers }, result, benefitId: result.id, documentCode: doc.code, onBack: () => go(['wynik']) });
+    handler.render(state.container, { ...(result.pdfContext || {}), ...(leaveKind?{kind:leaveKind}:{}), answers: { ...state.answers }, result, benefitId: result.id, documentCode: doc.code, onBack: () => go(['wynik']) });
+  }
+  function renderLetter(parts) {
+    if (!root.OtulaPismo) { state.message='Nie udało się wczytać ścieżki pisma; odśwież stronę.'; return renderLanding(); }
+    root.OtulaPismo.render(state.container,{ data:{...state.letter}, step:parts[1], onChange:data=>{state.letter=model().cleanLetter(data);if(state.saved)save();}, onNavigate:step=>go(['pismo',step]), onBack:()=>go(state.answers.event?['wynik']:[]) });
   }
   function bind(actions = {}) {
     state.container.querySelectorAll('[data-wywiad]').forEach(b => b.addEventListener('click', () => {
@@ -225,11 +296,9 @@
     const parts = route();
     if (parts[0] === 'wynik') renderResults();
     else if (parts[0] === 'dokument') renderDocument(parts);
-    else if (!parts.length) {
-      const questions = questionList();
-      if (questions.length && questions.every(q => state.answers[q.id] !== undefined)) renderResults();
-      else renderLanding();
-    }
+    else if (parts[0] === 'pismo') renderLetter(parts);
+    else if (parts[0] === 'dodaj') renderLanding(true);
+    else if (!parts.length) renderLanding();
     else {
       const questions = questionList();
       const requested = parts[0] === 'pytanie' ? parts[1] : '';
@@ -238,5 +307,18 @@
     }
     if (state.focus) { state.focus = false; const title = container.querySelector('#wywiad-title'); if (title) title.focus({ preventScroll: true }); container.scrollIntoView({ block: 'start', behavior: 'instant' }); }
   }
-  root.OtulaWywiad = { render, clear, storageKey: STORAGE_KEY, getAnswers: () => ({ ...state.answers }) };
+  function getAnswers() { load(); return JSON.parse(JSON.stringify(state.answers)); }
+  function updateCalculatorAnswers(patch) {
+    load();
+    const allowed=['benefitBase','baseKnown','parentalWeeks','otherPlannedWeeks','parentalStart','otherParentalStart','otherBenefitBase','otherBaseKnown','otherConditionsConfirmed','otherRatePlan','plan','applicationDate','firstYearParental'];
+    for(const key of allowed)if(cleanScalar(patch?.[key]))state.answers[key]=patch[key];
+    changed();return getAnswers();
+  }
+  root.addEventListener('storage',event=>{
+    if(state.saved&&(event.key===STORAGE_KEY||event.key===null)){
+      state.answers={};state.statuses={};state.letter={};state.saved=false;state.loaded=false;state.defaults=null;
+      load();state.message=state.saved?'Wczytano zmieniony zapis z drugiej karty.':'Zapis został usunięty w innej karcie.';
+    }
+  });
+  root.OtulaWywiad = { render, clear, storageKey: STORAGE_KEY, getAnswers, updateCalculatorAnswers };
 })(window);

@@ -67,3 +67,60 @@
  .wywiad-page .text-button { white-space:normal; text-align:left; }
 }
 @media(prefers-reduced-motion:reduce) { .wywiad-page * { scroll-behavior:auto; } }
+
+/* Sytuacje i pytania z odcinkami — przewodnik stylu, rozdział 15. */
+.wywiad-page { max-width:1180px; margin-inline:auto; }
+.wywiad-dashboard .page-intro { max-width:900px; }
+.wywiad-role { margin-bottom:20px; }
+.wywiad-role>.filters { margin:8px 0; }
+.wywiad-role>.filters .filter { gap:8px; }
+.wywiad-current { border:1px solid var(--line); border-radius:22px; padding:20px; margin:20px 0; background:var(--rose); }
+.wywiad-current .case-actions { margin-top:16px; }
+.wywiad-current .chip { display:inline-flex; margin:8px 8px 0 0; padding:6px 10px; }
+.wywiad-search { max-width:none; border-radius:999px; margin:24px 0; padding:4px 16px; }
+.wywiad-search input { border:0!important; background:transparent!important; min-width:0; width:100%; padding:8px 0!important; border-radius:999px!important; }
+.wywiad-tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-auto-rows:1fr; gap:16px; margin:20px 0; }
+.wywiad-tile { position:relative; display:flex; align-items:center; gap:12px; min-height:124px; padding:20px 16px; border:1px solid var(--line); border-radius:22px; text-align:left; color:var(--ink); font-size:16px; font-weight:750; overflow:hidden; }
+.wywiad-tile:before { content:''; position:absolute; top:0; left:0; right:0; height:5px; background:var(--c,var(--peach)); opacity:1; }
+.wywiad-tile>span:nth-child(2) { flex:1; }
+.wywiad-tile>.tile-icon { width:48px; height:48px; border-radius:16px; }
+.wywiad-tile>span:last-child { flex:none; }
+.wywiad-tile:hover { box-shadow:0 8px 26px #5a2e400d; border-color:var(--berry); }
+.wywiad-library { margin:28px 0; }
+.wywiad-library h2 { margin-bottom:16px; }
+.wywiad-crumbs { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:0 0 8px; font-size:14px; color:var(--muted); }
+.wywiad-crumbs a { min-height:44px; display:flex; align-items:center; }
+.wywiad-record-list { display:grid; gap:16px; margin:24px 0 16px; }
+.wywiad-record { min-width:0; border:1px solid var(--line); border-radius:22px; padding:20px; margin:0; background:var(--paper); }
+.wywiad-record legend { font-size:18px; font-weight:700; padding:0 8px; }
+.wywiad-record-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.wywiad-record .field { display:grid; gap:8px; min-width:0; }
+.wywiad-record .field input,.wywiad-record .field select { width:100%; min-width:0; font-family:inherit; }
+.wywiad-record>button { margin-top:12px; }
+.wywiad-record+button+p { margin-top:12px; }
+.wywiad-results-layout { display:grid; grid-template-columns:minmax(0,1.8fr) minmax(270px,1fr); gap:24px; align-items:start; }
+.wywiad-results-layout>.wywiad-results-main { min-width:0; }
+.wywiad-results-layout>.wywiad-summary { position:sticky; top:20px; }
+.wywiad-summary .zus-result { margin-top:0; background:var(--gold); }
+.wywiad-summary h2 { font-size:25px!important; }
+.wywiad-summary-total { display:block; font-size:32px; line-height:1.2; font-weight:750; margin:16px 0; }
+.wywiad-summary ul { padding-left:20px; }
+.wywiad-benefit { background:#fff; }
+.wywiad-benefit:first-child { margin-top:0; }
+.wywiad-result-title { display:flex; align-items:center; gap:12px; }
+.wywiad-result-title h2 { font-size:25px!important; }
+.wywiad-check { padding:16px; border-radius:16px; margin:20px 0; }
+.wywiad-check strong { display:block; }
+.wywiad-check p { font-size:14px; margin-top:8px; }
+.wywiad-status { margin-top:20px; padding-top:16px; border-top:1px solid var(--line); }
+.wywiad-status .filters { margin:12px 0; }
+.wywiad-status .filter { font-size:14px; }
+.wywiad-result-actions { display:flex; flex-wrap:wrap; gap:12px; margin:20px 0; }
+.wywiad-result-actions .button { flex:1 1 180px; }
+.wywiad-case-letter { background:var(--rose); }
+.wywiad-support-request { white-space:pre-wrap; }
+.wywiad-questions-tools { display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+@media(min-width:701px) and (max-width:1150px) { .wywiad-tiles { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media(max-width:900px) { .wywiad-results-layout { display:flex; flex-direction:column; } .wywiad-results-layout>.wywiad-summary { order:-1; position:static; width:100%; } .wywiad-results-main { width:100%; } }
+@media(max-width:700px) { .wywiad-tiles { grid-template-columns:minmax(0,1fr); gap:12px; } .wywiad-tile { min-height:92px; } .wywiad-record-fields { grid-template-columns:minmax(0,1fr); } .wywiad-record { padding:16px; } .wywiad-status .filters { gap:8px; } }

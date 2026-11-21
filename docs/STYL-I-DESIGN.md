@@ -125,3 +125,9 @@ Na szerokim ekranie trzy karty mieszczą się w jednym rzędzie; na telefonie uk
 Wynik pokazuje oddzielnie świadczenia, kwotę lub brak danych do kwoty oraz dokumenty z osobą odpowiedzialną. Szczegóły można rozwinąć; podstawowe informacje i następny krok pozostają widoczne. Zmiana odpowiedzi usuwa niepasujące odpowiedzi zależne. Trasy pytań, wyniku i przygotowania dokumentu zachowują systemowe cofanie. Dane osobowe wniosku nie należą do zapisu odpowiedzi; zapis na urządzeniu wymaga świadomego działania użytkownika.
 
 Powitanie wywiadu ma jedną brzoskwiniową kartę i jedno główne działanie; na komputerze istniejąca ilustracja ciężarnej pozostaje dekoracją obok tekstu, na małym telefonie pierwszeństwo ma tekst i przycisk. Ukończony wywiad otwiera wynik; rozpoczęty pozwala kontynuować od brakującej odpowiedzi.
+
+## 15. Kafelki sytuacji, powtarzane okresy i status sprawy
+
+Główne wejście „Co się u Was dzieje?” używa równych kart `.wywiad-tile` z ikoną w istniejącym `.tile-icon`, kolorowym paskiem i krótką etykietą. Karty mają promień 22 px i znane kolory tematu; na telefonie jedną kolumnę, na komputerze trzy lub cztery. Wyszukiwarka korzysta z `.search-box`; wyniki biblioteki pozostają oddzielone od wyboru sytuacji. Rola jest widoczna i edytowalna nad kafelkami.
+
+Pytania o wiele okresów używają powtarzanych kart z numerem, oznaczonymi polami i przyciskami „Dodaj”/„Usuń”, bez ciasnej tabeli na telefonie. Wyniki mają główną kolumnę kart i prawą kolumnę sumy oraz terminów; mobilnie suma poprzedza karty. Ręczny status sprawy ma opis „Status podany przez Ciebie” i nie zastępuje oceny warunków ani potwierdzenia wypłaty. Wszystkie nowe kontrolki zachowują minimum 44 px i widoczny fokus.
