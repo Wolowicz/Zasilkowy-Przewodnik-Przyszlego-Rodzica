@@ -599,7 +599,7 @@ function render(focus = false) {
   const r = route();
   document.body.classList.toggle('arriving', (r.page === 'start' && !state.onboarded) || ['powitanie','dzieci','praca'].includes(r.page));
   frame(r);
-  const pages = { termin:calendarEditor, formularze:formsPage, kalkulator:calculatorPage, 'e-uslugi':eUslugiPage, 'sprawdz-sprawe':sprawdzSprawePage, parametry:zusParametersPage, uprawnienia:zusGuidePage, narzedzia:toolsPage, slowniczek:glossaryPage, rodzina:childrenPage, raport:reportPage, poradnik:handbook, pomoc:helpPage, powitanie: arrival, dzieci: arrival, praca: arrival, start, plan: planPage, terminy: deadlinesPage, biblioteka: library, wsparcie: support, sytuacja: situation, 'o-przewodniku': about, dane: dataPage };
+  const pages = { termin:calendarEditor, formularze:formsPage, kalkulator:calculatorPage, 'e-uslugi':eUslugiPage, 'sprawdz-sprawe':sprawdzSprawePage, parametry:zusParametersPage, uprawnienia:zusCompactGuidePage, narzedzia:toolsPage, slowniczek:glossaryPage, rodzina:childrenPage, raport:reportPage, poradnik:handbook, pomoc:helpPage, powitanie: arrival, dzieci: arrival, praca: arrival, start, plan: planPage, terminy: deadlinesPage, biblioteka: library, wsparcie: support, sytuacja: situation, 'o-przewodniku': about, dane: dataPage };
   main.innerHTML = r.page === 'sprawa' ? backLink(r) + casePage(r.id) : pages[r.page](r);
   if (['plan','terminy','sytuacja','wsparcie'].includes(r.page)) main.insertAdjacentHTML('afterbegin',childSwitch());
   if (r.page === 'biblioteka') main.insertAdjacentHTML('afterbegin','<div class="library-tools"><a href="#slowniczek">Słowniczek</a><a href="#pomoc">Zapytaj AI</a></div>');
@@ -792,3 +792,4 @@ window.addEventListener('hashchange', () => {
 });
 trackRoute();
 render();
+
