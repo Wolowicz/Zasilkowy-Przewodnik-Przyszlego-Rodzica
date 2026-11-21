@@ -114,3 +114,5 @@ Drugi, niezależny przegląd porównał około 70 wartości ilościowych z wyci�
 | B12–B13 | Termin ojcowskiego przy adopcji; lista dokumentów rodzicielskiego | Otwarte |
 
 Przykładowe sprawy z zestawu ZUS odczytano lokalnym OCR (Windows, bez wysyłania). Ich opisy są przygotowywane poza repozytorium i trafiają do aplikacji wyłącznie zaszyfrowane kluczem z oryginalnego pliku (`scripts/sprawy-zus/zaszyfruj.mjs`): juror z plikiem może sprawdzić wyliczenie, a nikt bez pliku nie odczyta danych.
+
+Stan danych spraw (21.11.2026): w aplikacji jest 10 reprezentatywnych spraw (w tym 2 odmowy – brak ubezpieczenia i zadłużenie, martwe urodzenie, wcześniak, adopcja, ojcowski, 9 tygodni, łączenie z pracą), odczytanych lokalnie ze skanów. Kwoty, stawki i podstawy pominięto, bo skany nie podają ich czytelnie (część wartości agenci tylko wyliczyli lub założyli). Porównanie z kalkulatorem obejmuje więc decyzję i okresy; pozostałych 76 spraw nie opracowano.
