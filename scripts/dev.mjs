@@ -14,7 +14,7 @@ const data=await Promise.all(names.map(async(n,i)=>`const ${vars[i]}=${await fs.
 const modules=await Promise.all(['matching.js','discovery.mjs','medical-search.mjs','assistant.mjs'].map(n=>fs.readFile(new URL(n,workerRoot),'utf8')));
 // Lokalny origin dodajemy wyłącznie do instancji w pamięci; produkcyjna lista pozostaje bez zmian.
 const worker=(await import('data:text/javascript;base64,'+Buffer.from([...data,...modules,`origins.add(${JSON.stringify(origin)});`].join('\n')).toString('base64'))).default;
-const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.ttf':'font/ttf','.pdf':'application/pdf','.mp4':'video/mp4','.vtt':'text/vtt; charset=utf-8'};
+const types={'.json':'application/json; charset=utf-8','.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.ttf':'font/ttf','.pdf':'application/pdf','.mp4':'video/mp4','.vtt':'text/vtt; charset=utf-8'};
 const server=http.createServer(async(req,res)=>{
   const send=(status,text)=>{res.writeHead(status,{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'});res.end(text);};
   try{

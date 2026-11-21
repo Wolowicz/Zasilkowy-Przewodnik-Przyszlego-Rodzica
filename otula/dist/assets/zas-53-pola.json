@@ -1,0 +1,436 @@
+[
+  {
+    "name": "PESEL",
+    "label": "Wpisz swój numer PESEL",
+    "page": 0,
+    "rect": [
+      239.1020050048828,
+      303.833984375,
+      434.9419860839844,
+      321.114013671875
+    ],
+    "comb": true,
+    "max": 11,
+    "check": false
+  },
+  {
+    "name": "Dataurodzenia",
+    "label": "Jeśli nie masz nadanego numeru PESEL, wpisz swoją datę urodzenia w formacie dd mm rrrr",
+    "page": 0,
+    "rect": [
+      239.1020050048828,
+      329.635009765625,
+      381.71600341796875,
+      346.9150085449219
+    ],
+    "comb": true,
+    "max": 8,
+    "check": false
+  },
+  {
+    "name": "Rodzajseriainumerdokumentu",
+    "label": "Jeśli nie masz nadanego numeru PESEL wpisz rodzaj, serię i numer dokumentu potwierdzającego Twoją tożsamość",
+    "page": 0,
+    "rect": [
+      240.7519989013672,
+      373.47601318359375,
+      550.3519897460938,
+      390.7560119628906
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "Imie",
+    "label": "Wpisz swoje imię",
+    "page": 0,
+    "rect": [
+      240.5449981689453,
+      411.780029296875,
+      550.14501953125,
+      429.0600280761719
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "Nazwisko",
+    "label": "Wpisz swoje nazwisko",
+    "page": 0,
+    "rect": [
+      240.5449981689453,
+      438.29302978515625,
+      550.14501953125,
+      455.5730285644531
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "Ulica",
+    "label": "Twój adres - wpisz ulicę",
+    "page": 0,
+    "rect": [
+      240.697998046875,
+      464.14202880859375,
+      550.2979736328125,
+      481.4220275878906
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "Numerdomu",
+    "label": "Twój adres - wpisz numer domu",
+    "page": 0,
+    "rect": [
+      240.697998046875,
+      490.06201171875,
+      307.6579895019531,
+      507.3420104980469
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "Numerlokalu",
+    "label": "Twój adres - wpisz numer lokalu",
+    "page": 0,
+    "rect": [
+      401.63800048828125,
+      490.06201171875,
+      468.5979919433594,
+      507.3420104980469
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "Kodpocztowy",
+    "label": "Twój adres - wpisz kod pocztowy",
+    "page": 0,
+    "rect": [
+      240.697998046875,
+      515.2449951171875,
+      307.6579895019531,
+      532.5250244140625
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "Poczta",
+    "label": "Twój adres - wpisz miejscowość",
+    "page": 0,
+    "rect": [
+      401.63800048828125,
+      515.2449951171875,
+      549.9580078125,
+      532.5250244140625
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "Nazwapaństwa",
+    "label": "Jeśli Twój adres jest inny niż polski, wpisz nazwę państwa",
+    "page": 0,
+    "rect": [
+      240.697998046875,
+      541.8370361328125,
+      550.2979736328125,
+      559.1170043945312
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "Numertelefonu",
+    "label": "Wpisz swój numer telefonu. Ułatwi nam to kontakt w Twojej sprawie. To pole jest dobrowolne",
+    "page": 0,
+    "rect": [
+      240.697998046875,
+      576.4620361328125,
+      550.2979736328125,
+      593.7420043945312
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "NIP",
+    "label": "Wpisz NIP płatnika składek",
+    "page": 0,
+    "rect": [
+      239.01400756835938,
+      635.3569946289062,
+      416.85400390625,
+      652.6370239257812
+    ],
+    "comb": true,
+    "max": 10,
+    "check": false
+  },
+  {
+    "name": "REGON",
+    "label": "Jeśli płatnik składek nie ma nadanego  NIP, wpisz jego REGON",
+    "page": 0,
+    "rect": [
+      239.23800659179688,
+      660.93701171875,
+      489.0780029296875,
+      678.217041015625
+    ],
+    "comb": true,
+    "max": 14,
+    "check": false
+  },
+  {
+    "name": "PESEL_1",
+    "label": "Jeśli płatnik składek nie ma nadanego  NIP i REGON, wpisz jego PESEL",
+    "page": 0,
+    "rect": [
+      239.1020050048828,
+      695.6480102539062,
+      435.1659851074219,
+      712.927978515625
+    ],
+    "comb": true,
+    "max": 11,
+    "check": false
+  },
+  {
+    "name": "Rodzajseriainumerdokumentu_1",
+    "label": "Jeśli płatnik składek nie ma nadanego  NIP, REGON i PESEL, wpisz rodzaj, serię i numer dokumentu potwierdzającego jego tożsamość",
+    "page": 0,
+    "rect": [
+      240.61000061035156,
+      730.5390014648438,
+      550.2100219726562,
+      747.8190307617188
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "Nazwaplatnika",
+    "label": "Wpisz nazwę albo imię i nazwisko płatnika składek",
+    "page": 0,
+    "rect": [
+      240.61000061035156,
+      765.1900024414062,
+      550.2100219726562,
+      782.4700317382812
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "Numerrachunku",
+    "label": "Jeśli chcesz otrzymywać wypłatę zasiłku chorobowego na rachunek bankowy, wpisz numer rachunku. To pole jest dobrowolne. Jeśli nie wypełnisz tego pola, zasiłek chorobowy wypłacimy Ci przekazem pocztowym na podany wyżej adres",
+    "page": 1,
+    "rect": [
+      42.74100112915039,
+      114.697998046875,
+      506.3840026855469,
+      131.97802734375
+    ],
+    "comb": true,
+    "max": 26,
+    "check": false
+  },
+  {
+    "name": "Tekst",
+    "label": "Wpisz datę lub daty (od–do) oraz – jeśli znasz – serię i numer zwolnienia lekarskiego",
+    "page": 1,
+    "rect": [
+      46.12300109863281,
+      180.53900146484375,
+      550.1229858398438,
+      240.43798828125
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "wniosek1A",
+    "label": "Zaznacz, jeśli wniosek dotyczy okresu niezdolności do pracy z powodu choroby przypadającego w okresie ubezpieczenia chorobowego lub wypadkowego",
+    "page": 1,
+    "rect": [
+      41.47999954223633,
+      279.8270263671875,
+      60.47999954223633,
+      298.8270263671875
+    ],
+    "comb": false,
+    "max": 0,
+    "check": true
+  },
+  {
+    "name": "wniosek1B",
+    "label": "Zaznacz, jeśli wniosek dotyczy okresu niezdolności do pracy z powodu choroby przypadającego po ustaniu tytułu ubezpieczenia chorobowego lub wypadkowego",
+    "page": 1,
+    "rect": [
+      41.47999954223633,
+      306.676025390625,
+      60.47999954223633,
+      325.676025390625
+    ],
+    "comb": false,
+    "max": 0,
+    "check": true
+  },
+  {
+    "name": "Data",
+    "label": "Jeśli wniosek dotyczy okresu niezdolności do pracy z powodu choroby przypadającego po ustaniu tytułu ubezpieczenia chorobowego lub wypadkowego, wpisz datę ustania tytułu ubezpieczenia w formacie dd mm rrrr",
+    "page": 1,
+    "rect": [
+      346.802001953125,
+      307.68402099609375,
+      489.4159851074219,
+      324.9639892578125
+    ],
+    "comb": true,
+    "max": 8,
+    "check": false
+  },
+  {
+    "name": "choroby",
+    "label": "Zaznacz, jeśli wniosek dotyczy niezdolności do pracy z powodu choroby zawodowej",
+    "page": 1,
+    "rect": [
+      41.47999954223633,
+      371.25,
+      60.47999954223633,
+      390.25
+    ],
+    "comb": false,
+    "max": 0,
+    "check": true
+  },
+  {
+    "name": "przypracy",
+    "label": "Zaznacz, jeśli wniosek dotyczy niezdolności do pracy z powodu wypadku przy pracy",
+    "page": 1,
+    "rect": [
+      202.0030059814453,
+      371.73699951171875,
+      221.0030059814453,
+      390.73699951171875
+    ],
+    "comb": false,
+    "max": 0,
+    "check": true
+  },
+  {
+    "name": "wdrodze",
+    "label": "Zaznacz, jeśli wniosek dotyczy niezdolności do pracy z powodu wypadku w drodze do pracy lub z pracy",
+    "page": 1,
+    "rect": [
+      327.3710021972656,
+      371.73699951171875,
+      346.3710021972656,
+      390.73699951171875
+    ],
+    "comb": false,
+    "max": 0,
+    "check": true
+  },
+  {
+    "name": "Data2",
+    "label": "Wpisz datę wypełnienia formularza w formacie dd mm rrrr. Obok znajduje się miejsce na podpis",
+    "page": 1,
+    "rect": [
+      79.01000213623047,
+      617.4620361328125,
+      221.62399291992188,
+      634.7420043945312
+    ],
+    "comb": true,
+    "max": 8,
+    "check": false
+  },
+  {
+    "name": "TAK_5",
+    "label": "Zaznacz, jeśli wniosek dotyczy niezdolności do pracy z powodu choroby zawodowej, wypadku przy pracy lub wypadku w drodze do pracy lub z pracy",
+    "page": 1,
+    "rect": [
+      41.03799819946289,
+      398.25201416015625,
+      60.03799819946289,
+      417.25201416015625
+    ],
+    "comb": false,
+    "max": 0,
+    "check": true
+  },
+  {
+    "name": "NIE_5",
+    "label": "Zaznacz, jeśli wniosek nie dotyczy niezdolności do pracy z powodu choroby zawodowej, wypadku przy pracy lub wypadku w drodze do pracy lub z pracy",
+    "page": 1,
+    "rect": [
+      94.69499969482422,
+      398.25201416015625,
+      113.69499969482422,
+      417.25201416015625
+    ],
+    "comb": false,
+    "max": 0,
+    "check": true
+  },
+  {
+    "name": "Tekst5",
+    "label": "Jeśli wniosek dotyczy niezdolności do pracy, to wpisz rodzaj dokumentu potwierdzającego (decyzja, protokół lub karta wypadku), numer oraz datę jego sporządzenia",
+    "page": 1,
+    "rect": [
+      169.76400756835938,
+      398.8520202636719,
+      549.7960205078125,
+      416.13201904296875
+    ],
+    "comb": false,
+    "max": 0,
+    "check": false
+  },
+  {
+    "name": "TAK_6",
+    "label": "Zaznacz, jeżeli jesteś marynarzem i za okres niezdolności do pracy, za który ubiegasz się o zasiłek chorobowy przysługuje Ci wynagrodzenie za pracę, o którym mowa w art. 75 pkt. 2 ustawy z dnia 5 sierpnia 2015 r. o pracy na morzu",
+    "page": 1,
+    "rect": [
+      41.13100051879883,
+      502.1590270996094,
+      60.13100051879883,
+      521.1590576171875
+    ],
+    "comb": false,
+    "max": 0,
+    "check": true
+  },
+  {
+    "name": "NIE_6",
+    "label": "Zaznacz, jeżeli jesteś marynarzem i za okres niezdolności do pracy, za który ubiegasz się o zasiłek chorobowy nie przysługuje Ci wynagrodzenie za pracę, o którym mowa w art. 75 pkt. 2 ustawy z dnia 5 sierpnia 2015 r. o pracy na morzu",
+    "page": 1,
+    "rect": [
+      94.78800201416016,
+      502.1590270996094,
+      113.78800201416016,
+      521.1590576171875
+    ],
+    "comb": false,
+    "max": 0,
+    "check": true
+  }
+]

@@ -3,7 +3,10 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 const root=fileURLToPath(new URL('../',import.meta.url));
-for(const test of ['otula/tests/zus.test.cjs','otula/tests/calendar.test.cjs','otula/tests/assistant.test.cjs','otula/tests/sprawy.test.cjs','otula/tests/e-uslugi.test.cjs'])execFileSync(process.execPath,[path.join(root,test)],{stdio:'inherit'});
+const testsDir = path.join(root,'otula/tests');
+for (const test of fs.readdirSync(testsDir).filter(name => name.endsWith('.test.cjs')).sort()) {
+  execFileSync(process.execPath,[path.join(testsDir,test)],{stdio:'inherit'});
+}
 for(const name of fs.readdirSync(path.join(root,'otula/dist')).filter(n=>n.endsWith('.js')))execFileSync(process.execPath,['--check',path.join(root,'otula/dist',name)],{stdio:'inherit'});
 for(const name of fs.readdirSync(path.join(root,'scripts')).filter(n=>n.endsWith('.mjs')))execFileSync(process.execPath,['--check',path.join(root,'scripts',name)],{stdio:'inherit'});
 execFileSync(process.execPath,[path.join(root,'tests/dev.test.mjs')],{stdio:'inherit'});
