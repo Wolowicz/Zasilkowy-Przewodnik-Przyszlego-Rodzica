@@ -47,7 +47,7 @@ r=calc({shareA:20,shareB:9,parentalStartA:'2027-03-21',parentalStartB:'2027-03-2
 r=calc({parentalStartA:'2026-11-01'});assert.ok(r.issues.some(s=>s.includes('po jego okresie')));
 r=calc({parentalStartB:'2026-10-31'});assert.ok(r.issues.length);
 r=calc({parentalStartB:'2032-12-31'});assert.ok(r.issues.length);
-r=calc({rate:'combined',firstYearParental:'no'});assert.equal(r.issues.length,0);assert.equal(r.segments[0].rate,100);assert.equal(r.segments[1].rate,70);assert.equal(r.adjustment,4317.6);assert.equal(r.segments[1].from,'2027-11-01');assert.equal(r.firstYearAdjustment,true);
+r=calc({rate:'combined',firstYearParental:'no'});assert.equal(r.issues.length,0);assert.equal(r.segments[0].rate,100);assert.equal(r.segments[1].rate,70);assert.equal(r.adjustment,4316.2);assert.equal(r.segments[1].from,'2027-11-01');assert.equal(r.firstYearAdjustment,true);
 r=calc({rate:'combined',firstYearParental:'unknown'});assert.ok(r.issues.length);
 r=calc({rate:'combined',firstYearParental:'yes'});assert.equal(r.issues.length,0);assert.equal(r.adjustment,0);
 r=calc({rate:'combined',firstYearParental:'no',parentalStartA:'2027-10-31'});assert.ok(r.issues.length);
@@ -68,6 +68,13 @@ assert.ok(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,combinedRate:6
 assert.ok(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,parentalWeeks:[10,43]}).length',context));
 assert.ok(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,maternityWeeks:[20,31,30,35,37]}).length',context));
 assert.ok(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,validTo:"2025-12-31"}).length',context));
+// Work fraction refers to full-time hours, while the money reduction refers to the original contract.
+r=calc({contractFractionA:.5,fractionA:.25,baseA:6000});assert.equal(r.issues.length,0);assert.equal(r.segments[1].days,298);assert.equal(r.segments[1].daily,70);
+r=calc({contractFractionA:.5,fractionA:.5});assert.ok(r.issues.length);
+r=calc({shareA:9,shareB:0,fractionA:.25,baseA:6000});assert.equal(r.segments[1].days,83);assert.equal(r.segments[1].daily,105);
+r=calc({shareA:9,shareB:0,fractionA:.5,baseA:6000});assert.equal(r.segments[1].days,125);assert.equal(r.segments[1].daily,70);
+r=calc({shareA:0,shareB:0,rate:'combined',baseA:5000});assert.equal(r.segments[0].daily,135.84);
+assert.equal(vm.runInContext('zusDaily(5000,70,.5,1)',context),58.33);
 const storage=new Map();context.localStorage={getItem:key=>storage.get(key)??null,setItem:(key,value)=>storage.set(key,value),removeItem:key=>storage.delete(key)};
 const hospital={exception:'hospital',gestationWeeks:27,birthWeight:900,hospitalFrom:'2026-11-01',hospitalUntil:'2026-11-09',hospitalConfirmed:true};
 r=calc({workA:'business',debt:'amount',debtAmountA:48.06});assert.equal(r.issues.length,0);

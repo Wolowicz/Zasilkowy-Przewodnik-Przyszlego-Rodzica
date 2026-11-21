@@ -121,6 +121,7 @@ const ZUS_SOURCES = {
   formProxy: 'https://bip.zus.pl/web/guest/-/tymczasowe-przywr%C3%B3cenie-formularza-z-3b-na-profilu-p%C5%82atnika-w-zwi%C4%85zku-z-ograniczeniami-na-ezus-dla-pe%C5%82nomocnik%C3%B3w?redirect=%2Fweb%2Fguest',
   work: 'https://www.pip.gov.pl/dla-pracodawcow/porady-prawne/rodzicielstwo'
   ,supplementary:'https://www.gov.pl/web/rodzina/pytania-i-odpowiedzi3'
+  ,calculationCommentary:'https://www.zus.pl/documents/10182/24202/Komentarz%2Bdo%2Bustawy%2Bo%2B%C5%9Bwiadczeniach%2Bpieni%C4%99%C5%BCnych%2Bz%2Bubezpieczenia%2Bspo%C5%82ecznego%2Bw%2Brazie%2Bchoroby%2Bi%2Bmacierzy%C5%84stwa%2B2023.pdf/7a31a278-8c06-cee4-3542-1d5bb8b36ad6'
 };
 function zusSource(key,label) {
   return `<a href="${ZUS_SOURCES[key]}" target="_blank" rel="noopener noreferrer">${label} ${icon('external',14)}</a>`;
@@ -169,6 +170,16 @@ function zusDate(value) {
 function zusIso(date) { return date?date.toISOString().slice(0,10):''; }
 function zusAddDays(date,days) { if(!date)return null;const next=new Date(date);next.setUTCDate(next.getUTCDate()+days);return next; }
 function zusRound(value) { return Math.round((value+Number.EPSILON)*100)/100; }
+// ZUS commentary, points 144/147/182: separately round daily basis, rate and reduction.
+// Leave extension uses the fraction of full-time work; payment reduction uses the fraction of the person's contract.
+function zusDaily(base,rate,workFraction=0,contractFraction=1) {
+  const full=zusRound(zusRound(base/30)*rate/100);
+  return zusRound(full-zusRound(full*workFraction/contractFraction));
+}
+function zusParentalDays(originalDays,workFraction=0) {
+  const extension=Math.floor(originalDays*workFraction+1e-8);
+  return originalDays+Math.floor(extension/(1-workFraction)+1e-8);
+}
 function zusSupplementary(d) {
   if(d.exception!=='hospital')return {issues:[],weeks:0,days:0};
   const issues=[],birth=zusDate(d.kind==='birth'?d.eventDate:d.childDob),placement=zusDate(d.eventDate);
@@ -230,7 +241,7 @@ function zusApplyMinimum(segments,d,rules) {
       if(base>s.base)notices.push(`Rodzic ${s.parent}: podstawę podniesiono z ${zusMoney(s.base)} do minimum ${zusMoney(base)} dla ${year} r. i wymiaru ${fraction} etatu.`);
       const yearEnd=cursor?new Date(Date.UTC(year,11,31,12)):null,last=end&&yearEnd<end?yearEnd:end;
       const days=cursor?Math.round((last-cursor)/86400000)+1:s.days;
-      const daily=zusRound(base/30*s.rate/100*(1-s.fraction));
+      const daily=zusDaily(base,s.rate,s.fraction,s.contractFraction??1);
       parts.push({...s,base,days,daily,total:zusRound(days*daily),from:zusIso(cursor),until:zusIso(last)});
       cursor=last?zusAddDays(last,1):null;
     }while(cursor&&end&&cursor<=end);
@@ -298,6 +309,7 @@ function zusCalculation(d,rules=zusRules) {
     if(!Number.isFinite(d['fraction'+key])||d['fraction'+key]<0||d['fraction'+key]>.5)issues.push('Wymiar pracy w okresie urlopu musi wynosić od 0 do połowy etatu.');
     if(d['fraction'+key]>0&&d['work'+key]!=='employee')issues.push('Łączenie urlopu z pracą w tym kalkulatorze dotyczy umowy o pracę u pracodawcy udzielającego urlopu.');
     if(d['work'+key]==='employee'&&d['contractFraction'+key]!==undefined&&(!Number.isFinite(d['contractFraction'+key])||d['contractFraction'+key]<=0||d['contractFraction'+key]>1))issues.push('Wymiar zatrudnienia do minimalnej podstawy musi być większy od 0 i nie większy od 1 etatu.');
+    if(d['fraction'+key]>0&&d['fraction'+key]>=(d['contractFraction'+key]??1))issues.push('Praca podczas rodzicielskiego musi pozostawiać część Twojego wymiaru zatrudnienia na urlop. Przy umowie na pół etatu wybierz np. pracę na 1/4 pełnego etatu; pracę w całym dotychczasowym wymiarze ustal odrębnie z kadrami.');
   }
   if(!fatherOnly&&(!Number.isInteger(d.shareA)||d.shareA<0))issues.push('Podaj pełną, nieujemną liczbę tygodni rodzicielskich pierwszego rodzica.');
   if(d.workPattern==='variable')issues.push('Zmiany etatu, przerwy lub zakończenie pracy w trakcie urlopu wymagają wyliczenia odcinkami. Ten kalkulator obsługuje wyłącznie stały wymiar przez cały wybrany okres i jego wydłużenie.');
@@ -354,9 +366,9 @@ function zusCalculation(d,rules=zusRules) {
   const maternityRate=d.rate==='combined'&&!firstYearAdjustment?rules.combinedRate:rules.maternityRate;
   const parentalRate=d.rate==='combined'&&!firstYearAdjustment?rules.combinedRate:rules.parentalRate;
   const segment=(label,weeks,base,rate,fraction,parent,kind)=> {
-    const days=Math.floor(weeks*7/(1-fraction)+1e-8);
-    const daily=Math.round(base/30*rate/100*(1-fraction)*100)/100;
-    return {label,days,daily,total:Math.round(days*daily*100)/100,rate,fraction,parent,kind,base};
+    const originalDays=Math.round(weeks*7),days=zusParentalDays(originalDays,fraction),contractFraction=d['contractFraction'+parent]??1;
+    const daily=zusDaily(base,rate,fraction,contractFraction);
+    return {label,days,daily,total:Math.round(days*daily*100)/100,rate,fraction,contractFraction,parent,kind,base};
   };
   let segments=fatherOnly?[]:[segment('Pierwszy rodzic · okres macierzyński',maternity,d.baseA,maternityRate,0,'A','maternity')];
   if(supplementary.weeks)segments.push(segment('Pierwszy rodzic · uzupełniający macierzyński',supplementary.weeks,d.baseA,rules.maternityRate,0,'A','supplementary'));
@@ -381,7 +393,7 @@ function zusCalculation(d,rules=zusRules) {
   if(issues.length)return {issues,maternity,maternityDays,minimumAdoption,parental};
   const minimum=zusApplyMinimum(segments,d,rules);segments=minimum.segments;
   const perParent=Object.fromEntries(['A','B'].map(parent=>[parent,{days:segments.filter(s=>s.parent===parent).reduce((n,s)=>n+s.days,0),total:zusRound(segments.filter(s=>s.parent===parent).reduce((n,s)=>n+s.total,0))}]));
-  const adjustment=firstYearAdjustment?zusRound(segments.filter(s=>s.kind==='maternity').reduce((sum,s)=>sum+(s.daily-zusRound(s.base/30*rules.combinedRate/100))*s.days,0)):0;
+  const adjustment=firstYearAdjustment?zusRound(segments.filter(s=>s.kind==='maternity').reduce((sum,s)=>sum+(s.daily-zusDaily(s.base,rules.combinedRate))*s.days,0)):0;
   return {issues:[],fatherOnly,maternity,maternityDays,minimumAdoption,parental,supplementary,shareA,shareB,unused:parental-shareA-shareB,segments,firstYearAdjustment,adjustment,
     total:Math.round(segments.reduce((sum,s)=>sum+Math.round(s.total*100),0))/100,
     perParent,months:zusMonthlyTotals(segments),notices:minimum.notices,ageLimit,custom:JSON.stringify(rules)!==JSON.stringify(ZUS_DEFAULT_RULES)};
@@ -404,7 +416,7 @@ function zusResult(d) {
     <p>Pierwszy rodzic: ${result.perParent.A.days} dni, ${zusMoney(result.perParent.A.total)}. Drugi rodzic: ${result.perParent.B.days} dni, ${zusMoney(result.perParent.B.total)}. Daty końca obejmują ostatni dzień wypłaty. Nakładanie się okresów rodziców jest dozwolone; zużywa sumę ich tygodni.</p>
     ${zusTopupPanel(result)}
     ${result.unused?`<p class="zus-notice">${result.unused} tygodni nie jest objętych tym wyliczeniem. ${result.fatherOnly?`${zusRules.reservedWeeks} tygodni zastrzeżonych matce nie przechodzi na ojca. Pozostała różnica, jeśli występuje, to niewybrana część jego puli.`:'Nieprzenoszalna część drugiego rodzica wymaga jego własnego uprawnienia.'}</p>`:''}
-    <details class="zus-explain"><summary>Założenia i sposób liczenia</summary><p>Podstawa to kwota ustalona po odliczeniu składek, przed podatkiem. Stawka dzienna = podstawa / 30 × procent zasiłku, z zaokrągleniem do grosza. Kwota miesięczna zależy od liczby dni kalendarzowych. Suma główna jest brutto. Podwyższenie netto obliczamy osobno z potwierdzonej zaliczki PIT i kwot z pozostałych tytułów; nie obliczamy podatku za płatnika.</p><p>${result.fatherOnly?'Liczymy wyłącznie rodzicielskie ojca przy nieubezpieczonej matce (art. 31 ust. 3h ustawy zasiłkowej). Nie oznacza to przejęcia macierzyńskiego ani prawa do 81,5%.':'Pierwszy rodzic korzysta z całego okresu macierzyńskiego. Rodzicielskie można wykorzystać kolejno lub równolegle. Przy porodzie brak dnia rodzicielskiego w stawce 81,5% w pierwszym roku zmienia stawkę na 70% i pozwala obliczyć wyrównanie macierzyńskiego do 100% na wniosek.'} Kwoty nie obejmują wynagrodzenia za pracę ani osobnego urlopu ojcowskiego.</p><p>Praca u pracodawcy udzielającego urlopu trwa w stałym wymiarze przez cały wybrany okres rodzicielski i jego wydłużenie. Dni = pełnowymiarowe dni / (1 − etat), z pominięciem części dnia. Zasiłek maleje proporcjonalnie. Zmienne okresy pracy, wcześniejsze wykorzystanie części puli i przejęcie macierzyńskiego wymagają odrębnego wyliczenia. Przy adopcji/pieczy macierzyński skracamy do granicy wieku, zachowując minimum 9 tygodni; dla tego minimum pokazujemy pulę 38 lub 62 tygodni. Rodzicielskie przekraczające granicę wieku wymaga potwierdzenia interpretacji z ZUS.</p>${result.ageLimit?`<p>Graniczny wiek dziecka przypada ${fmt(result.ageLimit)}. Zaplanuj wykorzystanie urlopu z uwzględnieniem właściwych terminów.</p>`:''}</details>
+    <details class="zus-explain"><summary>Założenia i sposób liczenia</summary><p>Podstawa to kwota ustalona po odliczeniu składek, przed podatkiem. Podstawę dzienną (podstawa / 30), stawkę procentową i kwotę redukcji za pracę zaokrąglamy kolejno do grosza. Kwota dzienna po redukcji = pełny zasiłek dzienny minus zaokrąglona redukcja. Kwota miesięczna zależy od liczby dni kalendarzowych. Suma główna jest brutto. Podwyższenie netto obliczamy osobno z potwierdzonej zaliczki PIT i kwot z pozostałych tytułów; nie obliczamy podatku za płatnika.</p><p>${result.fatherOnly?'Liczymy wyłącznie rodzicielskie ojca przy nieubezpieczonej matce (art. 31 ust. 3h ustawy zasiłkowej). Nie oznacza to przejęcia macierzyńskiego ani prawa do 81,5%.':'Pierwszy rodzic korzysta z całego okresu macierzyńskiego. Rodzicielskie można wykorzystać kolejno lub równolegle. Przy porodzie brak dnia rodzicielskiego w stawce 81,5% w pierwszym roku zmienia stawkę na 70% i pozwala obliczyć wyrównanie macierzyńskiego do 100% na wniosek.'} Kwoty nie obejmują wynagrodzenia za pracę ani osobnego urlopu ojcowskiego.</p><p>Praca u pracodawcy udzielającego urlopu trwa w stałym wymiarze przez cały wybrany okres rodzicielski i jego wydłużenie. Wydłużenie: dni okresu × wymiar pracy względem pełnego etatu, pominięcie części dnia, następnie podział przez (1 − wymiar pracy) i ponowne pominięcie części dnia. Kwotę zasiłku zmniejszamy o stosunek tej pracy do Twojego wymiaru z umowy: praca 1/4 przy umowie 1/2 oznacza redukcję o połowę. Część nieprzenoszalną drugiego rodzica i pozostałą część planujemy jako odrębne okresy. ${zusSource('calculationCommentary','Komentarz ZUS: pkt 144, 147 i 182')} Zmienne okresy pracy, wcześniejsze wykorzystanie części puli i przejęcie macierzyńskiego wymagają odrębnego wyliczenia. Przy adopcji/pieczy macierzyński skracamy do granicy wieku, zachowując minimum 9 tygodni; dla tego minimum pokazujemy pulę 38 lub 62 tygodni. Rodzicielskie przekraczające granicę wieku wymaga potwierdzenia interpretacji z ZUS.</p>${result.ageLimit?`<p>Graniczny wiek dziecka przypada ${fmt(result.ageLimit)}. Zaplanuj wykorzystanie urlopu z uwzględnieniem właściwych terminów.</p>`:''}</details>
     <h3>Dokumenty i następny krok</h3><p>Wynik dotyczy dziecka wybranego w teczce i założeń widocznych powyżej. Zapisz go razem z wersją reguł.</p><p>${result.fatherOnly?`Ojciec kieruje dokumenty do ${payerB}.`:`Pierwszy rodzic kieruje dokumenty do ${payer}.${result.shareB?` Drugi rodzic: do ${payerB}.`:''}`} Przy zatrudnieniu u płatnika zgłaszającego ponad 20 osób do ubezpieczenia chorobowego wypłata zwykle należy do płatnika. Stan ustala się co do zasady na 30 listopada poprzedniego roku.</p>
     <ul><li>Przygotuj aktualny ZAM oraz dokumenty potwierdzające poród lub przyjęcie na wychowanie.</li><li>Pracownik uzgadnia urlop z pracodawcą. Do wypłaty przez ZUS potrzebne może być Z-3, a przy zleceniu Z-3a od płatnika.</li><li>Wniosek o urlop rodzicielski pracownika składa się co najmniej 21 dni przed rozpoczęciem. Wybór stawki 81,5% ma odrębny termin.</li></ul>
     <div class="source-box">${zusSource('amount','Stawki zasiłku')}${zusSource('duration','Wymiar i limity wieku')}${zusSource('parental','Podział i łączenie z pracą')}${zusSource('documents','Aktualne dokumenty')}</div>
@@ -442,9 +454,9 @@ function calculatorPage(r) {
     <p class="zus-notice" id="zus-father-note" ${zusFatherOnly(d)?'':'hidden'}>Wybrano samodzielny rodzicielski ojca przy nieubezpieczonej matce. Podaj tylko jego podstawę i wybrany okres. Nie doliczamy macierzyńskiego matki; zakładamy niewykorzystaną wcześniej pulę rodzicielskiego. Ojciec musi mieć własne uprawnienie i opiekować się dzieckiem.</p>
     ${zusField('Podstawa pierwszego rodzica (zł)','baseA',d.baseA,'type="number" min="0" max="1000000" step="0.01"'+(zusFatherOnly(d)?'':' required'))}
     ${zusField('Podstawa drugiego rodzica (zł)','baseB',d.baseB,'type="number" min="0" max="1000000" step="0.01"'+(d.insuranceB==='yes'?' required':''))}
-    ${zusField('Wymiar zatrudnienia pierwszego rodzica — do minimalnej podstawy','contractFractionA',d.contractFractionA??1,'type="number" min="0.01" max="1" step="0.01"')}
-    ${zusField('Wymiar zatrudnienia drugiego rodzica — do minimalnej podstawy','contractFractionB',d.contractFractionB??1,'type="number" min="0.01" max="1" step="0.01"')}
-    <p class="zus-field-note">Dla pełnego etatu minimum w 2026 r. to 4 147,10 zł (4 806 zł pomniejszone o 13,71%). Wymiar zatrudnienia określa proporcję tego minimum; czym innym jest łączenie rodzicielskiego z pracą poniżej. Podstawa działalności i zlecenia nie podlega temu minimum pracowniczemu.</p>
+    ${zusField('Wymiar z umowy pierwszego rodzica (1 = pełny etat)','contractFractionA',d.contractFractionA??1,'type="number" min="0.01" max="1" step="0.01"')}
+    ${zusField('Wymiar z umowy drugiego rodzica (1 = pełny etat)','contractFractionB',d.contractFractionB??1,'type="number" min="0.01" max="1" step="0.01"')}
+    <p class="zus-field-note">Dla pełnego etatu minimum w 2026 r. to 4 147,10 zł (4 806 zł pomniejszone o 13,71%). Wymiar z umowy określa minimum i proporcję redukcji zasiłku podczas pracy. Poniżej wybierzesz pracę podczas rodzicielskiego jako część pełnego etatu, nie część swojej umowy. Podstawa działalności i zlecenia nie podlega temu minimum pracowniczemu.</p>
     <p class="zus-field-note">Wpisz podstawę z dokumentów płatnika. Na etacie zwykle wynika z 12 miesięcy wynagrodzenia po odliczeniu składek społecznych. Wahania składników, krótsze ubezpieczenie i działalność wymagają odrębnego ustalenia. ${zusSource('base','Jak ustala się podstawę')}</p>
     ${zusField('Koniec ubezpieczenia, jeśli znany','coverageEnd',d.coverageEnd,'type="date"')}
     ${zusSelect('Zadłużenie pierwszego rodzica przy działalności','debt',{unknown:'Do sprawdzenia',clear:'ZUS potwierdził brak przeszkody do wypłaty',amount:'Znam potwierdzoną kwotę — sprawdź próg',debt:'Zadłużenie wymaga wyjaśnienia'},d.debt)}
@@ -463,8 +475,8 @@ function calculatorPage(r) {
     ${zusSelect('Choć jeden dzień rodzicielskiego w stawce 81,5% w pierwszym roku życia?','firstYearParental',{unknown:'Do potwierdzenia',yes:'Tak — wykorzystany lub zaplanowany',no:'Nie — oblicz 70% i wyrównanie macierzyńskiego'},d.firstYearParental||'unknown')}
     ${zusSelect('Kto wypłaca zasiłek pierwszego rodzica','payer',{unknown:'Potwierdzę w kadrach',employer:'Uprawniony pracodawca',zus:'ZUS'},d.payer)}
     ${zusSelect('Kto wypłaca zasiłek drugiego rodzica','payerB',{unknown:'Potwierdzę w kadrach',employer:'Uprawniony pracodawca',zus:'ZUS'},d.payerB||'unknown')}
-    ${zusSelect('Praca pierwszego rodzica podczas rodzicielskiego','fractionA',{'0':'Bez łączenia z pracą','0.25':'1/4 etatu przez cały okres','0.5':'1/2 etatu przez cały okres'},String(d.fractionA))}
-    ${zusSelect('Praca drugiego rodzica podczas rodzicielskiego','fractionB',{'0':'Bez łączenia z pracą','0.25':'1/4 etatu przez cały okres','0.5':'1/2 etatu przez cały okres'},String(d.fractionB))}
+    ${zusSelect('Praca pierwszego rodzica podczas rodzicielskiego','fractionA',{'0':'Bez łączenia z pracą','0.25':'1/4 pełnego etatu przez cały okres','0.5':'1/2 pełnego etatu przez cały okres'},String(d.fractionA))}
+    ${zusSelect('Praca drugiego rodzica podczas rodzicielskiego','fractionB',{'0':'Bez łączenia z pracą','0.25':'1/4 pełnego etatu przez cały okres','0.5':'1/2 pełnego etatu przez cały okres'},String(d.fractionB))}
     ${zusSelect('Czy warunki pozostają stałe przez wybrany okres?','workPattern',{constant:'Tak — jeden stały wymiar, bez przerw',variable:'Nie — zmiany etatu, przerwy lub zakończenie urlopu'},d.workPattern||'constant')}</fieldset>
     <fieldset class="zus-review"><legend>Potwierdź dane do tego wariantu</legend>
     ${zusCheck('Sprawdzono stan ubezpieczenia obojga rodziców i ewentualne zadłużenie','reviewInsurance',d.reviewInsurance)}
@@ -476,7 +488,7 @@ function calculatorPage(r) {
     <a class="dashboard-link" href="#parametry">Parametry kalkulatora — panel demonstracyjny ${icon('right',16)}</a></div>`;
 }
 function zusParametersPage(r) {
-  return backLink(r)+pageHeading('Panel demonstracyjny','Parametry zasiłków','Spójne parametry symulacji zapisane na tym urządzeniu. Każdy wynik ma identyfikator wersji.')+
+  return backLink(r)+pageHeading('Panel demonstracyjny','Parametry zasiłków','Ustaw parametry na tym urządzeniu i sprawdzaj ich wersję przy wyniku.')+
     `<div class="zus-page"><form id="zus-parameters"><div class="zus-fields">
     ${zusField('Macierzyński (%)','maternityRate',zusRules.maternityRate,'type="number" min="0" max="100" step="0.1" required')}
     ${zusField('Rodzicielski (%)','parentalRate',zusRules.parentalRate,'type="number" min="0" max="100" step="0.1" required')}
