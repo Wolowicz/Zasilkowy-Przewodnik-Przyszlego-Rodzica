@@ -48,6 +48,7 @@ function sprawyDzienna(podstawa, stawka, praca = 0) {
 function sprawyPorownanie(c) {
   const zus = c.zus || {};
   const rows = [];
+  if (!['przyznano', 'odmowa', 'czesciowo'].includes(zus.decyzja)) return rows;
   const ok = (a, b, tol = 0) => (Number.isFinite(a) && Number.isFinite(b)) ? (Math.abs(a - b) <= tol ? 'zgodne' : 'rozne') : 'brak';
   if (zus.decyzja === 'odmowa') {
     const o = sprawyOtula(c);
@@ -76,19 +77,27 @@ function sprawyWynik() {
   if (!c) return `<section class="sprawa-card sprawa-nieznana">${icon('help', 26)}<div><h2>To nie jest plik z zestawu ZUS</h2>
     <p>Nie rozpoznano „${esc(SPRAWY.file.name)}”. Plik mógł zostać zmieniony. Wpisz dane sprawy ręcznie w kalkulatorze.</p>
     <div class="case-actions"><a class="button primary" href="#kalkulator">Otwórz kalkulator</a><button class="button secondary" data-sprawy="reset">Wybierz inny plik</button></div></div></section>`;
-  const decyzja = c.zus?.decyzja || 'przyznano';
+  const etykiety = { przyznano: 'Przyznanie / wypłata', odmowa: 'Odmowa ZUS', czesciowo: 'Częściowo', nieustalona: 'Rozstrzygnięcie nieustalone' };
+  const decyzja = Object.hasOwn(etykiety, c.zus?.decyzja) ? c.zus.decyzja : 'nieustalona';
   const fakty = (c.fakty || []).map(([k, v]) => `<div class="sprawa-fakt"><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('');
   const otula = sprawyOtula(c);
   const rows = sprawyPorownanie(c).map(([k, z, o, s]) => `<div class="sprawa-wiersz"><span class="sprawa-k">${esc(k)}</span>
     <span class="sprawa-v"><small>ZUS</small>${esc(z)}</span><span class="sprawa-v"><small>Otula</small>${esc(o)}</span>
     <span class="sprawa-status ${s}">${s === 'zgodne' ? 'Zgodne' : s === 'rozne' ? 'Różnica' : 'Brak danych'}</span></div>`).join('');
   const powod = otula?.issues?.length ? `<p class="sprawa-uwaga">Otula wstrzymała kwotę: ${esc(otula.issues[0])}</p>` : '';
+  const okresy = (lista) => lista.map(p => `<li>${esc(p.nazwa || p.rodzaj)}: ${esc(p.od || 'data nieustalona')} – ${esc(p.do || 'data nieustalona')}${Number.isFinite(p.dni) ? ` (${esc(sprawyDni(p.dni))})` : ''}</li>`).join('');
+  const walidacja = c.walidacja ? `<div class="sprawa-uwaga"><strong>${decyzja === 'nieustalona' ? 'Plik rozpoznany; decyzja wymaga potwierdzenia.' : 'Częściowy odczyt dokumentacji.'}</strong>
+    <p>${esc(c.walidacja.zakres || '')} ${c.walidacja.kwota === 'zweryfikowana' ? 'Kwota została osobno zweryfikowana.' : 'Podstawa i kwota zasiłku nie zostały zweryfikowane.'}</p>
+    ${c.zrodla?.length ? `<p>Sprawdź oryginał: strony ${c.zrodla.map(s => esc(s.strona)).join(', ')} z ${esc(c.walidacja.liczbaStron)}. ${esc(c.id || '')}</p>` : ''}</div>` : '';
   return `<section class="sprawa-card">
     <div class="sprawa-head"><div><p class="home-kicker">Rozpoznano sprawę z zestawu</p><h2 tabindex="-1">${esc(c.tytul || 'Sprawa ZUS')}</h2>
       <div class="sprawa-tagi">${(c.kategorie || []).map(k => `<span>${esc(SPRAWY_KAT[k] || k)}</span>`).join('')}</div></div>
-      <span class="sprawa-decyzja ${decyzja}">${decyzja === 'odmowa' ? 'Odmowa ZUS' : decyzja === 'czesciowo' ? 'Częściowo' : 'Przyznano'}</span></div>
+      <span class="sprawa-decyzja ${decyzja}${decyzja === 'nieustalona' ? ' czesciowo' : ''}">${etykiety[decyzja]}</span></div>
     ${c.zus?.uzasadnienie ? `<p class="sprawa-powod">${esc(c.zus.uzasadnienie)}</p>` : ''}
+    ${walidacja}
     <dl class="sprawa-fakty">${fakty}</dl>
+    ${c.zus?.okresy?.length && decyzja !== 'nieustalona' ? `<h3>${decyzja === 'odmowa' ? 'Okresy objęte odmową' : 'Okresy odczytane z dokumentacji'}</h3><ul class="sprawa-ryzyka">${okresy(c.zus.okresy)}</ul>` : ''}
+    ${c.wnioskowaneOkresy?.length ? `<h3>Okresy z wniosku — niepotwierdzone jako przyznane</h3><ul class="sprawa-ryzyka">${okresy(c.wnioskowaneOkresy)}</ul>` : ''}
     ${rows ? `<h3>Porównanie z kalkulatorem Otuli</h3><div class="sprawa-por">${rows}</div>${powod}` : ''}
     ${c.ryzyka?.length ? `<h3>Na co uważać w takiej sytuacji</h3><ul class="sprawa-ryzyka">${c.ryzyka.map(r => `<li>${esc(r)}</li>`).join('')}</ul>` : ''}
     <div class="case-actions">${c.kalkulator ? `<button class="button primary" data-sprawy="kalkulator">Przelicz w kalkulatorze ${icon('arrow', 16)}</button>` : ''}
@@ -101,13 +110,16 @@ function sprawyWynik() {
 function sprawdzSprawePage() {
   const n = Object.keys(window.ZUS_SPRAWY_ENC?.items || {}).length;
   const kat = window.ZUS_SPRAWY_ENC?.kategorie || {};
+  const stat = window.ZUS_SPRAWY_ENC?.statystyki;
   return `<div class="page-intro"><div class="small-label">Zestaw testowy ZUS</div><h1 tabindex="-1">Sprawdź sprawę</h1>
-    <p>Wgraj PDF sprawy z zestawu. Otula rozpozna ją, pokaże decyzję ZUS i porówna ją z kalkulatorem.</p></div>
+    <p>Wybierz oryginalny PDF z zestawu. Otula rozpozna sprawę, pokaże odczytane informacje i wskaże, co jeszcze trzeba potwierdzić w dokumentach.</p></div>
     <ol class="sprawa-kroki" aria-label="Etapy"><li class="${SPRAWY.file ? 'done' : 'now'}"><b>1</b>Wgraj</li><li class="${SPRAWY.result ? 'done' : SPRAWY.file ? 'now' : ''}"><b>2</b>Rozpoznaj</li><li class="${SPRAWY.result ? 'now' : ''}"><b>3</b>Porównaj</li></ol>
     ${SPRAWY.file ? '' : `<label class="sprawa-drop" id="sprawa-drop">${icon('file', 34)}<strong>Przeciągnij tutaj plik PDF</strong><span>albo</span><span class="button primary">Wybierz plik</span>
       <input type="file" id="sprawa-plik" accept="application/pdf,.pdf"><small>${icon('lock', 14)} Plik zostaje na tym urządzeniu</small></label>`}
     <div id="sprawa-wynik" aria-live="polite">${sprawyWynik()}</div>
-    ${n ? `<section class="sprawa-zakres"><h2>Sprawy z zestawu ZUS: ${n}</h2><div class="sprawa-tagi">${Object.entries(kat).map(([k, v]) => `<span>${esc(SPRAWY_KAT[k] || k)} · ${v}</span>`).join('')}</div></section>` : ''}`;
+    ${n ? `<section class="sprawa-zakres"><h2>Rozpoznawane sprawy z zestawu ZUS: ${n}</h2>
+      ${stat ? `<p>${esc(stat.odczytaneRozstrzygniecie)} spraw z odczytaną decyzją lub adnotacją o wyniku; ${esc(stat.nieustaloneRozstrzygniecie)} z nieustalonym rozstrzygnięciem. Zweryfikowane kwoty: ${esc(stat.zweryfikowaneKwoty)}.</p><p>Rozpoznanie dokumentu nie oznacza pełnej weryfikacji uprawnienia ani zgodności kwoty z kalkulatorem.</p>` : ''}
+      <div class="sprawa-tagi">${Object.entries(kat).map(([k, v]) => `<span>${esc(SPRAWY_KAT[k] || k)} · ${v}</span>`).join('')}</div></section>` : ''}`;
 }
 
 // Wejście z kalkulatora: plik już rozpoznany w teczce sprawy.

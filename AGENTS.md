@@ -9,3 +9,4 @@
 - Białe/jasne tło, pastele brzoskwiniowe, żółte i różowe; ciemny tekst, cel kontrastu 4,5:1; sprawdź 320–390 px.
 - `npm test`, `npm run build:assistant` i `npm run sources` to podstawowe polecenia. Nie wprowadzaj kluczy do frontendu lub repozytorium.
 - Notatki w `docs/historia` są materiałami historycznymi. Bieżący zakres opisują README i docs.
+- Wygląd: każdą zmianę interfejsu wykonuj według `docs/STYL-I-DESIGN.md` (paleta, typografia, komponenty, lista kontrolna). Nie wprowadzaj nowych kolorów, trójkątów ▶ ani surowych kontrolek.

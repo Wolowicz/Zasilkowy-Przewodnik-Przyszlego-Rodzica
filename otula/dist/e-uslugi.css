@@ -60,9 +60,11 @@
 .eu-watek b { display: block; font-size: 13px; color: #7a6269; }
 .eu-watek .eu-odp { background: #eef3fb; margin-left: 24px; }
 @media (max-width: 900px) {
-  .eu-uklad { grid-template-columns: 1fr; }
-  .eu-menu { grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; padding-bottom: 4px; }
-  .eu-menu a { min-height: 46px; white-space: nowrap; }
+  .eu-uklad { grid-template-columns: minmax(0,1fr); }
+  .eu-menu { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .eu-menu a { min-width:0; min-height:46px; padding:10px; font-size:14px; gap:8px; }
+  .eu-menu a span { overflow-wrap:anywhere; }
+  .eu-dane { grid-template-columns: minmax(0,1fr); }
 }
 @media (max-width: 520px) { .eu-para { grid-template-columns: 1fr; } .eu-kod { font-size: 36px; } }
 @media (prefers-reduced-motion: reduce) { .eu-spinner, .eu-postep li.teraz::before { animation: none; } }

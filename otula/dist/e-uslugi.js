@@ -23,15 +23,15 @@ const EU = { osoba: 'etat', zalogowany: false, etap: '', czas: 0, wiadomosci: []
 function euFmt(d) { return new Date(d + 'T12:00').toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' }); }
 function euZl(v) { return new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(v); }
 function euNr(prefix) { return `${prefix}/${new Date().getFullYear()}/${String(Math.floor(100000 + Math.random() * 899999))}`; }
-function euBadge() { return '<span class="eu-sym">Symulacja · dane fikcyjne</span>'; }
+function euBadge() { return '<span class="eu-sym">Symulacja</span>'; }
 
 function euLogowanie() {
-  if (EU.etap === 'kod') return `<section class="eu-okno eu-mob" aria-labelledby="eu-mob-t"><div class="eu-okno-pasek">mObywatel ${euBadge()}</div>
+  if (EU.etap === 'kod') return `<section class="eu-okno eu-mob" aria-labelledby="eu-mob-t"><div class="eu-okno-pasek">mObywatel</div>
     <div class="eu-okno-tresc"><h2 id="eu-mob-t" tabindex="-1">Potwierdź logowanie</h2><p>Otwórz aplikację mObywatel i sprawdź, czy kod jest taki sam.</p>
     <div class="eu-kod" aria-label="Kod weryfikacyjny">${EU.kod}</div>
     <div class="case-actions"><button class="button primary" data-eu="potwierdz">Potwierdzam w telefonie</button><button class="button secondary" data-eu="anuluj">Anuluj</button></div></div></section>`;
   if (EU.etap === 'laczenie') return `<section class="eu-okno"><div class="eu-okno-tresc eu-ladowanie" role="status"><span class="eu-spinner"></span><h2>Łączenie z ZUS…</h2><p>Weryfikujemy tożsamość i otwieramy profil na PUE/eZUS.</p></div></section>`;
-  return `<section class="eu-okno"><div class="eu-okno-pasek">Logowanie ${euBadge()}</div><div class="eu-okno-tresc">
+  return `<section class="eu-okno"><div class="eu-okno-pasek">Logowanie</div><div class="eu-okno-tresc">
     <h2 tabindex="-1">Zaloguj się, aby zobaczyć swoje dane</h2>
     <fieldset class="eu-osoby"><legend>Wybierz fikcyjną osobę do pokazu</legend>${Object.entries(EU_OSOBY).map(([k, o]) =>
       `<label><input type="radio" name="eu-osoba" value="${k}" ${EU.osoba === k ? 'checked' : ''}><span><b>${o.imie}</b>${o.opis}</span></label>`).join('')}</fieldset>
@@ -98,10 +98,10 @@ function euWnioski(typ) {
 function eUslugiPage(r) {
   const usluga = r.id || '';
   const o = EU_OSOBY[EU.osoba];
-  const head = `<div class="page-intro"><div class="small-label">Centrum e-usług</div><h1 tabindex="-1">Twoje sprawy w ZUS</h1>
-    <p>Pokaz integracji z mObywatelem, ZUS i USC. To symulacja na fikcyjnych danych – nic nie jest wysyłane.</p></div>`;
+  const head = backLink(r) + `<div class="page-intro"><div class="small-label">Centrum e-usług</div><h1 tabindex="-1">Twoje sprawy w ZUS</h1>
+    <p>Przećwicz logowanie, sprawdzenie danych i przygotowanie wniosku na przykładowym profilu.</p>${euBadge()}</div>`;
   if (!EU.zalogowany) return head + euLogowanie();
-  return head + `<div class="eu-konto"><span class="eu-avatar">${o.imie[0]}</span><div><b>${o.imie}</b><small>${o.opis}</small></div>${euBadge()}<button class="text-button" data-eu="wyloguj">Wyloguj</button></div>
+  return head + `<div class="eu-konto"><span class="eu-avatar">${o.imie[0]}</span><div><b>${o.imie}</b><small>${o.opis}</small></div><button class="text-button" data-eu="wyloguj">Wyloguj</button></div>
     <div class="eu-uklad"><nav class="eu-menu" aria-label="Usługi">${EU_USLUGI.map(([id, n, ic]) =>
       `<a href="#e-uslugi/${id}" class="${usluga === id ? 'on' : ''}" ${usluga === id ? 'aria-current="page"' : ''}>${icon(ic, 20)}<span>${n}</span></a>`).join('')}</nav>
     <section class="eu-panel">${usluga ? euPanel(usluga) : `<h2 tabindex="-1">Wybierz usługę</h2><p>Zacznij od pobrania danych o ubezpieczeniu – pokażą, czy i kto wypłaci zasiłek.</p>

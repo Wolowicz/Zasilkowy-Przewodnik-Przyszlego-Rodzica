@@ -46,6 +46,34 @@ r=calc({shareA:20,shareB:9,parentalStartA:'2027-03-21',parentalStartB:'2027-03-2
 r=calc({parentalStartA:'2026-11-01'});assert.ok(r.issues.some(s=>s.includes('po jego okresie')));
 r=calc({parentalStartB:'2026-10-31'});assert.ok(r.issues.length);
 r=calc({parentalStartB:'2032-12-31'});assert.ok(r.issues.length);
+r=calc({rate:'combined',firstYearParental:'no'});assert.equal(r.issues.length,0);assert.equal(r.segments[0].rate,100);assert.equal(r.segments[1].rate,70);assert.equal(r.adjustment,4317.6);assert.equal(r.segments[1].from,'2027-11-01');assert.equal(r.firstYearAdjustment,true);
+r=calc({rate:'combined',firstYearParental:'unknown'});assert.ok(r.issues.length);
+r=calc({rate:'combined',firstYearParental:'yes'});assert.equal(r.issues.length,0);assert.equal(r.adjustment,0);
+r=calc({rate:'combined',firstYearParental:'no',parentalStartA:'2027-10-31'});assert.ok(r.issues.length);
+r=calc({rate:'combined',firstYearParental:'yes',parentalStartA:'2027-11-01'});assert.ok(r.issues.length);
+r=calc({eventDate:'2026-01-01',baseA:1000,contractFractionA:1,shareA:0,shareB:0});assert.equal(r.issues.length,0);assert.equal(r.segments[0].base,4147.1);assert.equal(r.segments[0].daily,138.24);
+r=calc({eventDate:'2026-01-01',baseA:1000,contractFractionA:.5,shareA:0,shareB:0});assert.equal(r.segments[0].base,2073.55);
+r=calc({eventDate:'2026-01-01',baseA:1000,workA:'business',debt:'clear',shareA:0,shareB:0});assert.equal(r.segments[0].base,1000);
+r=calc({eventDate:'2025-11-01',baseA:1000,contractFractionA:1,shareA:0,shareB:0});assert.equal(r.segments.length,2);assert.equal(r.segments[0].until,'2025-12-31');assert.equal(r.segments[0].base,4026.29);assert.equal(r.segments[1].base,4147.1);
+r=calc({contractFractionA:0});assert.ok(r.issues.length);
+context.row={gross:870.9,days:30,monthDays:30};
+let t=vm.runInContext('zusTopupMonth(row,0,0,true)',context);assert.equal(t.topup,129.1);assert.equal(t.netWithTopup,1000);
+t=vm.runInContext('zusTopupMonth(row,50,0,true)',context);assert.equal(t.topup,179.1);
+t=vm.runInContext('zusTopupMonth(row,0,400,true)',context);assert.equal(t.topup,0);assert.equal(t.netWithTopup,1270.9);
+assert.ok(vm.runInContext('zusTopupMonth(row,0,0,false).issue',context));assert.ok(vm.runInContext('zusTopupMonth(row,"",0,true).issue',context));
+context.row={gross:200,days:10,monthDays:31};t=vm.runInContext('zusTopupMonth(row,10,0,true)',context);assert.equal(t.target,322.6);assert.equal(t.topup,132.6);
+context.row={gross:812.84,days:28,monthDays:28};t=vm.runInContext('zusTopupMonth(row,0,0,true)',context);assert.equal(t.target,1000);
+assert.ok(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,combinedRate:60}).length',context));
+assert.ok(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,parentalWeeks:[10,43]}).length',context));
+assert.ok(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,maternityWeeks:[20,31,30,35,37]}).length',context));
+assert.ok(vm.runInContext('zusValidateRules({...ZUS_DEFAULT_RULES,validTo:"2025-12-31"}).length',context));
+const storage=new Map();context.localStorage={getItem:key=>storage.get(key)??null,setItem:(key,value)=>storage.set(key,value),removeItem:key=>storage.delete(key)};
+assert.equal(vm.runInContext('zusSetRules({...ZUS_DEFAULT_RULES,minimumWage:5000}).persisted',context),true);
+assert.equal(vm.runInContext('zusLoadRules().minimumWage',context),5000);
+assert.equal(vm.runInContext('zusMinimumBase()',context),4314.5);
+assert.ok(vm.runInContext('zusSetRules({...ZUS_DEFAULT_RULES,reservedWeeks:40}).issues.length',context));
+assert.equal(vm.runInContext('zusRules.minimumWage',context),5000,'invalid update is atomic');
+vm.runInContext('zusSetRules(structuredClone(ZUS_DEFAULT_RULES),true)',context);assert.equal(storage.size,0);
 
 // Drafts follow stable child IDs, not list positions, and never cross family profiles.
 context.state={active:0,role:'mama',work:'employee',children:[{uid:'child-a',stage:'birth',date:'2026-11-01',multiple:false},{uid:'child-b',stage:'pregnancy',date:'2027-03-09',multiple:true}]};
