@@ -1,5 +1,11 @@
 # Historia zmian
 
+## 2026-11-21 — publikacja wersji konkursowej
+
+- Opublikowano aktualny `otula/dist` na dotychczasowej stronie Sites (wersja 23), z PDF 10 slajdów i filmem 102 s. Publiczne odnośniki obu plików zwróciły HTTP 200.
+- Serwer asystenta (wersja 19) korzysta z płatnego Gemini 2.5 Flash Lite; dwa sprawdzenia pytania o dokumenty do becikowego zwróciły odpowiedź AI, linki i cytaty. Ścisły schemat odpowiedzi odrzuca ucięte dane i błędne referencje; nie certyfikuje merytoryki odpowiedzi.
+- `npm test`, `npm run build:assistant` i rejestr źródeł zakończone poprawnie. Zapisano rzeczywisty kadr opublikowanego Startu; 36 wcześniejszych widoków audytu pozostaje osobnym materiałem.
+
 ## 2026-11-21 — aktualne materiały dla jury
 
 - Nowa prezentacja PDF: 10 slajdów, aktualne ekrany webowe, czytelne wycinki Karty wsparcia i codziennych czynności z telefonu, notatki prelegenta oraz jawny zakres technologii i użycia AI.
