@@ -15,7 +15,7 @@ Projekt na zadanie ZUS w HackNation 2026. Stan dokumentacji: **21 listopada 2026
 | Aplikacja bez logowania | [Otwórz Otulę na telefonie lub komputerze](https://otula-dla-rodziny.etherealdaffodil4.chatgpt.site/) |
 | Przewodnik dla jury i mapa wymagań | [DLA-JURY.md](docs/DLA-JURY.md) |
 | Prezentacja: 10 slajdów | [PDF w repozytorium](otula/dist/Otula-prezentacja.pdf) |
-| Demonstracja: około 1 min 50 s | [Film MP4](otula/dist/Otula-demo.mp4) · [odtwarzacz online](https://otula-dla-rodziny.etherealdaffodil4.chatgpt.site/Otula-demo.html) |
+| Demonstracja: 1 min 30 s · Full HD | [Film MP4](otula/dist/Otula-demo.mp4) · [odtwarzacz online](https://otula-dla-rodziny.etherealdaffodil4.chatgpt.site/Otula-demo.html) |
 | Slajdy do edycji i notatki prelegenta | [Samodzielny HTML](otula/materialy/Otula-slajdy-i-notatki.html) — pobierz i otwórz w przeglądarce |
 | Ekrany aktualnej wersji | [Galeria](docs/EKRANY.md) |
 
@@ -70,6 +70,7 @@ Testy obejmują 19 autorskich przypadków kalkulatora, eksport ICS oraz lokalny 
 | Weryfikacja treści | [Reguły i źródła](docs/REGULY-I-ZRODLA.md), [rejestr odnośników](docs/REJESTR-ZRODEL.md) |
 | Jakość i bezpieczeństwo | [Testy](docs/TESTY.md), [dane i bezpieczeństwo](docs/PRYWATNOSC-I-BEZPIECZENSTWO.md), [zgłoszenia](SECURITY.md) |
 | Autorstwo | [Wcześniejsze prace, AI i licencje](docs/HISTORIA-I-AUTORSTWO.md), [historia zmian](CHANGELOG.md) |
+| Prezentacja i film | [Użyte narzędzia i gotowe prompty](docs/PROMPTY-I-NARZEDZIA.md), [źródło montażu](otula/materialy/film/README.md) |
 
 ## Układ repozytorium
 

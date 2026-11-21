@@ -14,7 +14,7 @@ Otula prowadzi od sytuacji rodziny przez sprawę i dokumenty do terminu oraz pom
 
 - [Demo](https://otula-dla-rodziny.etherealdaffodil4.chatgpt.site/).
 - [10 slajdów PDF](../otula/dist/Otula-prezentacja.pdf) i [notatki prelegenta](../otula/materialy/Otula-slajdy-i-notatki.html).
-- [Nagranie około 1:50](../otula/dist/Otula-demo.mp4), bez dźwięku, z objaśnieniami.
+- [Nagranie 1:30 w Full HD](../otula/dist/Otula-demo.mp4), z dużymi hasłami, animacjami 60 kl./s i autorskim podkładem instrumentalnym; zrozumiałe także bez dźwięku.
 - Frontend w `otula/dist`, pełny serwer AI w `otula-asystent`, testy i dokumentacja w tym repozytorium.
 - [Zrzuty](EKRANY.md), [scenariusz do 3 minut](SCENARIUSZ-DEMO.md), [odpowiedzi na pytania](PYTANIA-JURY.md).
 

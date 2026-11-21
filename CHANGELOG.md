@@ -1,5 +1,13 @@
 # Historia zmian
 
+## 2026-11-21 — nowy film produktowy
+
+- Montaż 90 s w Full HD, animacje 60 kl./s, krótkie hasła obok prawdziwego interfejsu i osobna scena Karty wsparcia.
+- Oryginalny podkład instrumentalny, plakat, VTT, rozdziały i responsywny odtwarzacz.
+- Odtwarzalne źródło montażu i dwa prompty do prezentacji oraz filmu; lista rzeczywiście użytych narzędzi.
+- Kontrola dekodowania, przejść, czytelności, metadanych i poziomu dźwięku.
+
+
 ## 2026-11-21 — prywatne repozytorium projektu
 
 - Import aktualnego frontendu, źródeł serwera AI, testów, zasobów i licencji.

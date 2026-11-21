@@ -13,3 +13,5 @@
 *.png binary
 *.webp binary
 *.ttf binary
+*.jpg binary
+*.vtt text eol=lf

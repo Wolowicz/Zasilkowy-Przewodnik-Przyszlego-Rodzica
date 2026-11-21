@@ -25,7 +25,15 @@ Przypadki kalkulatora obejmują standardowy podział, pół etatu, 81,5%, bliźn
 
 Scenariusze przeglądarkowe objęły 320, 390 i 1440 px: nowe moduły ZUS, kalendarz, parametry, próbne formularze i Kartę wsparcia. Onboarding sprawdzano także przy 412 px i w orientacji poziomej 740 px. Sprawdzono dodawanie dzieci, rok 2027, przełączanie dziecka, tworzenie/edycję/usuwanie wydarzenia, odczyt po przeładowaniu, własne terminy w raporcie i kopiowanie prośby po normalizacji końców linii Windows.
 
-W publicznym wdrożeniu sprawdzono powitanie, ścieżkę, termin, kalkulator, film i zgodność archiwum. PDF miał 10 stron; przejrzano miniatury całości oraz gęstsze slajdy. MP4 trwa około 109,8 sekundy. Zrzuty i artefakty są w repozytorium. Nie dołączono automatyzacji całej sesji przeglądarkowej; opis jest zapisem wykonanej kontroli, nie obietnicą `npm test` odtwarzającego UI.
+W publicznym wdrożeniu sprawdzono powitanie, ścieżkę, termin, kalkulator, film i zgodność archiwum. PDF miał 10 stron; przejrzano miniatury całości oraz gęstsze slajdy. Ówczesny MP4 trwał około 109,8 sekundy; zastąpił go opisany poniżej film 90-sekundowy. Zrzuty i artefakty są w repozytorium. Nie dołączono automatyzacji całej sesji przeglądarkowej; opis jest zapisem wykonanej kontroli, nie obietnicą `npm test` odtwarzającego UI.
+
+## Kontrola nowego filmu — 21 listopada
+
+- ffprobe: H.264, 1920×1080, 60 kl./s, 90,005 s; AAC stereo 48 kHz. Ruch nagranego UI pochodzi ze źródła 25 kl./s, grafiki montażowe są animowane w 60 kl./s.
+- Pełne dekodowanie 5400 klatek zakończyło się bez błędów; blackdetect nie zgłosił czarnych odcinków dłuższych niż 0,1 s.
+- Obejrzano 16 klatek gotowego MP4: sceny, trzy przejścia i zakończenie, a Kartę wsparcia także w 960×540. Sprawdzono proporcje i rozmieszczenie tekstów.
+- Pomiar dźwięku: −19,06 LUFS, −5,06 dBTP, bez przesterowania. To kontrola techniczna, nie odsłuch na urządzeniu jury.
+- MP4 ma atom moov przed mdat (faststart). Film ma plakat, opcjonalne opisy VTT i tekstowy przebieg w odtwarzaczu.
 
 ## Czego nie potwierdzono
 

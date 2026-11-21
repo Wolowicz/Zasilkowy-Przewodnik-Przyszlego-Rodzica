@@ -1,6 +1,6 @@
 # Demonstracja w 3 minuty
 
-Użyj fikcyjnych danych w osobnym profilu przeglądarki. Nie usuwaj prawdziwego profilu tylko do pokazu. Film w repozytorium trwa około 1:50 i ma objaśnienia na ekranie.
+Użyj fikcyjnych danych w osobnym profilu przeglądarki. Nie usuwaj prawdziwego profilu tylko do pokazu. Film w repozytorium trwa 1:30 i ma objaśnienia na ekranie oraz autorski podkład instrumentalny. Poniżej scenariusz osobnego, trzyminutowego pokazu na żywo.
 
 | Czas | Czynność | Wypowiedź |
 | --- | --- | --- |

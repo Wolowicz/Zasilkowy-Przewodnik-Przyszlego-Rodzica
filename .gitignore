@@ -20,6 +20,7 @@ __pycache__/
 *.zip
 *.exe
 *.webm
+otula/materialy/film/render/
 .DS_Store
 Thumbs.db
 Otula-slajdy-i-notatki.html
