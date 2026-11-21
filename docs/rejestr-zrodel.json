@@ -1,0 +1,836 @@
+[
+  {
+    "type": "Sprawa",
+    "id": "chorobowe",
+    "title": "Sprawdź ubezpieczenie chorobowe",
+    "url": "https://www.zus.pl/swiadczenia/zasilki/zasilek-macierzynski/komu-przysluguje"
+  },
+  {
+    "type": "Sprawa",
+    "id": "becikowe-przygotowanie",
+    "title": "Przygotuj dokument do becikowego",
+    "url": "https://www.gov.pl/web/gov/uzyskaj-becikowe"
+  },
+  {
+    "type": "Sprawa",
+    "id": "profil",
+    "title": "Przygotuj dostęp do e-urzędu",
+    "url": "https://www.gov.pl/web/profilzaufany/najczesciej-zadawane-pytania2"
+  },
+  {
+    "type": "Sprawa",
+    "id": "praca-ciaza",
+    "title": "Sprawdź swoje prawa w pracy",
+    "url": "https://www.gov.pl/web/rodzina/uprawnienia-zwiazane-z-rodzicielstwem"
+  },
+  {
+    "type": "Sprawa",
+    "id": "urodzenie",
+    "title": "Zgłoś urodzenie dziecka",
+    "url": "https://www.gov.pl/web/gov/zglos-urodzenie-dziecka"
+  },
+  {
+    "type": "Sprawa",
+    "id": "ubezpieczenie-dziecka",
+    "title": "Zgłoś dziecko do ubezpieczenia zdrowotnego",
+    "url": "https://pacjent.gov.pl/aktualnosc/zglos-dziecko-do-ubezpieczenia"
+  },
+  {
+    "type": "Sprawa",
+    "id": "macierzynski",
+    "title": "Przygotuj wniosek o zasiłek macierzyński",
+    "url": "https://www.zus.pl/pl/swiadczenia/zasilki/zasilek-macierzynski/niezbedne-dokumenty"
+  },
+  {
+    "type": "Sprawa",
+    "id": "urlop-ojcowski",
+    "title": "Zaplanuj urlop ojcowski",
+    "url": "https://www.gov.pl/web/rodzina/urlop-ojcowski"
+  },
+  {
+    "type": "Sprawa",
+    "id": "urlop-rodzicielski",
+    "title": "Zaplanuj urlop rodzicielski",
+    "url": "https://www.gov.pl/web/rodzina/urlop-rodzicielski"
+  },
+  {
+    "type": "Sprawa",
+    "id": "800-plus",
+    "title": "Sprawdź świadczenie 800+",
+    "url": "https://www.zus.pl/pl/swiadczenia/swiadczenia-dla-rodzin/swiadczenie-wychowawcze-800-plus"
+  },
+  {
+    "type": "Sprawa",
+    "id": "rodzicielskie",
+    "title": "Sprawdź świadczenie rodzicielskie",
+    "url": "https://www.gov.pl/web/gov/uzyskaj-swiadczenie-rodzicielskie"
+  },
+  {
+    "type": "Sprawa",
+    "id": "becikowe",
+    "title": "Sprawdź warunki becikowego",
+    "url": "https://www.gov.pl/web/gov/uzyskaj-becikowe"
+  },
+  {
+    "type": "Sprawa",
+    "id": "paszport-dziecka",
+    "title": "Wyrób paszport dla dziecka",
+    "url": "https://www.gov.pl/web/gov/uzyskaj-paszport-dla-dziecka"
+  },
+  {
+    "type": "Sprawa",
+    "id": "dowod-dziecka",
+    "title": "Wyrób dowód osobisty dla dziecka",
+    "url": "https://www.gov.pl/web/gov/uzyskaj-dowod-osobisty-dla-dziecka-lub-podopiecznego"
+  },
+  {
+    "type": "Sprawa",
+    "id": "odpis-urodzenia",
+    "title": "Zamów odpis aktu urodzenia",
+    "url": "https://www.gov.pl/web/gov/uzyskaj-odpis-aktu-stanu-cywilnego-urodzenia-malzenstwa-zgonu"
+  },
+  {
+    "type": "Sprawa",
+    "id": "ekuz-rodziny",
+    "title": "Zamów EKUZ dla dziecka i rodziców",
+    "url": "https://pacjent.gov.pl/ekuz"
+  },
+  {
+    "type": "Sprawa",
+    "id": "ikp-dziecka",
+    "title": "Otwórz IKP dziecka i daj dostęp drugiemu rodzicowi",
+    "url": "https://pacjent.gov.pl/dbaj-online-o-zdrowie-twojego-dziecka"
+  },
+  {
+    "type": "Sprawa",
+    "id": "polozna-poz",
+    "title": "Wybierz położną POZ na ciążę i połóg",
+    "url": "https://pacjent.gov.pl/czym-jest-opieka-okoloporodowa"
+  },
+  {
+    "type": "Sprawa",
+    "id": "lekarz-poz-dziecka",
+    "title": "Wybierz lekarza i pielęgniarkę POZ dla dziecka",
+    "url": "https://pacjent.gov.pl/aktualnosc/wybierz-dziecku-lekarza-rodzinnego"
+  },
+  {
+    "type": "Sprawa",
+    "id": "uznanie-ojcostwa",
+    "title": "Uznaj ojcostwo przed narodzinami lub po porodzie",
+    "url": "https://samorzad.gov.pl/web/gmina-jaslo/uznanie-ojcostwa"
+  },
+  {
+    "type": "Sprawa",
+    "id": "karta-duzej-rodziny",
+    "title": "Sprawdź Kartę Dużej Rodziny",
+    "url": "https://www.gov.pl/web/gov/uzyskaj-karte-duzej-rodziny"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "glod-i-sytosc",
+    "title": "Po czym poznam głód i sytość?",
+    "url": "https://www.cdc.gov/infant-toddler-nutrition/mealtime/signs-your-child-is-hungry-or-full.html"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "glod-i-sytosc",
+    "title": "Po czym poznam głód i sytość?",
+    "url": "https://www.nhs.uk/baby/health/when-to-get-urgent-medical-help-for-babies-and-children-under-5/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "karmienie-piersia",
+    "title": "Jak przystawić dziecko do piersi?",
+    "url": "https://www.nhs.uk/baby/breastfeeding-and-bottle-feeding/breastfeeding/positioning-and-attachment/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "karmienie-piersia",
+    "title": "Jak przystawić dziecko do piersi?",
+    "url": "https://www.gov.pl/web/zdrowie/karmienie-piersia"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "karmienie-butelka",
+    "title": "Jak karmić butelką w rytmie dziecka?",
+    "url": "https://www.nhs.uk/best-start-in-life/baby/feeding-your-baby/bottle-feeding/bottle-feeding-your-baby/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "karmienie-butelka",
+    "title": "Jak karmić butelką w rytmie dziecka?",
+    "url": "https://www.uhsussex.nhs.uk/resources/how-to-safely-bottle-feed-your-baby/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "mokre-pieluszki",
+    "title": "Czy dziecko dostaje dość mleka?",
+    "url": "https://www.nhs.uk/baby/breastfeeding-and-bottle-feeding/breastfeeding-problems/enough-milk/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "zmeczenie",
+    "title": "Jak poznać, że pora na odpoczynek?",
+    "url": "https://www.nhs.uk/best-start-in-life/baby/baby-basics/bonding-with-your-baby/understanding-your-baby/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "bezpieczny-sen",
+    "title": "Jak przygotować miejsce do snu?",
+    "url": "https://www.nhs.uk/best-start-in-life/baby/baby-basics/newborn-and-baby-sleeping-advice-for-parents/safe-sleep-advice-for-babies/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "otulanie",
+    "title": "Jak bezpiecznie otulić noworodka?",
+    "url": "https://www.healthychildren.org/English/ages-stages/baby/diapers-clothing/Pages/Swaddling-Is-it-Safe.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "kolka",
+    "title": "Długi płacz. Czy to może być kolka?",
+    "url": "https://www.nhs.uk/conditions/colic/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "kolka",
+    "title": "Długi płacz. Czy to może być kolka?",
+    "url": "https://www.nhs.uk/baby/caring-for-a-newborn/soothing-a-crying-baby/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "kolka",
+    "title": "Długi płacz. Czy to może być kolka?",
+    "url": "https://pacjent.gov.pl/pogotowie-i-numer-alarmowy"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "kapiel",
+    "title": "Pierwsza kąpiel bez pośpiechu",
+    "url": "https://www.nhs.uk/baby/caring-for-a-newborn/washing-and-bathing-your-baby/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pilna-pomoc",
+    "title": "Kiedy dziecko potrzebuje pilnej pomocy?",
+    "url": "https://www.nhs.uk/baby/health/when-to-get-urgent-medical-help-for-babies-and-children-under-5/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pilna-pomoc",
+    "title": "Kiedy dziecko potrzebuje pilnej pomocy?",
+    "url": "https://pacjent.gov.pl/pogotowie-i-numer-alarmowy"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pilna-pomoc",
+    "title": "Kiedy dziecko potrzebuje pilnej pomocy?",
+    "url": "https://pacjent.gov.pl/na-ratunek"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "plan-porodu",
+    "title": "Jak ułożyć swój plan porodu?",
+    "url": "https://www.gov.pl/web/zdrowie/standardy-opieki-okoloporodowej"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "plan-porodu",
+    "title": "Jak ułożyć swój plan porodu?",
+    "url": "https://www.nfz.gov.pl/gfx/nfz/userfiles/_public/dla_pacjenta/magazyn_ze_zdrowiem/ze_zdrowiem_nfz_nr_18.pdf"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "torba-porodowa",
+    "title": "Co spakować do szpitala dla siebie i dziecka?",
+    "url": "https://www.gov.pl/web/pimmswia/klinika-poloznictwa-i-perinatologii"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "torba-porodowa",
+    "title": "Co spakować do szpitala dla siebie i dziecka?",
+    "url": "https://www.nhs.uk/best-start-in-life/pregnancy/preparing-for-labour-and-birth/tips-for-your-birthing-partner-or-partners/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "poczatek-porodu",
+    "title": "Skurcze lub odejście wód. Kiedy dzwonić?",
+    "url": "https://www.nhs.uk/pregnancy/labour-and-birth/signs-that-labour-has-begun/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "poczatek-porodu",
+    "title": "Skurcze lub odejście wód. Kiedy dzwonić?",
+    "url": "https://pacjent.gov.pl/porod-i-jestes-na-swiecie"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "poczatek-porodu",
+    "title": "Skurcze lub odejście wód. Kiedy dzwonić?",
+    "url": "https://pacjent.gov.pl/pogotowie-i-numer-alarmowy"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "bliska-osoba",
+    "title": "Co może zrobić tata lub bliska osoba?",
+    "url": "https://www.nhs.uk/best-start-in-life/pregnancy/preparing-for-labour-and-birth/tips-for-your-birthing-partner-or-partners/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "bliska-osoba",
+    "title": "Co może zrobić tata lub bliska osoba?",
+    "url": "https://www.nhs.uk/baby/support-and-services/relationships-after-having-a-baby/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "bliska-osoba",
+    "title": "Co może zrobić tata lub bliska osoba?",
+    "url": "https://pacjent.gov.pl/pogotowie-i-numer-alarmowy"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "wypis-i-patronaz",
+    "title": "Wypis, pierwsza wizyta położnej i kontrola mamy",
+    "url": "https://www.gov.pl/web/zdrowie/standardy-opieki-okoloporodowej"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "wypis-i-patronaz",
+    "title": "Wypis, pierwsza wizyta położnej i kontrola mamy",
+    "url": "https://dziennikustaw.gov.pl/DU/2026/1140"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "wypis-i-patronaz",
+    "title": "Wypis, pierwsza wizyta położnej i kontrola mamy",
+    "url": "https://www.who.int/publications/i/item/9789240045989"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "krwawienie-po-porodzie",
+    "title": "Krwawienie w połogu. Co obserwować?",
+    "url": "https://www.nhs.uk/pregnancy/labour-and-birth/your-body/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "krwawienie-po-porodzie",
+    "title": "Krwawienie w połogu. Co obserwować?",
+    "url": "https://www.cdc.gov/hearher/maternal-warning-signs/index.html"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "krwawienie-po-porodzie",
+    "title": "Krwawienie w połogu. Co obserwować?",
+    "url": "https://pacjent.gov.pl/pogotowie-i-numer-alarmowy"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pielegnacja-krocza",
+    "title": "Jak myć krocze i dbać o szwy?",
+    "url": "https://www.nhs.uk/pregnancy/labour-and-birth/episiotomy-and-perineal-tears/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pielegnacja-krocza",
+    "title": "Jak myć krocze i dbać o szwy?",
+    "url": "https://www.cuh.nhs.uk/patient-information/perineum-care-after-childbirth/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "po-cesarskim-cieciu",
+    "title": "Jak zadbać o siebie po cesarskim cięciu?",
+    "url": "https://www.nhs.uk/tests-and-treatments/caesarean-section/recovery/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "po-cesarskim-cieciu",
+    "title": "Jak zadbać o siebie po cesarskim cięciu?",
+    "url": "https://www.cdc.gov/hearher/maternal-warning-signs/index.html"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "ruch-i-dno-miednicy",
+    "title": "Spacer, mięśnie dna miednicy i powrót do ruchu",
+    "url": "https://www.nhs.uk/baby/support-and-services/your-post-pregnancy-body/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "ruch-i-dno-miednicy",
+    "title": "Spacer, mięśnie dna miednicy i powrót do ruchu",
+    "url": "https://www.nhs.uk/baby/support-and-services/keeping-fit-and-healthy-with-a-baby/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "ruch-i-dno-miednicy",
+    "title": "Spacer, mięśnie dna miednicy i powrót do ruchu",
+    "url": "https://www.cdc.gov/hearher/maternal-warning-signs/index.html"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "bol-piersi",
+    "title": "Pełne i bolesne piersi. Co może przynieść ulgę?",
+    "url": "https://www.nhs.uk/conditions/mastitis/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "bol-piersi",
+    "title": "Pełne i bolesne piersi. Co może przynieść ulgę?",
+    "url": "https://www.nfz.gov.pl/gfx/nfz/userfiles/_public/dla_pacjenta/magazyn_ze_zdrowiem/ze_zdrowiem_nfz_nr_18.pdf"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "bol-piersi",
+    "title": "Pełne i bolesne piersi. Co może przynieść ulgę?",
+    "url": "https://www.cdc.gov/hearher/maternal-warning-signs/index.html"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "nastroj-po-porodzie",
+    "title": "Przygnębienie, lęk i nastrój po porodzie",
+    "url": "https://pacjent.gov.pl/jak-zyc-z-choroba/mloda-matka-w-depresji"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "nastroj-po-porodzie",
+    "title": "Przygnębienie, lęk i nastrój po porodzie",
+    "url": "https://www.nhs.uk/mental-health/conditions/post-partum-psychosis/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "bliskosc-po-porodzie",
+    "title": "Bliskość, współżycie i planowanie kolejnej ciąży",
+    "url": "https://www.nhs.uk/baby/support-and-services/sex-and-contraception-after-birth/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "bliskosc-po-porodzie",
+    "title": "Bliskość, współżycie i planowanie kolejnej ciąży",
+    "url": "https://www.nhs.uk/pregnancy/labour-and-birth/episiotomy-and-perineal-tears/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pilna-pomoc-dla-mamy",
+    "title": "Kiedy mama potrzebuje pilnej pomocy?",
+    "url": "https://www.cdc.gov/hearher/maternal-warning-signs/index.html"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pilna-pomoc-dla-mamy",
+    "title": "Kiedy mama potrzebuje pilnej pomocy?",
+    "url": "https://pacjent.gov.pl/pogotowie-i-numer-alarmowy"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "wypis-noworodka",
+    "title": "Co ustalić przed powrotem z dzieckiem do domu?",
+    "url": "https://nawigatorpacjenta.rpp.gov.pl/nawigator/porady-dla-rodzicow/kiedy-w-rodzinie-pojawia-sie-noworodek-porady-na-pierwsze-dni/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "wypis-noworodka",
+    "title": "Co ustalić przed powrotem z dzieckiem do domu?",
+    "url": "https://dziennikustaw.gov.pl/DU/2026/1140"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "badanie-z-pietki",
+    "title": "Badanie z piętki. Co sprawdzić w książeczce?",
+    "url": "https://przesiew.imid.med.pl/badaniaprzesiewowe.html"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "badanie-z-pietki",
+    "title": "Badanie z piętki. Co sprawdzić w książeczce?",
+    "url": "https://przesiew.imid.med.pl/download/Ulotka_20240401_PL.pdf"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "przesiew-sluchu",
+    "title": "Badanie słuchu. Co oznacza kolor wklejki?",
+    "url": "https://newsroom.wosp.org.pl/469828-ponad-8-milionow-dzieci-przebadanych-w-programie-badan-sluchu-wosp"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pierwsze-szczepienia",
+    "title": "Jak przygotować się do wizyty szczepiennej?",
+    "url": "https://szczepienia.pzh.gov.pl/faq/jak-przygotowac-sie-do-pierwszej-wizyty-zwiazanej-ze-szczepieniem-dziecka/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pierwsze-szczepienia",
+    "title": "Jak przygotować się do wizyty szczepiennej?",
+    "url": "https://szczepienia.pzh.gov.pl/wp-content/uploads/2022/01/Przewodnik-po-szczepieniach-ochronnych-dla-rodzicow-malych-dzieci-FINAL.pdf"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "zoltaczka-noworodka",
+    "title": "Co zrobić, gdy skóra lub oczy żółkną?",
+    "url": "https://www.nhs.uk/conditions/jaundice-in-babies/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pepek-noworodka",
+    "title": "Jak pielęgnować pępek przed odpadnięciem kikuta?",
+    "url": "https://www.childrens.health.qld.gov.au/health-a-to-z/caring-for-your-babys-umbilical-cord-stump-and-belly-button"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "skora-pod-pieluszka",
+    "title": "Jak przewijać dziecko i łagodzić podrażnienie skóry?",
+    "url": "https://www.nhs.uk/baby/caring-for-a-newborn/nappy-rash/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "skora-pod-pieluszka",
+    "title": "Jak przewijać dziecko i łagodzić podrażnienie skóry?",
+    "url": "https://www.nhs.uk/baby/caring-for-a-newborn/how-to-change-your-babys-nappy/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "podroz-fotelik",
+    "title": "Jak przygotować pierwszą podróż samochodem?",
+    "url": "https://www.nhs.uk/baby/first-aid-and-safety/safety/choosing-a-baby-car-seat/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "podroz-fotelik",
+    "title": "Jak przygotować pierwszą podróż samochodem?",
+    "url": "https://eli.gov.pl/api/acts/DU/2024/1251/text/U/D20241251Lj.pdf"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "podroz-fotelik",
+    "title": "Jak przygotować pierwszą podróż samochodem?",
+    "url": "https://www.healthychildren.org/English/safety-prevention/on-the-go/Pages/rear-facing-car-seats-for-infants-toddlers.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "zabawa-na-brzuszku",
+    "title": "Jak zacząć zabawę na brzuszku?",
+    "url": "https://www.nhs.uk/best-start-in-life/baby/baby-moves/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "odwiedziny-noworodka",
+    "title": "Jak umówić odwiedziny u noworodka?",
+    "url": "https://www.gov.pl/web/gis/zakazenia-wywolane-rsv"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "odwiedziny-noworodka",
+    "title": "Jak umówić odwiedziny u noworodka?",
+    "url": "https://www.nhs.uk/conditions/neonatal-herpes/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "lagodzenie-bolu-porodowego",
+    "title": "Co może pomóc, kiedy skurcze stają się bolesne?",
+    "url": "https://www.labourpains.org/during-labour/pain-relief-comparisons"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "lagodzenie-bolu-porodowego",
+    "title": "Co może pomóc, kiedy skurcze stają się bolesne?",
+    "url": "https://www.labourpains.org/downloads/translated-content/polish/faqs---pain-relief-in-labour---polish.pdf"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "lagodzenie-bolu-porodowego",
+    "title": "Co może pomóc, kiedy skurcze stają się bolesne?",
+    "url": "https://www.labourpains.org/during-labour/epidural-advice-and-information"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "rozmowa-o-indukcji",
+    "title": "Lekarz proponuje indukcję porodu. O co zapytać?",
+    "url": "https://www.uclh.nhs.uk/patients-and-visitors/patient-information-pages/induction-labour-iol"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "rozmowa-o-indukcji",
+    "title": "Lekarz proponuje indukcję porodu. O co zapytać?",
+    "url": "https://openstax.org/books/maternal-newborn-nursing/pages/19-2-medical-interventions-during-labor"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "kontakt-skora-do-skory",
+    "title": "Jak bezpiecznie ułożyć dziecko skóra do skóry?",
+    "url": "https://cps.ca/en/documents/position/skin-to-skin-care"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "kontakt-skora-do-skory",
+    "title": "Jak bezpiecznie ułożyć dziecko skóra do skóry?",
+    "url": "https://www.unicef.org.uk/babyfriendly/baby-friendly-resources/implementing-standards-resources/skin-to-skin-contact/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pecherz-po-porodzie",
+    "title": "Po porodzie trudno mi oddać mocz. Kiedy zgłosić to położnej?",
+    "url": "https://www.cuh.nhs.uk/patient-information/urinary-retention-following-childbirth/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pecherz-po-porodzie",
+    "title": "Po porodzie trudno mi oddać mocz. Kiedy zgłosić to położnej?",
+    "url": "https://www.uclh.nhs.uk/patients-and-visitors/patient-information-pages/advice-and-exercise-following-childbirth"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "wyproznienie-w-pologu",
+    "title": "Pierwsze wypróżnienie po porodzie i zaparcia",
+    "url": "https://openstax.org/books/maternal-newborn-nursing/pages/20-3-nursing-care-during-the-postpartum-period"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "wyproznienie-w-pologu",
+    "title": "Pierwsze wypróżnienie po porodzie i zaparcia",
+    "url": "https://www.uclh.nhs.uk/patients-and-visitors/patient-information-pages/advice-and-exercise-following-childbirth"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "wyproznienie-w-pologu",
+    "title": "Pierwsze wypróżnienie po porodzie i zaparcia",
+    "url": "https://my.clevelandclinic.org/health/diseases/bowel-obstruction"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "rodzic-na-neonatologii",
+    "title": "Co mogę robić przy dziecku na oddziale neonatologicznym?",
+    "url": "https://www.bliss.org.uk/parents/in-hospital/being-involved-in-your-babys-care-and-procedures/working-with-the-neonatal-care-team"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "rodzic-na-neonatologii",
+    "title": "Co mogę robić przy dziecku na oddziale neonatologicznym?",
+    "url": "https://www.healthychildren.org/English/ages-stages/baby/preemie/pages/How-You-Can-Participate-in-the-Care-of-Your-Baby-in-the-NICU.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "rodzic-na-neonatologii",
+    "title": "Co mogę robić przy dziecku na oddziale neonatologicznym?",
+    "url": "https://cps.ca/en/documents/position/skin-to-skin-care"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "rodzic-na-neonatologii",
+    "title": "Co mogę robić przy dziecku na oddziale neonatologicznym?",
+    "url": "https://www.bliss.org.uk/parents/in-hospital/about-neonatal-care/routines-on-the-unit"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "kontrola-po-cukrzycy-ciazowej",
+    "title": "Jak zaplanować badania po cukrzycy ciążowej?",
+    "url": "https://www.termedia.pl/Wytyczne-rozpoznawania-i-leczenia-cukrzycy-dla-lekarzy-rodzinnych-Polskiego-Towarzystwa-Medycyny-Rodzinnej-Kolegium-Lekarzy-Rodzinnych-w-Polsce-i-Polskiego-Towarzystwa-Diabetologicznego,98,47994,1,1.html"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "kontrola-po-cukrzycy-ciazowej",
+    "title": "Jak zaplanować badania po cukrzycy ciążowej?",
+    "url": "https://www.currenttopicsindiabetes.com/pdf-219306-137953?filename=Clinical-Recommendations-.pdf"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "kontakt-twarza-w-twarz",
+    "title": "Jak poznać, że niemowlę ma ochotę na kontakt?",
+    "url": "https://developingchild.harvard.edu/resources/briefs/5-steps-for-brain-building-serve-and-return/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "kontakt-twarza-w-twarz",
+    "title": "Jak poznać, że niemowlę ma ochotę na kontakt?",
+    "url": "https://www.healthychildren.org/English/ages-stages/baby/Pages/How-Your-Newborn-Behaves.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pierwsze-rozmowy",
+    "title": "Jak rozmawiać z dzieckiem, które jeszcze nie mówi?",
+    "url": "https://www.asha.org/public/developmental-milestones/communication-milestones-birth-to-1-year/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pierwsze-rozmowy",
+    "title": "Jak rozmawiać z dzieckiem, które jeszcze nie mówi?",
+    "url": "https://www.mp.pl/pacjent/pediatria/prawidlowyrozwoj/rozwojfizyczny/52294,etapy-rozwoju-mowy"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pierwsze-rozmowy",
+    "title": "Jak rozmawiać z dzieckiem, które jeszcze nie mówi?",
+    "url": "https://doi.org/10.1073/pnas.1921653117"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "czytanie-od-urodzenia",
+    "title": "Co czytać niemowlęciu i jak zacząć?",
+    "url": "https://publications.aap.org/pediatrics/article/154/6/e2024069090/199469/Literacy-Promotion-An-Essential-Component-of"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "czytanie-od-urodzenia",
+    "title": "Co czytać niemowlęciu i jak zacząć?",
+    "url": "https://www.fpc.org.pl/nasze-projekty/ksiazkanarecepte/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "czytanie-od-urodzenia",
+    "title": "Co czytać niemowlęciu i jak zacząć?",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5914489/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "wzrok-w-pierwszych-miesiacach",
+    "title": "Co widzi noworodek i jak bawić się spojrzeniem?",
+    "url": "https://www.healthychildren.org/English/ages-stages/baby/Pages/Babys-Vision-Development.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "obserwacja-rozwoju",
+    "title": "Jak zanotować rozwój przed wizytą u pediatry?",
+    "url": "https://www.healthychildren.org/English/family-life/health-management/Pages/Milestones-Matter.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "obserwacja-rozwoju",
+    "title": "Jak zanotować rozwój przed wizytą u pediatry?",
+    "url": "https://www.healthychildren.org/English/health-issues/conditions/developmental-disabilities/Pages/default.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "wiek-skorygowany",
+    "title": "Wcześniak: jak policzyć wiek skorygowany?",
+    "url": "https://www.healthychildren.org/English/ages-stages/baby/preemie/Pages/Corrected-Age-For-Preemies.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "wiek-skorygowany",
+    "title": "Wcześniak: jak policzyć wiek skorygowany?",
+    "url": "https://www.healthychildren.org/English/ages-stages/baby/preemie/pages/Preemie-Milestones.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "przerwa-dla-opiekuna",
+    "title": "Płacz mnie przerasta. Jak zrobić bezpieczną przerwę?",
+    "url": "https://www.healthychildren.org/English/ages-stages/baby/crying-colic/Pages/Calming-A-Fussy-Baby.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "przerwa-dla-opiekuna",
+    "title": "Płacz mnie przerasta. Jak zrobić bezpieczną przerwę?",
+    "url": "https://www.mayoclinic.org/diseases-conditions/shaken-baby-syndrome/symptoms-causes/syc-20366619"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "reczne-odciaganie-pokarmu",
+    "title": "Jak ręcznie odciągnąć pokarm po porodzie?",
+    "url": "https://llli.org/breastfeeding-info/hand-expressing/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "reczne-odciaganie-pokarmu",
+    "title": "Jak ręcznie odciągnąć pokarm po porodzie?",
+    "url": "https://www.healthychildren.org/English/ages-stages/baby/breastfeeding/Pages/hand-expressing-milk.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "reczne-odciaganie-pokarmu",
+    "title": "Jak ręcznie odciągnąć pokarm po porodzie?",
+    "url": "https://www.schn.health.nsw.gov.au/breastfeeding-and-expressing-milk-hospital-information-sheet"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "przechowywanie-pokarmu",
+    "title": "Jak przechować i rozmrozić odciągnięty pokarm?",
+    "url": "https://www.cdc.gov/breastfeeding/breast-milk-preparation-and-storage/handling-breastmilk.html"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "przechowywanie-pokarmu",
+    "title": "Jak przechować i rozmrozić odciągnięty pokarm?",
+    "url": "https://www.bfmed.org/assets/DOCUMENTS/PROTOCOLS/8-human-milk-storage-protocol-english.pdf"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "przechowywanie-pokarmu",
+    "title": "Jak przechować i rozmrozić odciągnięty pokarm?",
+    "url": "https://www.healthychildren.org/English/ages-stages/baby/breastfeeding/Pages/storing-and-preparing-expressed-breast-milk.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "gotowosc-do-rozszerzania-diety",
+    "title": "Po czym poznać gotowość na pierwszy posiłek?",
+    "url": "https://www.healthychildren.org/English/ages-stages/baby/feeding-nutrition/pages/starting-solid-foods.aspx"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "gotowosc-do-rozszerzania-diety",
+    "title": "Po czym poznać gotowość na pierwszy posiłek?",
+    "url": "https://ptghizd.pl/cm/uploads/2022/12/4337.pdf"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "konsystencja-i-zadlawienie",
+    "title": "Jak przygotować kawałki jedzenia, by ograniczyć ryzyko zadławienia?",
+    "url": "https://www.rch.org.au/kidsinfo/fact_sheets/choking,_suffocation_and_strangulation/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "konsystencja-i-zadlawienie",
+    "title": "Jak przygotować kawałki jedzenia, by ograniczyć ryzyko zadławienia?",
+    "url": "https://caringforkids.cps.ca/handouts/pregnancy-and-babies/feeding_your_baby_in_the_first_year"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "konsystencja-i-zadlawienie",
+    "title": "Jak przygotować kawałki jedzenia, by ograniczyć ryzyko zadławienia?",
+    "url": "https://pacjent.gov.pl/pogotowie-i-numer-alarmowy"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "zelazo-w-posilkach",
+    "title": "Jak ułożyć posiłek z żelazem dla niemowlęcia?",
+    "url": "https://caringforkids.cps.ca/handouts/pregnancy-and-babies/iron_needs_of_babies_and_children"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "zelazo-w-posilkach",
+    "title": "Jak ułożyć posiłek z żelazem dla niemowlęcia?",
+    "url": "https://ptghizd.pl/cm/uploads/2022/12/4337.pdf"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "jajko-i-orzeszki",
+    "title": "Jak wprowadzić jajko i orzeszki ziemne?",
+    "url": "https://allergy.org.au/hp/papers/infant-feeding-and-allergy-prevention"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "jajko-i-orzeszki",
+    "title": "Jak wprowadzić jajko i orzeszki ziemne?",
+    "url": "https://ptghizd.pl/cm/uploads/2022/12/4337.pdf"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "jajko-i-orzeszki",
+    "title": "Jak wprowadzić jajko i orzeszki ziemne?",
+    "url": "https://www.nejm.org/doi/full/10.1056/NEJMoa1414850"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "jajko-i-orzeszki",
+    "title": "Jak wprowadzić jajko i orzeszki ziemne?",
+    "url": "https://www.rch.org.au/kidsinfo/fact_sheets/Nutrition_babies_toddlers/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pierwszy-zab",
+    "title": "Pierwszy ząb. Jak zacząć mycie i kiedy iść do dentysty?",
+    "url": "https://pasd.edu.pl/porady/dzieci-0-2-rok-zycia/"
+  },
+  {
+    "type": "Podręcznik",
+    "id": "pierwszy-zab",
+    "title": "Pierwszy ząb. Jak zacząć mycie i kiedy iść do dentysty?",
+    "url": "https://www.aapd.org/resources/parent/faq/"
+  }
+]

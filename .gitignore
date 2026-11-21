@@ -1,0 +1,30 @@
+# Sekrety i prywatna konfiguracja
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+*.pem
+*.key
+.openai/
+.codex/
+.agents/
+.aws/
+# Pliki odtwarzalne i robocze
+node_modules/
+otula-asystent/dist/
+__pycache__/
+.venv/
+*.log
+*.tmp
+*.zip
+*.exe
+*.webm
+.DS_Store
+Thumbs.db
+Otula-slajdy-i-notatki.html
+!otula/materialy/Otula-slajdy-i-notatki.html
+# Nie dołączać eksportów prawdziwych rodzin ani skrzynek pocztowych
+private/
+local-data/
+*-mail-do-wyslania.txt

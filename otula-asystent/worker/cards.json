@@ -1,0 +1,277 @@
+[
+  {
+    "id": "chorobowe",
+    "title": "Sprawdź ubezpieczenie chorobowe",
+    "why": "Sprawdzasz w eZUS lub w kadrach, czy i od kiedy obejmuje Cię ubezpieczenie chorobowe. Na etacie jest obowiązkowe. Przy zleceniu lub własnej firmie może wymagać zgłoszenia na Twój wniosek.",
+    "benefit": "Jeszcze przed porodem możesz wychwycić brak zgłoszenia i wyjaśnić z płatnikiem, co to oznacza dla zasiłku macierzyńskiego.",
+    "cost": "Wgląd do eZUS i sprawdzenie zgłoszenia są bezpłatne. Samo ubezpieczenie ma składkę w wysokości 2,45% podstawy jej wymiaru.",
+    "short": "Ustal, od czego zależy zasiłek macierzyński.",
+    "docs": [
+      "Informacja o tytule i okresie ubezpieczenia",
+      "Dane płatnika składek, jeśli chcesz wyjaśnić zgłoszenie"
+    ],
+    "source": "https://www.zus.pl/swiadczenia/zasilki/zasilek-macierzynski/komu-przysluguje"
+  },
+  {
+    "id": "becikowe-przygotowanie",
+    "title": "Przygotuj dokument do becikowego",
+    "why": "To zaświadczenie, w którym lekarz lub położna potwierdza, od kiedy i do kiedy mama była pod opieką medyczną w ciąży. Dla rodzica biologicznego jest załącznikiem do wniosku o becikowe.",
+    "benefit": "Z dokumentem możesz po porodzie wykazać jeden z warunków jednorazowej wypłaty 1000 zł na dziecko. Gmina sprawdzi też m.in. dochód rodziny.",
+    "cost": "0 zł za zaświadczenie do becikowego w ramach opieki NFZ. Jeśli wybierasz prywatną wizytę, jej cenę ustala placówka.",
+    "short": "Sprawdź, jakie zaświadczenie zachować.",
+    "docs": [
+      "Zaświadczenie lekarza lub położnej potwierdzające wymagany okres opieki"
+    ],
+    "source": "https://www.gov.pl/web/gov/uzyskaj-becikowe"
+  },
+  {
+    "id": "profil",
+    "title": "Przygotuj dostęp do e-urzędu",
+    "why": "Profil zaufany pozwala potwierdzić w internecie, że to Ty załatwiasz sprawę, i podpisać dokument urzędowy.",
+    "benefit": "Możesz załatwić część spraw z domu, np. podpisać zgłoszenie urodzenia. Do tej usługi przygotuj też aktywną skrzynkę do e-Doręczeń.",
+    "cost": "0 zł za założenie, przedłużenie i używanie profilu zaufanego.",
+    "short": "Wybierz sposób podpisywania spraw online.",
+    "docs": [
+      "Przy potwierdzeniu w punkcie przygotuj ważny dokument tożsamości",
+      "Przy zakładaniu profilu przygotuj własny numer telefonu i adres e-mail"
+    ],
+    "source": "https://www.gov.pl/web/profilzaufany/najczesciej-zadawane-pytania2"
+  },
+  {
+    "id": "praca-ciaza",
+    "title": "Sprawdź swoje prawa w pracy",
+    "why": "Jeśli pracujesz na etacie, w ciąży przysługują Ci szczególne zasady dotyczące m.in. godzin pracy i wyjść na badania.",
+    "benefit": "Pracodawca musi zaplanować pracę bez nocy i nadgodzin. Zachowujesz wynagrodzenie za czas zaleconego przez lekarza badania związanego z ciążą, gdy nie da się go wykonać poza godzinami pracy.",
+    "cost": "Pracodawca nie pobiera opłaty za dostosowanie pracy ani zgłoszenie wyjścia na takie badanie.",
+    "short": "Zobacz zasady dotyczące godzin pracy i badań.",
+    "docs": [
+      "Zaświadczenie lekarskie stwierdzające ciążę",
+      "Informacja o terminie zaleconego badania, jeśli potrzebujesz zwolnienia"
+    ],
+    "source": "https://www.gov.pl/web/rodzina/uprawnienia-zwiazane-z-rodzicielstwem"
+  },
+  {
+    "id": "urodzenie",
+    "title": "Zgłoś urodzenie dziecka",
+    "why": "Zgłaszasz narodziny i wybrane imię lub imiona. Na podstawie zgłoszenia oraz karty urodzenia z placówki medycznej USC sporządza akt urodzenia.",
+    "benefit": "Dostajesz odpis, którym możesz potwierdzić narodziny dziecka. Urząd przekazuje też informację o numerze PESEL, jeśli został nadany. Przyda się m.in. do ubezpieczenia dziecka.",
+    "cost": "Zgłoszenie i pierwszy odpis skrócony kosztują 0 zł. Przy późniejszym zamówieniu odpisu opłata wynosi zwykle 22 zł za skrócony lub 33 zł za zupełny. Podaj cel we wniosku, bo np. w sprawach ubezpieczenia społecznego przysługuje zwolnienie z opłaty.",
+    "short": "Zarejestruj dziecko urodzone w Polsce.",
+    "docs": [
+      "W urzędzie: dokument tożsamości",
+      "Online: aktywna skrzynka do e-Doręczeń i sposób potwierdzenia tożsamości, np. profil zaufany",
+      "Wybrane imię lub imiona dziecka"
+    ],
+    "source": "https://www.gov.pl/web/gov/zglos-urodzenie-dziecka"
+  },
+  {
+    "id": "ubezpieczenie-dziecka",
+    "title": "Zgłoś dziecko do ubezpieczenia zdrowotnego",
+    "why": "Ubezpieczony rodzic zgłasza dziecko jako członka rodziny. Na etacie podajesz dane pracodawcy. Gdy prowadzisz firmę, możesz złożyć formularz ZUS ZCNA.",
+    "benefit": "Zgłoszenie porządkuje dane dziecka w NFZ. Po ich przetworzeniu uzyskasz dostęp do jego Internetowego Konta Pacjenta, np. do e-recept. Dziecku z polskim obywatelstwem przysługuje bezpłatne leczenie także przed zgłoszeniem.",
+    "cost": "0 zł za zgłoszenie. Dopisanie dziecka do ubezpieczenia rodzinnego nie podwyższa Twojej składki zdrowotnej.",
+    "short": "To nie dzieje się automatycznie po rejestracji w USC.",
+    "docs": [
+      "Numer PESEL i dane dziecka"
+    ],
+    "source": "https://pacjent.gov.pl/aktualnosc/zglos-dziecko-do-ubezpieczenia"
+  },
+  {
+    "id": "macierzynski",
+    "title": "Przygotuj wniosek o zasiłek macierzyński",
+    "why": "Zasiłek macierzyński zastępuje część dochodu na czas opieki nad dzieckiem. Mogą z niego korzystać m.in. pracownicy i osoby prowadzące firmę lub pracujące na zleceniu, jeśli spełniają warunki ubezpieczenia.",
+    "benefit": "Zwykle otrzymasz 100% podstawy za okres macierzyński i 70% za rodzicielski. Jeśli w ciągu 21 dni po porodzie złożysz wniosek za oba okresy w pełnym wymiarze, możesz wybrać 81,5%. Za 9 tygodni zastrzeżonych dla drugiego rodzica stawka wynosi 70%.",
+    "cost": "0 zł za złożenie wniosku o wypłatę. Indywidualna kwota zasiłku zależy od podstawy obliczonej przez płatnika.",
+    "short": "Dobierz dokumenty do tego, kto wypłaca zasiłek.",
+    "docs": [
+      "Informacja o okresie, za który chcesz pobierać zasiłek",
+      "Dane dziecka i rodziców do właściwego wniosku"
+    ],
+    "source": "https://www.zus.pl/pl/swiadczenia/zasilki/zasilek-macierzynski/niezbedne-dokumenty"
+  },
+  {
+    "id": "urlop-ojcowski",
+    "title": "Zaplanuj urlop ojcowski",
+    "why": "To osobny urlop pracownika, który wychowuje swoje dziecko. Ojciec może go wykorzystać również wtedy, gdy mama przebywa na urlopie macierzyńskim.",
+    "benefit": "Masz do 2 tygodni na opiekę nad dzieckiem, razem lub w dwóch tygodniowych częściach. Za ten czas zasiłek wynosi 100% Twojej podstawy wymiaru.",
+    "cost": "0 zł za wniosek u pracodawcy. Urlop ojcowski ma własną pulę dni, obok urlopu wypoczynkowego.",
+    "short": "Dwa tygodnie dla taty — do 12. miesiąca życia dziecka.",
+    "docs": [
+      "Wniosek o urlop ojcowski",
+      "Dane dziecka potrzebne do wniosku, np. data urodzenia"
+    ],
+    "source": "https://www.gov.pl/web/rodzina/urlop-ojcowski"
+  },
+  {
+    "id": "urlop-rodzicielski",
+    "title": "Zaplanuj urlop rodzicielski",
+    "why": "To czas wolny od pracy, który pracujący rodzice mogą podzielić między siebie na opiekę nad dzieckiem. Wniosek o swoją część składasz u swojego pracodawcy.",
+    "benefit": "Zwykle macie łącznie do 41 tygodni przy jednym dziecku lub 43 przy porodzie mnogim. Każdy rodzic ma w tej puli 9 tygodni wyłącznie dla siebie. Zasiłek zasadniczo wynosi 70% podstawy. Przy wariancie uśrednionym stawka to 81,5%, z wyjątkiem 9 tygodni drugiego rodzica.",
+    "cost": "0 zł za złożenie wniosku o urlop rodzicielski.",
+    "short": "Każdemu z rodziców przysługuje 9 tygodni tylko dla siebie.",
+    "docs": [
+      "Wniosek do pracodawcy",
+      "Plan podziału urlopu uzgodniony z drugim rodzicem"
+    ],
+    "source": "https://www.gov.pl/web/rodzina/urlop-rodzicielski"
+  },
+  {
+    "id": "800-plus",
+    "title": "Sprawdź świadczenie 800+",
+    "why": "800+ to świadczenie wychowawcze z ZUS, które pomaga pokrywać wydatki na dziecko do jego 18. urodzin. Dochód rodziny nie jest kryterium.",
+    "benefit": "Za pełny miesiąc przysługuje co do zasady 800 zł na każde uprawnione dziecko. Przy dwojgu to zwykle 1600 zł miesięcznie. Za miesiąc narodzin ZUS oblicza kwotę według liczby dni, za które przysługuje świadczenie.",
+    "cost": "0 zł za elektroniczny wniosek o 800+.",
+    "short": "Przygotuj elektroniczny wniosek na noworodka.",
+    "docs": [
+      "Dane dziecka, w tym PESEL, jeśli został nadany",
+      "Numer rachunku do wypłaty",
+      "Dodatkowe dokumenty wskazane przez ZUS dla Twojej sytuacji"
+    ],
+    "source": "https://www.zus.pl/pl/swiadczenia/swiadczenia-dla-rodzin/swiadczenie-wychowawcze-800-plus"
+  },
+  {
+    "id": "rodzicielskie",
+    "title": "Sprawdź świadczenie rodzicielskie",
+    "why": "Świadczenie rodzicielskie, potocznie „kosiniakowe”, to wsparcie z gminy na czas osobistej opieki nad dzieckiem. Może pomóc m.in. osobie studiującej lub bez pracy, gdy rodzice nie otrzymują zasiłku macierzyńskiego.",
+    "benefit": "Podstawowa kwota to 1000 zł za pełny miesiąc, bez progu dochodowego. Przy jednym dziecku okres wynosi zwykle 52 tygodnie, przy bliźniętach 65 tygodni. Bliźnięta wydłużają czas pobierania jednego świadczenia.",
+    "cost": "0 zł za złożenie wniosku o świadczenie rodzicielskie.",
+    "short": "Poznaj wsparcie, gdy rodzice nie pobierają zasiłku macierzyńskiego.",
+    "docs": [
+      "Wniosek o ustalenie prawa do świadczenia rodzicielskiego",
+      "Dane rodziców i dziecka oraz załączniki wymagane w Twojej sytuacji"
+    ],
+    "source": "https://www.gov.pl/web/gov/uzyskaj-swiadczenie-rodzicielskie"
+  },
+  {
+    "id": "becikowe",
+    "title": "Sprawdź warunki becikowego",
+    "why": "Becikowe to jednorazowa pomoc finansowa po narodzinach dziecka. Składasz wniosek w gminie, a przyznane pieniądze możesz przeznaczyć np. na pierwsze zakupy dla dziecka.",
+    "benefit": "Po spełnieniu warunków otrzymasz raz 1000 zł na każde dziecko. Przy bliźniętach to łącznie 2000 zł. Dochód na osobę w rodzinie nie może przekroczyć 1922 zł netto miesięcznie.",
+    "cost": "0 zł za złożenie wniosku o becikowe. Jeśli wybierasz wysyłkę pocztą, ponosisz koszt przesyłki.",
+    "short": "Jednorazowa zapomoga po urodzeniu dziecka.",
+    "docs": [
+      "Wniosek o becikowe",
+      "Zaświadczenie lekarskie lub od położnej, jeśli dotyczy",
+      "PESEL członków rodziny, dane do wypłaty oraz dokumenty o utracie lub uzyskaniu dochodu, jeśli dotyczy. Przy samotnym wychowywaniu: orzeczenie alimentacyjne albo dokument potwierdzający wyjątek"
+    ],
+    "source": "https://www.gov.pl/web/gov/uzyskaj-becikowe"
+  },
+  {
+    "id": "paszport-dziecka",
+    "title": "Wyrób paszport dla dziecka",
+    "why": "Paszport potwierdza tożsamość i polskie obywatelstwo dziecka za granicą. Nawet niemowlę podróżuje z własnym dokumentem.",
+    "benefit": "Wyjedziesz z dzieckiem także do krajów, które wymagają paszportu. Przed wyjazdem sprawdź minimalną ważność dokumentu i zasady wjazdu do kraju docelowego.",
+    "cost": "W Polsce zwykły paszport kosztuje 30 zł przed 12. urodzinami i 70 zł od 12. do 18. urodzin. Z Kartą Dużej Rodziny dziecka ceny wynoszą odpowiednio 15 zł i 35 zł. Zdjęcie może kosztować osobno. Konsulat stosuje własną taryfę.",
+    "short": "Sprawdź, kiedy wystarczy wniosek online i czy dziecko musi przyjść.",
+    "docs": [
+      "Własny ważny dowód albo paszport, aktualne zdjęcie dziecka wykonane do 6 miesięcy wcześniej, potwierdzenie opłaty",
+      "Dotychczasowy dokument dziecka, jeśli go ma, oraz potwierdzenie ewentualnej ulgi",
+      "Do wniosku online przygotuj cyfrowe zdjęcie, podpis elektroniczny akceptowany przez usługę i skrzynkę do e-Doręczeń. W razie samodzielnej decyzji rodzica przygotuj dokument wskazany dla Twojej sytuacji."
+    ],
+    "source": "https://www.gov.pl/web/gov/uzyskaj-paszport-dla-dziecka"
+  },
+  {
+    "id": "dowod-dziecka",
+    "title": "Wyrób dowód osobisty dla dziecka",
+    "why": "Dowód osobisty potwierdza tożsamość i polskie obywatelstwo dziecka. Rodzic może go wyrobić również dla noworodka.",
+    "benefit": "Dziecko może podróżować z dowodem do państw, które go uznają, m.in. w UE. Przy planowaniu wyjazdu sprawdź zasady konkretnego kraju.",
+    "cost": "Wydanie dowodu jest bezpłatne. Osobnym wydatkiem może być zdjęcie.",
+    "short": "Bezpłatny dokument na podróże m.in. po Unii Europejskiej.",
+    "docs": [
+      "Twój dowód lub paszport, zdjęcie dziecka 35 × 45 mm z ostatnich 6 miesięcy (do wniosku internetowego plik cyfrowy)",
+      "Dotychczasowy dowód lub paszport dziecka, jeżeli go ma. Opiekun lub kurator przygotowuje dokument potwierdzający umocowanie."
+    ],
+    "source": "https://www.gov.pl/web/gov/uzyskaj-dowod-osobisty-dla-dziecka-lub-podopiecznego"
+  },
+  {
+    "id": "odpis-urodzenia",
+    "title": "Zamów odpis aktu urodzenia",
+    "why": "Odpis jest urzędowym potwierdzeniem danych z aktu urodzenia. Przy rejestracji urodzenia dostajesz pierwszy odpis skrócony z urzędu.",
+    "benefit": "Możesz przedstawić potwierdzenie pokrewieństwa lub danych dziecka tam, gdzie instytucja rzeczywiście go wymaga, również w sprawach zagranicznych.",
+    "cost": "Pierwszy odpis skrócony po rejestracji urodzenia jest bezpłatny. Następny zwykle kosztuje 22 zł za odpis skrócony (także wielojęzyczny) albo 33 zł za zupełny. W sprawach objętych zwolnieniem, np. ubezpieczenia społecznego, wskaż cel wydania.",
+    "short": "Dobierz odpis skrócony, zupełny lub wielojęzyczny do sprawy.",
+    "docs": [
+      "Dane dziecka, w tym imię i nazwisko, data i miejsce urodzenia",
+      "Twój dokument tożsamości w urzędzie, potwierdzenie ewentualnej opłaty i dane do wysyłki"
+    ],
+    "source": "https://www.gov.pl/web/gov/uzyskaj-odpis-aktu-stanu-cywilnego-urodzenia-malzenstwa-zgonu"
+  },
+  {
+    "id": "ekuz-rodziny",
+    "title": "Zamów EKUZ dla dziecka i rodziców",
+    "why": "EKUZ potwierdza prawo do niezbędnego, nieplanowanego leczenia w publicznym systemie kraju czasowego pobytu. Działa m.in. w UE, państwach EFTA i Wielkiej Brytanii.",
+    "benefit": "Jeśli podczas wyjazdu dziecko zachoruje, okażesz jego kartę w placówce publicznego systemu. Koszty są rozliczane na zasadach obowiązujących osoby ubezpieczone na miejscu.",
+    "cost": "Wydanie EKUZ przez NFZ jest bezpłatne. Za granicą mogą obowiązywać dopłaty do wizyty lub pobytu w szpitalu.",
+    "short": "Przed wyjazdem wyrobisz osobną Europejską Kartę Ubezpieczenia Zdrowotnego każdej uprawnionej osobie.",
+    "docs": [
+      "Dane osoby, dla której wnioskujesz, w tym PESEL, jeśli go nadano, oraz adres przy wysyłce",
+      "Przy wizycie dokument tożsamości. Jeśli NFZ nie może potwierdzić prawa do świadczeń, może poprosić o dodatkowe dokumenty."
+    ],
+    "source": "https://pacjent.gov.pl/ekuz"
+  },
+  {
+    "id": "ikp-dziecka",
+    "title": "Otwórz IKP dziecka i daj dostęp drugiemu rodzicowi",
+    "why": "Internetowe Konto Pacjenta jest zakładane automatycznie osobie z numerem PESEL. Rodzic korzysta z konta małego dziecka po zalogowaniu do własnego IKP.",
+    "benefit": "Masz pod ręką kody recept, skierowania i informacje o opiece dziecka. Drugi uprawniony rodzic może sprawdzać te dane we własnym profilu.",
+    "cost": "Korzystanie z IKP i udostępnienie konta drugiemu rodzicowi są bezpłatne.",
+    "short": "Sprawdź e-receptę, e-skierowanie lub deklarację POZ dziecka z własnego konta.",
+    "docs": [
+      "Twój bezpieczny sposób logowania do IKP, np. profil zaufany",
+      "Do nadania dostępu PESEL i nazwisko drugiego rodzica"
+    ],
+    "source": "https://pacjent.gov.pl/dbaj-online-o-zdrowie-twojego-dziecka"
+  },
+  {
+    "id": "polozna-poz",
+    "title": "Wybierz położną POZ na ciążę i połóg",
+    "why": "Położna podstawowej opieki zdrowotnej prowadzi edukację przedporodową oraz opiekuje się mamą i noworodkiem po porodzie. Możesz wybrać położną przyjmującą w ramach NFZ.",
+    "benefit": "Jeszcze w ciąży omówisz poród i karmienie. Po powrocie do domu możesz zapytać o gojenie, pielęgnację noworodka lub pomoc przy przystawianiu do piersi.",
+    "cost": "Pierwszy wybór i świadczenia w ramach NFZ są bezpłatne dla uprawnionych pacjentek. Dwie zmiany położnej w roku kalendarzowym są bezpłatne. Kolejna zwykle kosztuje 80 zł, z wyjątkami np. przy przeprowadzce.",
+    "short": "Jedna deklaracja ułatwia przygotowanie do porodu i kontakt po powrocie do domu.",
+    "docs": [
+      "Dane identyfikacyjne pacjentki, w tym PESEL, jeśli nadany",
+      "Dane wybranej położnej i placówki, adres pobytu po porodzie i telefon do kontaktu"
+    ],
+    "source": "https://pacjent.gov.pl/czym-jest-opieka-okoloporodowa"
+  },
+  {
+    "id": "lekarz-poz-dziecka",
+    "title": "Wybierz lekarza i pielęgniarkę POZ dla dziecka",
+    "why": "Rodzic lub opiekun wybiera dla dziecka lekarza POZ, np. pediatrę lub lekarza rodzinnego, a osobno pielęgniarkę POZ. Służą do tego deklaracje wyboru.",
+    "benefit": "Po przyjęciu deklaracji wiesz, gdzie umówić dziecko na poradę, bilans zdrowia i szczepienie. Możesz od razu ustalić z rejestracją termin pierwszej wizyty.",
+    "cost": "Pierwszy wybór jest bezpłatny. Każdego z medyków można zmienić bez opłat dwa razy w roku kalendarzowym. Następna zmiana zwykle kosztuje 80 zł, z wyjątkami m.in. przy zmianie miejsca zamieszkania.",
+    "short": "Zapisz noworodka do przychodni na wizyty, bilanse i szczepienia.",
+    "docs": [
+      "Dane dziecka i rodzica lub opiekuna, PESEL dziecka, gdy już go nadano",
+      "Przy wyborze online dostęp do IKP dziecka. Jeśli PESEL nie jest jeszcze nadany, zadzwoń do przychodni i ustal, jak złożyć deklarację dla noworodka."
+    ],
+    "source": "https://pacjent.gov.pl/aktualnosc/wybierz-dziecku-lekarza-rodzinnego"
+  },
+  {
+    "id": "uznanie-ojcostwa",
+    "title": "Uznaj ojcostwo przed narodzinami lub po porodzie",
+    "why": "Ojciec składa przed kierownikiem USC oświadczenie, że jest ojcem dziecka, a matka potwierdza jego słowa. Ta droga dotyczy sytuacji, gdy ojcostwo innej osoby nie jest już prawnie ustalone.",
+    "benefit": "Możecie uregulować pochodzenie dziecka i złożyć oświadczenia o jego nazwisku. Uznanie przed porodem ułatwia późniejsze zgłoszenie urodzenia przez tatę.",
+    "cost": "Przyjęcie oświadczeń w USC jest bezpłatne.",
+    "short": "Rodzice mogą wspólnie ustalić ojcostwo także w czasie ciąży.",
+    "docs": [
+      "Dokumenty tożsamości obojga rodziców",
+      "Przed porodem dokument potwierdzający ciążę wskazany przez USC, np. zaświadczenie lekarskie. Przy zagranicznych dokumentach zapytaj o odpis i tłumaczenie."
+    ],
+    "source": "https://samorzad.gov.pl/web/gmina-jaslo/uznanie-ojcostwa"
+  },
+  {
+    "id": "karta-duzej-rodziny",
+    "title": "Sprawdź Kartę Dużej Rodziny",
+    "why": "Karta Dużej Rodziny (KDR) potwierdza uprawnienie do ulg i zniżek u partnerów programu. Każdy uprawniony członek rodziny ma swoją kartę.",
+    "benefit": "Przykładowo KDR obniża opłatę za paszport dziecka. Inne aktualne zniżki, np. na usługi lub wstęp do obiektów, sprawdzisz w wykazie partnerów.",
+    "cost": "Pierwsze przyznanie karty jest bezpłatne. Od 1 marca 2026 r. duplikat kosztuje 17 zł. Jeśli zamówisz kartę plastikową po wcześniejszym wyborze wyłącznie elektronicznej, opłata wynosi 10 zł.",
+    "short": "Sprawdź, komu w rodzinie z co najmniej trojgiem dzieci przysługują zniżki.",
+    "docs": [
+      "Dane i numery PESEL członków rodziny, przy braku numeru dokumenty tożsamości",
+      "Oświadczenia dotyczące władzy rodzicielskiej, a w odpowiednim przypadku nauki pełnoletniego dziecka, orzeczenia o niepełnosprawności lub pieczy zastępczej. Dla cudzoziemca mogą być potrzebne dokumenty pobytowe."
+    ],
+    "source": "https://www.gov.pl/web/gov/uzyskaj-karte-duzej-rodziny"
+  }
+]

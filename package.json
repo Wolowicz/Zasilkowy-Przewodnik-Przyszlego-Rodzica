@@ -1,0 +1,13 @@
+{
+  "name": "otula-przewodnik-rodzica",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Otula — Zasiłkowy Przewodnik Przyszłego Rodzica",
+  "engines": {"node": ">=22"},
+  "scripts": {
+    "start": "node scripts/dev.mjs",
+    "test": "node scripts/check.mjs",
+    "build:assistant": "node scripts/build-assistant.mjs",
+    "sources": "node scripts/source-register.mjs"
+  }
+}
