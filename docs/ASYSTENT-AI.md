@@ -59,3 +59,10 @@ Opcjonalne zmienne serwera `OPENROUTER_MODEL` i `OPENROUTER_FALLBACK_MODEL` pozw
 ## Utrzymanie i testy jakości
 
 Po zmianie katalogu uruchom synchronizację, a po zmianie źródeł sprawdź trafność i daty. Testuj: zwykłe pytanie o dokument, pytanie nieobsługiwane, pytanie zdrowotne, sprzeczny kontekst, brak klucza, 429, brak sieci, niedostępny artykuł i próbę polecenia ukrytego w źródle. Oceniaj osobno trafność źródła, zgodność odpowiedzi z fragmentem, zachowanie wyjątków oraz komunikat niepewności. To plan rozszerzenia testów; nie twierdzimy, że cała macierz jest zautomatyzowana.
+
+
+## Konfiguracja pokazu 21.11.2026
+
+Za zgodą właścicielki w środowisku produkcyjnym ustawiono `OPENROUTER_MODEL` i `OPENROUTER_FALLBACK_MODEL` na `google/gemini-2.5-flash-lite`. Klucz pozostał niezmieniony w sekrecie Sites. Domyślne modele bezpłatne w kodzie nadal służą jako konfiguracja nieustawionego środowiska; nie opisują aktualnego wyboru produkcyjnego.
+
+Zmiana nastąpiła po limicie darmowego modelu; test publiczny pytania o dokumenty do becikowego zakończył się odpowiedzią AI z odnośnikami i cytatami gov.pl. Budżet zatwierdzony na testy wynosi maksymalnie 5 zł; nie jest to limit rachunku ani całego publicznego ruchu. Limit odpowiedzi pozostaje 1400 tokenów; nie zapisujemy tutaj sekretu, danych konta ani prywatnych pytań. Cena w chwili sprawdzenia: 0,10 USD / mln tokenów wejścia i 0,40 USD / mln wyjścia, według [OpenRouter](https://openrouter.ai/google/gemini-2.5-flash-lite). Aktualną dostępność i ceny należy sprawdzić przed dłuższym użyciem.
