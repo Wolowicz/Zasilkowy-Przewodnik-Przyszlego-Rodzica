@@ -504,7 +504,7 @@ function normalize(value) { return value.toLocaleLowerCase('pl').normalize('NFD'
 function libraryResults() {
   const needle = normalize(query.trim());
   const items = GUIDE.cases.filter(item => (libraryStage === 'all' || item.stage === libraryStage) && (category === 'all' || item.category === category) && normalize([item.title, item.short, item.institution, item.meaning, item.benefit, ...item.docs, ...item.steps, GUIDE.stages[item.stage], GUIDE.categories[item.category].name].join(' ')).includes(needle));
-  return `<p class="count-label" role="status">Liczba spraw: ${items.length}</p><div class="catalog-grid">${items.length ? items.map(item => `<a class="catalog-card" href="#sprawa/${item.id}">
+  return `<p class="count-label" role="status">Liczba spraw: ${items.length}</p><div class="catalog-grid">${items.length ? items.map(item => `<a class="catalog-card ${item.color}" href="#sprawa/${item.id}">
     <span class="catalog-top">${tileIcon(item)}<span class="stage-label">${GUIDE.stages[item.stage]}</span></span>
     <strong>${item.title}</strong><span class="catalog-copy">${item.short}</span><span class="catalog-foot">${item.institution} ${icon('arrow', 17)}</span></a>`).join('') : empty('Brak pasujących spraw.', 'Zmień etap, kategorię lub wpisz inne słowo, np. „ZUS”.')}</div>`;
 }

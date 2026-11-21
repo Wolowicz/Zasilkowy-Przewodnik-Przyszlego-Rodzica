@@ -20,17 +20,19 @@ Ciepło, spokój i troska. Aplikacja ma uspokajać rodzica, nie przytłaczać go
 | Żółć `.gold` | tło `#f8ebc7`, tekst `#80611f` | terminy, ostrzeżenia, uwagi |
 | Róż `.rose` | tło `#f4e0e7`, tekst `#91526c` | wsparcie, ścieżka rodzica |
 | Szałwia `.sage` | tło `#e6eedc`, tekst `#4c6944` | gotowe, sukces, podręcznik |
+| Błękit `.sky` | tło `#e1eef8`, tekst `#3d6488` | zdrowie, ubezpieczenia, dokumenty podróży |
+| Lilia `.lilac` | tło `#ece4f6`, tekst `#6b4f8f` | dostęp, tożsamość, rejestry |
 | Fokus | `#97496c`, obrys 3 px, odstęp 3 px | każdy element interaktywny |
 
 Zasady: kolor nigdy nie jest jedynym nośnikiem znaczenia (zawsze etykieta lub ikona). Czerwień tylko dla odmów i błędów, w stonowanym odcieniu (`#f8dde2` tło, `#8a2e46` tekst). Nowe barwy dodaje się tylko w tej palecie.
 
 ## 3. Typografia
 
-- **Nagłówki i hasła:** DM Serif Text (`--serif`), waga 400, ciasny tracking (około −0,04 em). `h1` 38–64 px, `h2` 25–36 px.
-- **Treść i interfejs:** DM Sans, 14–16 px, interlinia 1,4–1,5. Przyciski 13–15 px, waga 650–700.
+- **Cała aplikacja:** Nunito (okrągła, delikatna; `--serif` też wskazuje Nunito). Nagłówki waga 700, tracking około −0,015 em, `h1` 38–64 px, `h2` 25–36 px.
+- **Treść i interfejs:** 14–16 px, interlinia 1,4–1,5. Przyciski 13–15 px, waga 750.
 - **Etykiety nad nagłówkami** (`.small-label`): wersaliki, 12 px, tracking 0,12 em, kolor `--muted`.
 - **Minimum:** 12 px dla wersalików, 14 px dla linków i chipów, 16 px w polach formularzy (bez przybliżania na iOS).
-- Czcionki są lokalne (`assets/`, licencja SIL OFL). Nie dołączaj czcionek z internetu.
+- Czcionka Nunito jest lokalna (`assets/nunito.ttf`, licencja SIL OFL w `assets/nunito-license.txt`). DM Sans/DM Serif Text zostają tylko jako zapas. Nie dołączaj czcionek z internetu.
 
 ## 4. Układ i odstępy
 
@@ -55,7 +57,7 @@ Zasady: kolor nigdy nie jest jedynym nośnikiem znaczenia (zawsze etykieta lub i
 | Wynik / podsumowanie | karta z dużą liczbą w DM Serif Text | etykieta małym drukiem nad liczbą |
 | Powiadomienie | `#notice` | krótkie, zanika po kilku sekundach |
 
-Ikony: własny zestaw liniowy z `icons.js` (obrys 1,65 px, zaokrąglone zakończenia), `aria-hidden`. Kwiat Otuli (`assets/otula-kwiat.svg`) jako znak marki, bez dodatkowych ozdób.
+Ikony: zaokrąglony zestaw liniowy z `icons.js` i `ui-ikony.js` (obrys 1,65 px, zaokrąglone zakończenia), `aria-hidden`. Sprawy w bibliotece mają własną ikonę i kolor według tematu (zdrowie = błękit, pieniądze = brzoskwinia/żółć, dokumenty = róż/lilia, praca = szałwia); karty mają kolorowy pasek u góry. Kwiat Otuli (`assets/otula-kwiat.svg`) jako znak marki, bez dodatkowych ozdób.
 
 ## 6. Grafika
 
