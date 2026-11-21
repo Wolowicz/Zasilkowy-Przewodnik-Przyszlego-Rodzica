@@ -62,6 +62,10 @@ function zusInterviewParameters(date) {
 let zusDraft = null;
 let zusInterviewDraft = null;
 const zusFromInterview = () => typeof location !== 'undefined' && location.hash === '#kalkulator/wywiad';
+function ownCalculatorRoute() {
+  const event = window.OtulaWywiad?.getAnswers().event;
+  return ['birth','pregnancy','adoption','foster'].includes(event) ? '#kalkulator/wywiad' : '#kalkulator';
+}
 function zusInterviewInputs(a) {
   const father = (a.role === 'supporter' ? a.behalf : a.role) === 'father' && ['birth','pregnancy'].includes(a.event);
   const own = father ? 'B' : 'A', other = father ? 'A' : 'B';

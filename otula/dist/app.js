@@ -231,7 +231,7 @@ const parentNavigation = [
   ['terminy','Moje terminy','calendar']
 ];
 function parentNavLinks(active) {
-  return parentNavigation.map(([id,label,glyph])=>`<a href="#${id}" class="nav-item ${active===id?'selected':''}" ${active===id?'aria-current="page"':''}>${icon(glyph,20)}<span>${label}</span></a>`).join('');
+  return parentNavigation.map(([id,label,glyph])=>`<a href="${id==='kalkulator'?ownCalculatorRoute():'#'+id}" class="nav-item ${active===id?'selected':''}" ${active===id?'aria-current="page"':''}>${icon(glyph,20)}<span>${label}</span></a>`).join('');
 }
 function extraNavLinks(active) {
   return [['plan','Moje kolejne kroki','plan'],['raport','Pobierz mój plan','download'],['wsparcie','Poproś bliskich o pomoc','mail'],['narzedzia','Więcej możliwości','menu']].map(([id,label,glyph])=>
@@ -439,7 +439,7 @@ function start() {
   return `<div class="home-dashboard"><header class="dashboard-head"><div><div class="home-date">${dateTodayLabel()}</div><h1 tabindex="-1">Co możesz otrzymać?</h1><p class="dashboard-stage">${icon(pregnancy?'sprout':'heart',17)} ${GUIDE.stages[state.stage]} <span>·</span> ${esc(GUIDE.roles[role()].short)}</p></div>${dashboardFamily()}</header>
   ${benefits.length?`<section aria-label="Świadczenia w Twojej sytuacji"><div class="zus-guide-cards">${benefits.map(item=>`<article class="home-progress"><span class="chip">${esc(item.status)}</span><h2>${esc(item.title)}</h2><p>${esc(item.summary)}</p><a class="dashboard-link" href="${esc(item.href)}">Sprawdź szczegóły ${icon('right',16)}</a></article>`).join('')}</div></section>`:''}
   <section class="home-progress"><div class="home-progress-head"><div><h2>Ile pieniędzy i co przygotować?</h2><p>Oblicz kwotę dla swojej rodziny, a potem sprawdź potrzebne dokumenty.</p></div></div>
-  <a class="button primary" href="#kalkulator">Oblicz zasiłek macierzyński ${icon('arrow',16)}</a>
+  <a class="button primary" href="${ownCalculatorRoute()}">Oblicz zasiłek macierzyński ${icon('arrow',16)}</a>
   <a class="dashboard-link" href="#e-uslugi">Moje dane i e-usługi ${icon('arrow',16)}</a></section>
   <div class="dashboard-panels">
   ${dashboardCalendar()}
