@@ -47,11 +47,42 @@ function wczytaj(js) { const ctx = { window: {} }; vm.runInNewContext(js, ctx); 
   const zmieniony = Buffer.from(pdf); zmieniony[zmieniony.length - 1] ^= 1;
   assert.equal(await odszyfruj(dane, zmieniony), null, 'zmieniony plik nie odczyta sprawy');
 
+  // Nie wolno zapisać niepełnego katalogu ani po cichu nadpisać duplikatu.
+  const build = records => {
+    fs.writeFileSync(path.join(dir, 'sprawy.json'), JSON.stringify(records));
+    return execFileSync(process.execPath, [path.join(root, 'scripts/sprawy-zus/zaszyfruj.mjs'), dir, path.join(dir, 'sprawy.json'), out], { stdio: 'pipe' });
+  };
+  assert.throws(() => build([sprawa, sprawa]), /Powtórzony identyczny PDF/);
+  assert.equal(fs.readFileSync(out, 'utf8'), js, 'błędny katalog nie zastępuje poprzedniego pliku');
+  assert.throws(() => build([{ ...sprawa, plik: 'brak.pdf' }]), /Nie można odczytać PDF/);
+  assert.throws(() => build([{ ...sprawa, zus: {} }]), /status rozstrzygnięcia/);
+  assert.throws(() => build([{ ...sprawa, zus: { ...sprawa.zus, decyzja: 'nieustalona' } }]), /Nieustalone rozstrzygnięcie/);
+  const nieustalona = { ...sprawa, zus: { decyzja: 'nieustalona', okresy: [] }, walidacja: { rozstrzygniecie: 'nieustalone', kwota: 'niezweryfikowana' } };
+  build([nieustalona]);
+  const unknownData = wczytaj(fs.readFileSync(out, 'utf8'));
+  assert.equal((await odszyfruj(unknownData, pdf)).zus.decyzja, 'nieustalona');
+  assert.deepEqual(JSON.parse(JSON.stringify(unknownData.statystyki)), { rozpoznawane: 1, odczytaneRozstrzygniecie: 0, nieustaloneRozstrzygniecie: 1, zweryfikowaneKwoty: 0 });
+
   // dane w aplikacji: zawsze tylko szyfrogram
   const dist = fs.readFileSync(path.join(root, 'otula/dist/sprawy-zus-dane.js'), 'utf8');
   const wDist = wczytaj(dist);
+  assert.equal(Object.keys(wDist.items).length, 86, 'zestaw zawiera 86 unikalnych PDF, nie 87 kopii ani tylko 10 przykładów');
+  assert.equal(wDist.statystyki.rozpoznawane, 86);
+  assert.equal(wDist.statystyki.odczytaneRozstrzygniecie + wDist.statystyki.nieustaloneRozstrzygniecie, 86);
+  assert.equal(wDist.statystyki.zweryfikowaneKwoty, 0, 'rozpoznanie i odczyt adnotacji nie są walidacją kwot');
   for (const rec of Object.values(wDist.items)) assert.ok(rec.iv && rec.ct && Object.keys(rec).length === 2);
   assert.ok(!/"tytul"|"fakty"|\.pdf/.test(dist), 'otula/dist/sprawy-zus-dane.js nie może zawierać jawnych danych');
+
+  // Ekran i porównanie nie mogą zmieniać braku decyzji w przyznanie.
+  const ui = vm.createContext({ window: { ZUS_SPRAWY_ENC: wDist }, document: { addEventListener() {} }, esc: s => String(s), icon: () => '', __fixture: nieustalona });
+  vm.runInContext(fs.readFileSync(path.join(root, 'otula/dist/sprawy-zus.js'), 'utf8'), ui);
+  let html = vm.runInContext('SPRAWY.file = {}; SPRAWY.result = __fixture; sprawyWynik()', ui);
+  assert.match(html, /Rozstrzygnięcie nieustalone/);
+  assert.doesNotMatch(html, /Przyznanie \/ wypłata/);
+  assert.equal(vm.runInContext('sprawyPorownanie({ zus: { decyzja: "nieustalona", okresy: [{ stawka: 100 }] } }).length', ui), 0);
+  html = vm.runInContext('SPRAWY.result = { tytul: "Brak decyzji", zus: {} }; sprawyWynik()', ui);
+  assert.match(html, /Rozstrzygnięcie nieustalone/);
+  assert.match(vm.runInContext('sprawdzSprawePage()', ui), /Zweryfikowane kwoty: 0/);
   fs.rmSync(dir, { recursive: true, force: true });
   console.log(`Sprawy ZUS: szyfrowanie kluczem z pliku, odrzucenie obcego pliku, brak jawnych danych OK (w aplikacji: ${Object.keys(wDist.items).length})`);
 })().catch(e => { console.error(e); process.exit(1); });
