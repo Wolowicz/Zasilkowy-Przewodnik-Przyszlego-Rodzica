@@ -1,0 +1,290 @@
+[
+  {
+    "viewport": 320,
+    "route": "start",
+    "back": true,
+    "heading": "Rodzinny plan",
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "viewport": 320,
+    "route": "plan",
+    "back": true,
+    "heading": "Ścieżka rodzica",
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "viewport": 320,
+    "route": "terminy",
+    "back": true,
+    "heading": "Moje terminy",
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "viewport": 320,
+    "route": "kalkulator",
+    "back": true,
+    "heading": "Zaplanujcie opiekę",
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "viewport": 320,
+    "route": "sprawdz-sprawe",
+    "back": true,
+    "heading": "Sprawdź sprawę",
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "viewport": 320,
+    "route": "e-uslugi",
+    "back": true,
+    "heading": "Twoje sprawy w ZUS",
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "viewport": 320,
+    "route": "uprawnienia",
+    "back": true,
+    "heading": "Najważniejsze, na spokojnie",
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "viewport": 320,
+    "route": "parametry",
+    "back": true,
+    "heading": "Parametry zasiłków",
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "viewport": 320,
+    "route": "formularze",
+    "back": true,
+    "heading": "Formularze ZUS",
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "viewport": 320,
+    "route": "wsparcie",
+    "back": true,
+    "heading": "Karta wsparcia",
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "viewport": 320,
+    "route": "poradnik",
+    "back": true,
+    "heading": "Podręcznik rodzica",
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "viewport": 320,
+    "route": "raport",
+    "back": true,
+    "heading": "Raport dla rodziny",
+    "scrollWidth": 305,
+    "width": 305
+  },
+  {
+    "viewport": 390,
+    "route": "start",
+    "back": true,
+    "heading": "Rodzinny plan",
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "viewport": 390,
+    "route": "plan",
+    "back": true,
+    "heading": "Ścieżka rodzica",
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "viewport": 390,
+    "route": "terminy",
+    "back": true,
+    "heading": "Moje terminy",
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "viewport": 390,
+    "route": "kalkulator",
+    "back": true,
+    "heading": "Zaplanujcie opiekę",
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "viewport": 390,
+    "route": "sprawdz-sprawe",
+    "back": true,
+    "heading": "Sprawdź sprawę",
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "viewport": 390,
+    "route": "e-uslugi",
+    "back": true,
+    "heading": "Twoje sprawy w ZUS",
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "viewport": 390,
+    "route": "uprawnienia",
+    "back": true,
+    "heading": "Najważniejsze, na spokojnie",
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "viewport": 390,
+    "route": "parametry",
+    "back": true,
+    "heading": "Parametry zasiłków",
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "viewport": 390,
+    "route": "formularze",
+    "back": true,
+    "heading": "Formularze ZUS",
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "viewport": 390,
+    "route": "wsparcie",
+    "back": true,
+    "heading": "Karta wsparcia",
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "viewport": 390,
+    "route": "poradnik",
+    "back": true,
+    "heading": "Podręcznik rodzica",
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "viewport": 390,
+    "route": "raport",
+    "back": true,
+    "heading": "Raport dla rodziny",
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "viewport": 1440,
+    "route": "start",
+    "back": true,
+    "heading": "Rodzinny plan",
+    "scrollWidth": 1425,
+    "width": 1425
+  },
+  {
+    "viewport": 1440,
+    "route": "plan",
+    "back": true,
+    "heading": "Ścieżka rodzica",
+    "scrollWidth": 1425,
+    "width": 1425
+  },
+  {
+    "viewport": 1440,
+    "route": "terminy",
+    "back": true,
+    "heading": "Moje terminy",
+    "scrollWidth": 1425,
+    "width": 1425
+  },
+  {
+    "viewport": 1440,
+    "route": "kalkulator",
+    "back": true,
+    "heading": "Zaplanujcie opiekę",
+    "scrollWidth": 1425,
+    "width": 1425
+  },
+  {
+    "viewport": 1440,
+    "route": "sprawdz-sprawe",
+    "back": true,
+    "heading": "Sprawdź sprawę",
+    "scrollWidth": 1425,
+    "width": 1425
+  },
+  {
+    "viewport": 1440,
+    "route": "e-uslugi",
+    "back": true,
+    "heading": "Twoje sprawy w ZUS",
+    "scrollWidth": 1425,
+    "width": 1425
+  },
+  {
+    "viewport": 1440,
+    "route": "uprawnienia",
+    "back": true,
+    "heading": "Najważniejsze, na spokojnie",
+    "scrollWidth": 1425,
+    "width": 1425
+  },
+  {
+    "viewport": 1440,
+    "route": "parametry",
+    "back": true,
+    "heading": "Parametry zasiłków",
+    "scrollWidth": 1425,
+    "width": 1425
+  },
+  {
+    "viewport": 1440,
+    "route": "formularze",
+    "back": true,
+    "heading": "Formularze ZUS",
+    "scrollWidth": 1425,
+    "width": 1425
+  },
+  {
+    "viewport": 1440,
+    "route": "wsparcie",
+    "back": true,
+    "heading": "Karta wsparcia",
+    "scrollWidth": 1425,
+    "width": 1425
+  },
+  {
+    "viewport": 1440,
+    "route": "poradnik",
+    "back": true,
+    "heading": "Podręcznik rodzica",
+    "scrollWidth": 1425,
+    "width": 1425
+  },
+  {
+    "viewport": 1440,
+    "route": "raport",
+    "back": true,
+    "heading": "Raport dla rodziny",
+    "scrollWidth": 1425,
+    "width": 1425
+  }
+]

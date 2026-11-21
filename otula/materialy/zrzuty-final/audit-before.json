@@ -1,0 +1,2738 @@
+[
+  {
+    "back": false,
+    "heading": "Rodzinny plan",
+    "outside": [],
+    "route": "#start",
+    "scroll": 305,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "LABEL",
+        "text": "Plan dziecka"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moja rodzina"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Mój plan"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moje terminy"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Karta wsparcia"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SMALL",
+        "text": "Policz wariant dla obojga rodziców"
+      },
+      {
+        "cls": "home-kicker",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Następna sprawa"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "A",
+        "text": "Otwórz sprawę"
+      },
+      {
+        "cls": "home-kicker",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Przewidywany termin porodu"
+      },
+      {
+        "cls": "",
+        "size": "10px",
+        "tag": "SMALL",
+        "text": "mar"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "P",
+        "text": "12 marca 2027"
+      },
+      {
+        "cls": "dashboard-link",
+        "size": "13px",
+        "tag": "A",
+        "text": "Otwórz kalendarz"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "0 z 4 gotowych"
+      }
+    ],
+    "viewport": 320
+  },
+  {
+    "back": false,
+    "heading": "Ścieżka rodzica",
+    "outside": [],
+    "route": "#plan",
+    "scroll": 305,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Plan dziecka"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moja rodzina"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Twój rytm, Twoja rodzina"
+      },
+      {
+        "cls": "path-status",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Proponowany następny krok · Świadczenia"
+      },
+      {
+        "cls": "path-status",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Krok 2 · Dokumenty"
+      },
+      {
+        "cls": "path-status",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Krok 3 · Dokumenty"
+      },
+      {
+        "cls": "path-status",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Krok 4 · Praca i urlopy"
+      },
+      {
+        "cls": "plan-note",
+        "size": "12px",
+        "tag": "P",
+        "text": "„Gotowe” oznacza Twój własny postęp. Pot"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Przeglądaj wszystkie sprawy"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Twój postęp"
+      },
+      {
+        "cls": "stage-label",
+        "size": "10.5px",
+        "tag": "SPAN",
+        "text": "Ciąża"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "SMALL",
+        "text": "%"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "P",
+        "text": "kroków za Tobą"
+      }
+    ],
+    "viewport": 320
+  },
+  {
+    "back": false,
+    "heading": "Moje terminy",
+    "outside": [],
+    "route": "#terminy",
+    "scroll": 305,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Plan dziecka"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moja rodzina"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Kalendarz rodzica"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "P",
+        "text": "Etap: Ciąża · zmień"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "B",
+        "text": "Ciąża"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "zmień"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Dodaj termin"
+      },
+      {
+        "cls": "button secondary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Eksportuj nadchodzące terminy"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Pn"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wt"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Śr"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Cz"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Pt"
+      }
+    ],
+    "viewport": 320
+  },
+  {
+    "back": true,
+    "heading": "Zaplanujcie opiekę",
+    "outside": [],
+    "route": "#kalkulator",
+    "scroll": 305,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Moje terminy"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Moje terminy"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Zasiłki i urlopy"
+      },
+      {
+        "cls": "zus-simulation-badge",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Symulacja"
+      },
+      {
+        "cls": "button secondary",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wybierz plik"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SMALL",
+        "text": "Plik zostaje na tym urządzeniu"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "1"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Zdarzenie"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "2"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Ubezpieczenie i podstawa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "3"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Podział"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "4"
+      }
+    ],
+    "viewport": 320
+  },
+  {
+    "back": false,
+    "heading": "Sprawdź sprawę",
+    "outside": [],
+    "route": "#sprawdz-sprawe",
+    "scroll": 305,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Zestaw testowy ZUS"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wybierz plik"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SMALL",
+        "text": "Plik zostaje na tym urządzeniu"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Zasiłek macierzyński · 6"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Urlop rodzicielski · 6"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Działalność / współpraca · 5"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Zasiłek chorobowy w ciąży · 1"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Zasiłek w wysokości macierzyńskiego · 1"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Łączenie z pracą · 4"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Martwe urodzenie · 2"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Urlop ojcowski · 3"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Odmowa · 2"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Po ustaniu ubezpieczenia · 1"
+      }
+    ],
+    "viewport": 320
+  },
+  {
+    "back": true,
+    "heading": "Twoje sprawy w ZUS",
+    "outside": [],
+    "route": "#e-uslugi",
+    "scroll": 305,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Sprawdź sprawę ZUS"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Sprawdź sprawę ZUS"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Centrum e-usług"
+      },
+      {
+        "cls": "eu-sym",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Symulacja"
+      },
+      {
+        "cls": "",
+        "size": "12.5px",
+        "tag": "SMALL",
+        "text": "Umowa o pracę, ubezpieczona"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "A",
+        "text": "Pobierz dane z ZUS"
+      }
+    ],
+    "viewport": 320
+  },
+  {
+    "back": true,
+    "heading": "Najważniejsze, na spokojnie",
+    "outside": [],
+    "route": "#uprawnienia",
+    "scroll": 305,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Centrum e-usług"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Centrum e-usług"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Świadczenia w ciąży"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Warunki i dokumenty"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Warunki i wniosek"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Wyjątki i uprawnienia"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Zasady ZUS"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Dokumenty w szczególnych sytuacjach"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Stawki i wyrównanie"
+      },
+      {
+        "cls": "home-kicker",
+        "size": "12px",
+        "tag": "P",
+        "text": "Nie musisz być z tym sama ani sam"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "A",
+        "text": "Przygotuj Kartę wsparcia"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Ronić po Ludzku"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Wcześniak Rodzice-Rodzicom"
+      }
+    ],
+    "viewport": 320
+  },
+  {
+    "back": true,
+    "heading": "Parametry zasiłków",
+    "outside": [],
+    "route": "#parametry",
+    "scroll": 305,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Uprawnienia i wsparcie"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Uprawnienia i wsparcie"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Panel demonstracyjny"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Zastosuj w symulacji"
+      },
+      {
+        "cls": "button secondary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Przywróć sprawdzone wartości"
+      },
+      {
+        "cls": "dashboard-link",
+        "size": "13px",
+        "tag": "A",
+        "text": "Przetestuj kalkulator"
+      }
+    ],
+    "viewport": 320
+  },
+  {
+    "back": true,
+    "heading": "Formularze ZUS",
+    "outside": [],
+    "route": "#formularze",
+    "scroll": 305,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Parametry kalkulatora"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Parametry kalkulatora"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Dokumenty rodzica"
+      },
+      {
+        "cls": "plan-note",
+        "size": "12px",
+        "tag": "P",
+        "text": "Oficjalny katalog sprawdzony 21.11.2026."
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Cały katalog ZUS"
+      }
+    ],
+    "viewport": 320
+  },
+  {
+    "back": false,
+    "heading": "Karta wsparcia",
+    "outside": [],
+    "route": "#wsparcie",
+    "scroll": 305,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Plan dziecka"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moja rodzina"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Blisko siebie"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Mama „mogłabym”"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "„mogłabym”"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Tata „mógłbym”"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "„mógłbym”"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Neutralnie „czy mogę”"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "„czy mogę”"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Na „Ty” partner, mama, przyjaciółka"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "partner, mama, przyjaciółka"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Do Pani np. teściowa, sąsiadka"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "np. teściowa, sąsiadka"
+      }
+    ],
+    "viewport": 320
+  },
+  {
+    "back": false,
+    "heading": "Podręcznik rodzica",
+    "outside": [],
+    "route": "#poradnik",
+    "scroll": 305,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Od ciąży przez pierwszy rok dziecka"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "P",
+        "text": "Przygotowania do porodu, zdrowie mamy or"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Tematy poradnika"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Codzienne czynności"
+      },
+      {
+        "cls": "shelf-choice",
+        "size": "13px",
+        "tag": "LABEL",
+        "text": "DziałWszystkie działyPrzygotowanie do po"
+      }
+    ],
+    "viewport": 320
+  },
+  {
+    "back": false,
+    "heading": "Raport dla rodziny",
+    "outside": [],
+    "route": "#raport",
+    "scroll": 305,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Twój plan"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Pobierz PDF"
+      },
+      {
+        "cls": "button secondary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Pobierz Word (.docx)"
+      }
+    ],
+    "viewport": 320
+  },
+  {
+    "back": false,
+    "heading": "Rodzinny plan",
+    "outside": [],
+    "route": "#start",
+    "scroll": 375,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "LABEL",
+        "text": "Plan dziecka"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moja rodzina"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Mój plan"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moje terminy"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Karta wsparcia"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SMALL",
+        "text": "Policz wariant dla obojga rodziców"
+      },
+      {
+        "cls": "home-kicker",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Następna sprawa"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "A",
+        "text": "Otwórz sprawę"
+      },
+      {
+        "cls": "home-kicker",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Przewidywany termin porodu"
+      },
+      {
+        "cls": "",
+        "size": "10px",
+        "tag": "SMALL",
+        "text": "mar"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "P",
+        "text": "12 marca 2027"
+      },
+      {
+        "cls": "dashboard-link",
+        "size": "13px",
+        "tag": "A",
+        "text": "Otwórz kalendarz"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "0 z 4 gotowych"
+      }
+    ],
+    "viewport": 390
+  },
+  {
+    "back": false,
+    "heading": "Ścieżka rodzica",
+    "outside": [],
+    "route": "#plan",
+    "scroll": 375,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Plan dziecka"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moja rodzina"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Twój rytm, Twoja rodzina"
+      },
+      {
+        "cls": "path-status",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Proponowany następny krok · Świadczenia"
+      },
+      {
+        "cls": "path-status",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Krok 2 · Dokumenty"
+      },
+      {
+        "cls": "path-status",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Krok 3 · Dokumenty"
+      },
+      {
+        "cls": "path-status",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Krok 4 · Praca i urlopy"
+      },
+      {
+        "cls": "plan-note",
+        "size": "12px",
+        "tag": "P",
+        "text": "„Gotowe” oznacza Twój własny postęp. Pot"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Przeglądaj wszystkie sprawy"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Twój postęp"
+      },
+      {
+        "cls": "stage-label",
+        "size": "10.5px",
+        "tag": "SPAN",
+        "text": "Ciąża"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "SMALL",
+        "text": "%"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "P",
+        "text": "kroków za Tobą"
+      }
+    ],
+    "viewport": 390
+  },
+  {
+    "back": false,
+    "heading": "Moje terminy",
+    "outside": [],
+    "route": "#terminy",
+    "scroll": 375,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Plan dziecka"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moja rodzina"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Kalendarz rodzica"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "P",
+        "text": "Etap: Ciąża · zmień"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "B",
+        "text": "Ciąża"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "zmień"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Dodaj termin"
+      },
+      {
+        "cls": "button secondary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Eksportuj nadchodzące terminy"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Pn"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wt"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Śr"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Cz"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Pt"
+      }
+    ],
+    "viewport": 390
+  },
+  {
+    "back": true,
+    "heading": "Zaplanujcie opiekę",
+    "outside": [],
+    "route": "#kalkulator",
+    "scroll": 375,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Moje terminy"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Moje terminy"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Zasiłki i urlopy"
+      },
+      {
+        "cls": "zus-simulation-badge",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Symulacja"
+      },
+      {
+        "cls": "button secondary",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wybierz plik"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SMALL",
+        "text": "Plik zostaje na tym urządzeniu"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "1"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Zdarzenie"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "2"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Ubezpieczenie i podstawa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "3"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Podział"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "4"
+      }
+    ],
+    "viewport": 390
+  },
+  {
+    "back": false,
+    "heading": "Sprawdź sprawę",
+    "outside": [],
+    "route": "#sprawdz-sprawe",
+    "scroll": 375,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Zestaw testowy ZUS"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wybierz plik"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SMALL",
+        "text": "Plik zostaje na tym urządzeniu"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Zasiłek macierzyński · 6"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Urlop rodzicielski · 6"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Działalność / współpraca · 5"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Zasiłek chorobowy w ciąży · 1"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Zasiłek w wysokości macierzyńskiego · 1"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Łączenie z pracą · 4"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Martwe urodzenie · 2"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Urlop ojcowski · 3"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Odmowa · 2"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Po ustaniu ubezpieczenia · 1"
+      }
+    ],
+    "viewport": 390
+  },
+  {
+    "back": true,
+    "heading": "Twoje sprawy w ZUS",
+    "outside": [],
+    "route": "#e-uslugi",
+    "scroll": 375,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Sprawdź sprawę ZUS"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Sprawdź sprawę ZUS"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Centrum e-usług"
+      },
+      {
+        "cls": "eu-sym",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Symulacja"
+      },
+      {
+        "cls": "",
+        "size": "12.5px",
+        "tag": "SMALL",
+        "text": "Umowa o pracę, ubezpieczona"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "A",
+        "text": "Pobierz dane z ZUS"
+      }
+    ],
+    "viewport": 390
+  },
+  {
+    "back": true,
+    "heading": "Najważniejsze, na spokojnie",
+    "outside": [],
+    "route": "#uprawnienia",
+    "scroll": 375,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Centrum e-usług"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Centrum e-usług"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Świadczenia w ciąży"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Warunki i dokumenty"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Warunki i wniosek"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Wyjątki i uprawnienia"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Zasady ZUS"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Dokumenty w szczególnych sytuacjach"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Stawki i wyrównanie"
+      },
+      {
+        "cls": "home-kicker",
+        "size": "12px",
+        "tag": "P",
+        "text": "Nie musisz być z tym sama ani sam"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "A",
+        "text": "Przygotuj Kartę wsparcia"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Ronić po Ludzku"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Wcześniak Rodzice-Rodzicom"
+      }
+    ],
+    "viewport": 390
+  },
+  {
+    "back": true,
+    "heading": "Parametry zasiłków",
+    "outside": [],
+    "route": "#parametry",
+    "scroll": 375,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Uprawnienia i wsparcie"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Uprawnienia i wsparcie"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Panel demonstracyjny"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Zastosuj w symulacji"
+      },
+      {
+        "cls": "button secondary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Przywróć sprawdzone wartości"
+      },
+      {
+        "cls": "dashboard-link",
+        "size": "13px",
+        "tag": "A",
+        "text": "Przetestuj kalkulator"
+      }
+    ],
+    "viewport": 390
+  },
+  {
+    "back": true,
+    "heading": "Formularze ZUS",
+    "outside": [],
+    "route": "#formularze",
+    "scroll": 375,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Parametry kalkulatora"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Parametry kalkulatora"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Dokumenty rodzica"
+      },
+      {
+        "cls": "plan-note",
+        "size": "12px",
+        "tag": "P",
+        "text": "Oficjalny katalog sprawdzony 21.11.2026."
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Cały katalog ZUS"
+      }
+    ],
+    "viewport": 390
+  },
+  {
+    "back": false,
+    "heading": "Karta wsparcia",
+    "outside": [],
+    "route": "#wsparcie",
+    "scroll": 375,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Plan dziecka"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moja rodzina"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Blisko siebie"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Mama „mogłabym”"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "„mogłabym”"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Tata „mógłbym”"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "„mógłbym”"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Neutralnie „czy mogę”"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "„czy mogę”"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Na „Ty” partner, mama, przyjaciółka"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "partner, mama, przyjaciółka"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Do Pani np. teściowa, sąsiadka"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "np. teściowa, sąsiadka"
+      }
+    ],
+    "viewport": 390
+  },
+  {
+    "back": false,
+    "heading": "Podręcznik rodzica",
+    "outside": [],
+    "route": "#poradnik",
+    "scroll": 375,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Od ciąży przez pierwszy rok dziecka"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "P",
+        "text": "Przygotowania do porodu, zdrowie mamy or"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Tematy poradnika"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Codzienne czynności"
+      },
+      {
+        "cls": "shelf-choice",
+        "size": "13px",
+        "tag": "LABEL",
+        "text": "DziałWszystkie działyPrzygotowanie do po"
+      }
+    ],
+    "viewport": 390
+  },
+  {
+    "back": false,
+    "heading": "Raport dla rodziny",
+    "outside": [],
+    "route": "#raport",
+    "scroll": 375,
+    "tiny": [
+      {
+        "cls": "brand-subtitle",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Twój plan rodzicielstwa"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Twój plan"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Pobierz PDF"
+      },
+      {
+        "cls": "button secondary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Pobierz Word (.docx)"
+      }
+    ],
+    "viewport": 390
+  },
+  {
+    "back": false,
+    "heading": "Rodzinny plan",
+    "outside": [],
+    "route": "#start",
+    "scroll": 1425,
+    "tiny": [
+      {
+        "cls": "home-date",
+        "size": "13px",
+        "tag": "DIV",
+        "text": "sobota, 21 listopada 2026"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "LABEL",
+        "text": "Plan dziecka"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moja rodzina"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SMALL",
+        "text": "Policz wariant dla obojga rodziców"
+      },
+      {
+        "cls": "home-kicker",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Następna sprawa"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "A",
+        "text": "Otwórz sprawę"
+      },
+      {
+        "cls": "home-kicker",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Przewidywany termin porodu"
+      },
+      {
+        "cls": "",
+        "size": "10px",
+        "tag": "SMALL",
+        "text": "mar"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "P",
+        "text": "12 marca 2027"
+      },
+      {
+        "cls": "dashboard-link",
+        "size": "13px",
+        "tag": "A",
+        "text": "Otwórz kalendarz"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "0 z 4 gotowych"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "H3",
+        "text": "Kolejne sprawy"
+      },
+      {
+        "cls": "case-sub",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Sprawdź, jakie zaświadczenie zachować."
+      },
+      {
+        "cls": "case-sub",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Wybierz sposób podpisywania spraw online"
+      }
+    ],
+    "viewport": 1440
+  },
+  {
+    "back": false,
+    "heading": "Ścieżka rodzica",
+    "outside": [],
+    "route": "#plan",
+    "scroll": 1425,
+    "tiny": [
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Start"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "I",
+        "text": "/"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Mój plan"
+      },
+      {
+        "cls": "frame-date",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "sobota, 21 listopada 2026"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moja rodzina"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Twój rytm, Twoja rodzina"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Mama · Ciąża · Umowa o pracę"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "B",
+        "text": "Mama"
+      },
+      {
+        "cls": "path-status",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Proponowany następny krok · Świadczenia"
+      },
+      {
+        "cls": "path-status",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Krok 2 · Dokumenty"
+      },
+      {
+        "cls": "path-status",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Krok 3 · Dokumenty"
+      },
+      {
+        "cls": "path-status",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Krok 4 · Praca i urlopy"
+      },
+      {
+        "cls": "plan-note",
+        "size": "12px",
+        "tag": "P",
+        "text": "„Gotowe” oznacza Twój własny postęp. Pot"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Przeglądaj wszystkie sprawy"
+      }
+    ],
+    "viewport": 1440
+  },
+  {
+    "back": false,
+    "heading": "Moje terminy",
+    "outside": [],
+    "route": "#terminy",
+    "scroll": 1425,
+    "tiny": [
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Start"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "I",
+        "text": "/"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Moje terminy"
+      },
+      {
+        "cls": "frame-date",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "sobota, 21 listopada 2026"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moja rodzina"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Kalendarz rodzica"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "P",
+        "text": "Etap: Ciąża · zmień"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "B",
+        "text": "Ciąża"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "zmień"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Dodaj termin"
+      },
+      {
+        "cls": "button secondary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Eksportuj nadchodzące terminy"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Pn"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wt"
+      },
+      {
+        "cls": "weekday",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Śr"
+      }
+    ],
+    "viewport": 1440
+  },
+  {
+    "back": true,
+    "heading": "Zaplanujcie opiekę",
+    "outside": [],
+    "route": "#kalkulator",
+    "scroll": 1425,
+    "tiny": [
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Start"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "I",
+        "text": "/"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Kalkulator zasiłków"
+      },
+      {
+        "cls": "frame-date",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "sobota, 21 listopada 2026"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Moje terminy"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Moje terminy"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Zasiłki i urlopy"
+      },
+      {
+        "cls": "zus-simulation-badge",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Symulacja"
+      },
+      {
+        "cls": "button secondary",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wybierz plik"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SMALL",
+        "text": "Plik zostaje na tym urządzeniu"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "1"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "2"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "3"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "4"
+      }
+    ],
+    "viewport": 1440
+  },
+  {
+    "back": false,
+    "heading": "Sprawdź sprawę",
+    "outside": [],
+    "route": "#sprawdz-sprawe",
+    "scroll": 1440,
+    "tiny": [
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Start"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "I",
+        "text": "/"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Sprawdź sprawę ZUS"
+      },
+      {
+        "cls": "frame-date",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "sobota, 21 listopada 2026"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Zestaw testowy ZUS"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wybierz plik"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SMALL",
+        "text": "Plik zostaje na tym urządzeniu"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Zasiłek macierzyński · 6"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Urlop rodzicielski · 6"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Działalność / współpraca · 5"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Zasiłek chorobowy w ciąży · 1"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Zasiłek w wysokości macierzyńskiego · 1"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Łączenie z pracą · 4"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Martwe urodzenie · 2"
+      }
+    ],
+    "viewport": 1440
+  },
+  {
+    "back": true,
+    "heading": "Twoje sprawy w ZUS",
+    "outside": [],
+    "route": "#e-uslugi",
+    "scroll": 1425,
+    "tiny": [
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Start"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "I",
+        "text": "/"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Centrum e-usług"
+      },
+      {
+        "cls": "frame-date",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "sobota, 21 listopada 2026"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Sprawdź sprawę ZUS"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Sprawdź sprawę ZUS"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Centrum e-usług"
+      },
+      {
+        "cls": "eu-sym",
+        "size": "12px",
+        "tag": "SPAN",
+        "text": "Symulacja"
+      },
+      {
+        "cls": "",
+        "size": "12.5px",
+        "tag": "SMALL",
+        "text": "Umowa o pracę, ubezpieczona"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "A",
+        "text": "Pobierz dane z ZUS"
+      }
+    ],
+    "viewport": 1440
+  },
+  {
+    "back": true,
+    "heading": "Najważniejsze, na spokojnie",
+    "outside": [],
+    "route": "#uprawnienia",
+    "scroll": 1425,
+    "tiny": [
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Start"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "I",
+        "text": "/"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Uprawnienia i wsparcie"
+      },
+      {
+        "cls": "frame-date",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "sobota, 21 listopada 2026"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Centrum e-usług"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Centrum e-usług"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Świadczenia w ciąży"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Warunki i dokumenty"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Warunki i wniosek"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Wyjątki i uprawnienia"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Zasady ZUS"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Dokumenty w szczególnych sytuacjach"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Stawki i wyrównanie"
+      },
+      {
+        "cls": "home-kicker",
+        "size": "12px",
+        "tag": "P",
+        "text": "Nie musisz być z tym sama ani sam"
+      }
+    ],
+    "viewport": 1440
+  },
+  {
+    "back": true,
+    "heading": "Parametry zasiłków",
+    "outside": [],
+    "route": "#parametry",
+    "scroll": 1425,
+    "tiny": [
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Start"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "I",
+        "text": "/"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Parametry kalkulatora"
+      },
+      {
+        "cls": "frame-date",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "sobota, 21 listopada 2026"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Uprawnienia i wsparcie"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Uprawnienia i wsparcie"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Panel demonstracyjny"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Zastosuj w symulacji"
+      },
+      {
+        "cls": "button secondary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Przywróć sprawdzone wartości"
+      },
+      {
+        "cls": "dashboard-link",
+        "size": "13px",
+        "tag": "A",
+        "text": "Przetestuj kalkulator"
+      }
+    ],
+    "viewport": 1440
+  },
+  {
+    "back": true,
+    "heading": "Formularze ZUS",
+    "outside": [],
+    "route": "#formularze",
+    "scroll": 1425,
+    "tiny": [
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Start"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "I",
+        "text": "/"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Formularze ZUS"
+      },
+      {
+        "cls": "frame-date",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "sobota, 21 listopada 2026"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "Wróć do: Parametry kalkulatora"
+      },
+      {
+        "cls": "back-target",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "do: Parametry kalkulatora"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Dokumenty rodzica"
+      },
+      {
+        "cls": "plan-note",
+        "size": "12px",
+        "tag": "P",
+        "text": "Oficjalny katalog sprawdzony 21.11.2026."
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Cały katalog ZUS"
+      }
+    ],
+    "viewport": 1440
+  },
+  {
+    "back": false,
+    "heading": "Karta wsparcia",
+    "outside": [],
+    "route": "#wsparcie",
+    "scroll": 1425,
+    "tiny": [
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Start"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "I",
+        "text": "/"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Karta wsparcia"
+      },
+      {
+        "cls": "frame-date",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "sobota, 21 listopada 2026"
+      },
+      {
+        "cls": "",
+        "size": "13px",
+        "tag": "A",
+        "text": "Moja rodzina"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Blisko siebie"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Mama „mogłabym”"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "„mogłabym”"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Tata „mógłbym”"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "„mógłbym”"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Neutralnie „czy mogę”"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "„czy mogę”"
+      },
+      {
+        "cls": "",
+        "size": "13.5px",
+        "tag": "SPAN",
+        "text": "Na „Ty” partner, mama, przyjaciółka"
+      },
+      {
+        "cls": "",
+        "size": "11.5px",
+        "tag": "SMALL",
+        "text": "partner, mama, przyjaciółka"
+      }
+    ],
+    "viewport": 1440
+  },
+  {
+    "back": false,
+    "heading": "Podręcznik rodzica",
+    "outside": [],
+    "route": "#poradnik",
+    "scroll": 1425,
+    "tiny": [
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Start"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "I",
+        "text": "/"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Podręcznik rodzica"
+      },
+      {
+        "cls": "frame-date",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "sobota, 21 listopada 2026"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Od ciąży przez pierwszy rok dziecka"
+      },
+      {
+        "cls": "shelf-choice",
+        "size": "13px",
+        "tag": "LABEL",
+        "text": "DziałWszystkie działyPrzygotowanie do po"
+      }
+    ],
+    "viewport": 1440
+  },
+  {
+    "back": false,
+    "heading": "Raport dla rodziny",
+    "outside": [],
+    "route": "#raport",
+    "scroll": 1425,
+    "tiny": [
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "A",
+        "text": "Start"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "I",
+        "text": "/"
+      },
+      {
+        "cls": "",
+        "size": "12px",
+        "tag": "STRONG",
+        "text": "Raport rodzinny"
+      },
+      {
+        "cls": "frame-date",
+        "size": "13px",
+        "tag": "SPAN",
+        "text": "sobota, 21 listopada 2026"
+      },
+      {
+        "cls": "small-label",
+        "size": "12px",
+        "tag": "DIV",
+        "text": "Twój plan"
+      },
+      {
+        "cls": "button primary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Pobierz PDF"
+      },
+      {
+        "cls": "button secondary",
+        "size": "13px",
+        "tag": "BUTTON",
+        "text": "Pobierz Word (.docx)"
+      }
+    ],
+    "viewport": 1440
+  }
+]

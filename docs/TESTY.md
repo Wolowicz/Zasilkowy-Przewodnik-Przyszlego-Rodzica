@@ -61,7 +61,7 @@ To kontrola zapisanych ekranów z fikcyjnymi danymi, nie automatyczny test wszys
 
 ## Aktualne materiały dla jury
 
-Pakiet obejmuje 10 slajdów 16:9 oraz film planowany na 102 s, 1920×1080, 60 kl./s, z aktualnych ekranów i fikcyjnych danych. [Źródła, generator i procedura kontroli](../otula/materialy/jury/README.md) opisują odtworzenie artefaktów. PDF przeszedł kontrolę liczby stron, fontów, odnośnika demo i układu; aktualizacja sceny AI oraz końcowy render filmu są osobno weryfikowane przed podmianą plików. Metadane filmu i wynik finalnego przeglądu trzeba potwierdzić dla końcowego MP4; nie przenosimy wyników kontroli starego filmu na nowy.
+Pakiet obejmuje **10 slajdów 16:9 i film 102 s, 1920×1080, 60 kl./s** z aktualnych ekranów i fikcyjnych danych. PDF ma 10 stron; skontrolowano fonty, odnośnik demo i układ. Film ma 6120 klatek, H.264/AAC oraz BT.709; pełne dekodowanie zakończyło się bez błędów, a kontrola nie wykazała czarnych odcinków. Odtwarzacz sprawdzono przy 320, 390 i 1440 px, także przejście do rozdziału w 73. sekundzie. [Raport końcowy](../otula/materialy/jury/QA.md) oraz [generator i procedura kontroli](../otula/materialy/jury/README.md) opisują odtworzenie artefaktów. Scena AI pokazuje rzeczywisty stan asystenta w chwili wykonania zrzutu, bez obietnicy stałej dostępności modelu.
 
 ## Wcześniejsze sprawdzenie wersji aplikacji z 21 listopada
 
