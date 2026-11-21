@@ -28,7 +28,8 @@ flowchart LR
 | `care.js` | Treści podręcznika wraz ze źródłami |
 | `matching.js` | Dopasowanie tematów opieki; kopia synchronizowana do backendu |
 | `calendar.js` | Własne terminy, widok miesiąca i ICS |
-| `zus.js` | Reguły i widoki kalkulatora, e-usługi pokazowe, parametry |
+| `zus.js` | Reguły, oś dat i widoki kalkulatora, pomocnik hospitalizacji, minimalna podstawa, osobne podwyższenie miesięczne, parametry |
+| `sprawy-zus.js`, `sprawy-zus-dane.js` | Lokalne rozpoznawanie oryginalnych PDF i zaszyfrowany katalog 86 unikalnych spraw |
 | `report-export.js` | Eksport PDF/Word z lokalnymi bibliotekami |
 | `icons.js`, `*.css`, `assets/` | Ikony, układ, ilustracje, fonty i biblioteki |
 | `otula-asystent/worker/assistant.mjs` | Endpoint, źródła, model i odpowiedzi awaryjne |
@@ -53,7 +54,7 @@ Klucz profilu to `otula-plan-v1` w `localStorage`. Historia przejść używa `ot
 | --- | --- |
 | Dziecko | `uid` stabilny identyfikator, `name`, `stage`, `date`, `done`, `extras`, `checks`, `note`, `multiple`, `events` |
 | Własny termin | `id`, `title`, `date`, `time`, `remind`, `caseId`, `note`, `done`, `revision` |
-| Parametry kalkulatora | Kopia `ZUS_DEFAULT_RULES` w pamięci sesji; bez trwałego panelu administracyjnego |
+| Parametry kalkulatora | `ZUS_DEFAULT_RULES` oraz lokalny zapis zatwierdzonej kopii pod `otula-zus-rules-v2`; schemat 2, walidacja, daty obowiązywania, etykieta parametrów własnych i reset; bez kont administratorów i centralnego zatwierdzania |
 
 Daty są wartościami kalendarzowymi `YYYY-MM-DD`. Nie interpretuj terminu formalności jako uniwersalnej chwili UTC. Identyfikatory spraw są zapisane w postępie użytkownika — ich zmiana wymaga migracji. `uid` dziecka i `id` wydarzenia tworzą stabilny UID eksportu ICS. Edycja zwiększa `revision` używaną jako `SEQUENCE`.
 
@@ -76,7 +77,15 @@ Lokalny adapter nie zmienia plików wdrożenia. Podczas serwowania `family.js` p
 | Plik | Rola |
 | --- | --- |
 | `otula/dist/e-uslugi.js`, `e-uslugi.css` | Centrum e-usług: symulacja logowania mObywatel (kod weryfikacyjny), pobrania danych z ZUS, zaświadczenia o zadłużeniu na wybrany dzień, e-ZLA, wiadomości eZUS, wniosków o urlopy i ZAM oraz odpisu aktu urodzenia. Trzy fikcyjne osoby (etat, działalność z zadłużeniem, zlecenie bez chorobowego). Dane można przenieść do kalkulatora (`zusSaveDraft`). |
-| `otula/dist/sprawy-zus.js`, `sprawy-zus.css` | „Sprawdź sprawę ZUS”: PDF z zestawu testowego → SHA-256 w przeglądarce → odszyfrowanie opisu sprawy → decyzja ZUS, fakty i porównanie okres po okresie (stawka, dni, kwota dzienna = podstawa / 30 × stawka × (1 − wymiar pracy)). Ta sama funkcja rozpoznaje plik wgrany w teczce kalkulatora. |
+| `otula/dist/sprawy-zus.js`, `sprawy-zus.css` | „Sprawdź sprawę ZUS”: PDF → SHA-256 w przeglądarce → odszyfrowanie opracowanego wcześniej opisu. Pokazuje fakty, strony źródłowe, stan odczytu oraz oddziela okresy wniosku od rozstrzygniętych. `nieustalona` nie zmienia się domyślnie w przyznanie. Porównanie działa tylko dla dostępnych danych; obecny katalog nie ma zweryfikowanych kwot. Ta sama funkcja działa w teczce kalkulatora. |
 | `otula/dist/sprawy-zus-dane.js` | Wyłącznie szyfrogram AES-GCM. Klucz i indeks wyprowadzone z SHA-256 oryginalnego PDF; bez pliku danych nie da się odczytać. Generuje `scripts/sprawy-zus/zaszyfruj.mjs`. |
 | `otula/dist/ui-czytelnosc.css` | Jednolite sekcje rozwijane (karta z przyciskiem +/– zamiast trójkąta ▶), minimalne rozmiary krojów, kompaktowy przycisk asystenta na telefonie. |
-| `otula/tests/sprawy.test.cjs` | Szyfrowanie i odszyfrowanie spraw, odrzucenie obcego lub zmienionego pliku, brak jawnych danych w aplikacji. |
+| `otula/tests/sprawy.test.cjs` | Szyfrowanie, odrzucenie obcego/zmienionego pliku, duplikatu i brakującego źródła, brak jawnych danych, 86 rekordów oraz brak domyślnego przyznania przy nieustalonym wyniku. |
+
+## Katalog spraw: rozpoznanie a walidacja
+
+Zestaw 87 PDF zawiera jedną identyczną bajtowo kopię, czyli 86 unikalnych spraw. Katalog zachowuje rozpoznawanie wcześniejszych 10 i dodaje 76. Agregaty: 57 częściowych odczytów decyzji/adnotacji o wyniku, 29 rozstrzygnięć nieustalonych, 0 zweryfikowanych kwot. Nie jest to automatyczna analiza nowego PDF ani 86 pełnych testów prawidłowości kalkulatora.
+
+Jawny JSON, OCR, mapowanie plików i audyt skrótów PDF/OCR pozostają lokalnie poza repozytorium. Do aplikacji trafia wyłącznie AES-GCM oraz niesensytywne agregaty. `zaszyfruj.mjs` nie zapisuje katalogu, jeżeli brakuje PDF, występuje identyczny duplikat albo sprzeczny status. Nazwa PDF jest usuwana z szyfrowanego opisu. Każdy opis ma anonimowy `id`, `walidacja` i `zrodla` ze stronami; nieustalone okresy wniosku mają osobne pole `wnioskowaneOkresy`.
+
+Plik wybrany w przeglądarce pozostaje na urządzeniu; nie trafia do `/ask`, OpenRouter ani usługi OCR. Skrót pliku wyznacza indeks i klucz AES-GCM. To ograniczenie dostępu do przygotowanego katalogu na potrzeby demo, nie system kont ani produkcyjna autoryzacja. Posiadacz oryginalnego PDF może odczytać odpowiadający mu opis. [Dokładny zakres dowodów](WALIDACJA-ZUS.md).

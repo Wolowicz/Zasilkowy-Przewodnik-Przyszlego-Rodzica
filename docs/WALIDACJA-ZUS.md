@@ -1,8 +1,56 @@
 # Walidacja Otuli względem materiałów ZUS
 
-Stan przeglądu: **21.11.2026**. Zakres: lokalnie dostarczone materiały organizatora, fragment briefu (strony 11–15) oraz aktualny kod `otula/dist/zus.js`. To ocena zespołu, nie akceptacja ZUS ani opinia prawna. Zmiana kodu wymaga ponowienia odpowiednich pozycji przeglądu.
+Stan przeglądu: **21.11.2026**. Zakres: lokalnie dostarczone materiały organizatora, pełny brief (16 stron), regulamin zadania (4 strony) oraz aktualny kod `otula/dist/zus.js`. To ocena zespołu, nie akceptacja ZUS ani opinia prawna. Zmiana kodu wymaga ponowienia odpowiednich pozycji przeglądu.
 
-## Co sprawdzono
+## Aktualny stan po rozszerzeniu katalogu
+
+**86 rozpoznawanych spraw nie oznacza 86 zweryfikowanych wyliczeń.** Zestaw ma 87 PDF, ale dwa mają identyczny SHA-256. Po usunięciu jednej kopii pozostaje 86 unikalnych dokumentacji, łącznie 2008 stron. Lokalny OCR jest dostępny dla całego zestawu; jego dostępność nie oznacza, że każda strona została bezbłędnie odczytana lub sprawdzona wizualnie.
+
+| Miara | Wynik | Co dokładnie potwierdza |
+| --- | --- | --- |
+| Oryginalne PDF rozpoznawane w aplikacji | 86/86 | Skrót odpowiada kluczowi szyfrowanego rekordu; zachowano wcześniejsze 10, dodano 76. |
+| Częściowy odczyt wyniku | 57 | 46 przyznań/adnotacji o wypłacie i 11 odmów. Adnotacja o wypłacie nie potwierdza jej kwoty. |
+| Rozstrzygnięcie nieustalone | 29 | Rozpoznany plik, lecz brak pewnego odczytu końcowej decyzji. Nie jest to odmowa ani domyślne przyznanie. |
+| Zweryfikowane kwoty | **0** | Nie zamknięto niezależnego porównania podstawy, stawki dziennej i należnej/wypłaconej kwoty. |
+| Test rzeczywistego szyfrowania/odszyfrowania | 86/86 | Lokalny roundtrip odtworzył opisy i wszystkie 10 wcześniejszych identyfikatorów plików. To test techniczny. |
+
+Każdy rekord ma anonimowy identyfikator, `walidacja`, `zrodla` ze stronami i ograniczeniami. Lokalny, niepublikowany audyt wiąże rekord ze skrótem PDF i OCR. Nazwy plików są usuwane z payloadu. Jawny JSON, skany i OCR nie trafiają do repozytorium, witryny ani modelu; do frontendu trafia AES-GCM oraz agregaty. Odczyt w przeglądarce wymaga oryginalnego PDF, który nie opuszcza urządzenia. Szyfrowanie nie zastępuje zgody organizatora na sposób demonstracji materiałów.
+
+Skorygowano również wcześniejsze opisy: wniosek wcześniaka bez czytelnej decyzji ma stan `nieustalona`; 7 dni ojcowskiego nie jest traktowane jako pełne 14 dni; przy adopcji pierwotny wniosek jest oddzielony od dłuższego okresu wypłaty. W sprawie z uchyloną odmową opisano późniejsze rozstrzygnięcie. Nie uzupełniano brakujących kwot założeniami kalkulatora.
+
+## Aktualna implementacja kalkulatora
+
+| Obszar | Działa | Granica dowodu lub modelu |
+| --- | --- | --- |
+| Standard, Za życiem, oboje rodzice | Odrębne pule, 9 tygodni nieprzenoszalnych, niezależna liczba tygodni i daty rodziców; również rodzicielski ojca przy nieubezpieczonej matce. | Nie ustala tytułu ubezpieczenia z dokumentów i nie odejmuje całej historycznej puli. |
+| Wniosek 81,5% (B3) | Wniosek przed porodem nie jest odrzucany; górna granica 21 dni. | Termin urlopowy i warunki prawa nadal wymagają właściwych dokumentów. |
+| Brak dnia rodzicielskiego w pierwszym roku (B2) | Osobna deklaracja, 100% macierzyński, późniejszy rodzicielski 70%, pokazane wyrównanie. | Symulacja bez potwierdzania rzeczywistej historii wypłat. |
+| Minimalna podstawa i podwyższenie (B1) | Minimum dla pracownika zależy od roku i wymiaru etatu; osobny pomocnik podwyższenia z ręcznym PIT i innymi zasiłkami netto. | Nie odtwarza podstawy z historii płac, nie zgaduje PIT, nie potwierdza przelewu. |
+| Adopcja/piecza (B4) | Skrócony macierzyński w dniach, gwarantowane minimum 63 dni przy przyjęciu przed granicą, pule 38/62. | Rodzicielski przekraczający 7/10/14 lat zatrzymany do indywidualnego ustalenia; to ograniczenie symulacji, nie odmowa. |
+| Hospitalizacja (B5) | Pomocnik masy/tygodnia ciąży/pobytów; sumowanie z usunięciem nakładania, jedno zaokrąglenie, limit 8/15 tygodni; segment 100% między macierzyńskim a rodzicielskim. | Jedna nieprzerwana ścieżka pierwszego rodzica. Przejęcia, przerwy i interpretacja granicznych dni wymagają dodatkowego sprawdzenia. |
+| Stała praca do połowy etatu (B10) | Redukcja kwoty względem wymiaru umowy; dwa etapy pomijania niepełnego dnia przy wydłużeniu; dzienne zaokrąglenia etapami. | Zmienny wymiar i wcześniejsze zakończenie nadal wymagają odcinków. Komentarz ZUS pkt 182 ma niespójny przykład liczbowy, więc nie jest wzorcem kwoty. |
+| Parametry (B11) | Walidowany lokalny zapis, reset, daty obowiązywania i oznaczenie parametrów własnych. | Brak serwerowych wersji zatwierdzanych przez administratora. |
+| Zadłużenie (B6) | Pokazowy stan na dzień zdarzenia i osobna kwota dla rodziców; kontrola progu 1% minimum z roku początku prawa. Nieznana kwota nie jest zerem. | Nie jest samodzielnym rozstrzygnięciem ZUS ani pełnym modelem spłaty, przedawnienia i osób współpracujących. |
+
+Testy `zus.test.cjs` pozostają syntetyczne. `sprawy.test.cjs` dodatkowo kontroluje brak jawnych danych, odrzucenie obcego/zmienionego PDF, brakującego pliku, duplikatu i niepoprawnego statusu, statystyki oraz zakaz domyślnego przyznania. Pełne `npm test` i roundtrip katalogu przechodzą; nie nazywamy tego walidacją prawną wszystkich spraw.
+
+## Otwarte pytania merytoryczne
+
+1. **Granica wieku:** lokalny art. 183 § 3, § 4² i § 4⁵ (s. 8–9) daje minimum i pule 38/62, ale w tych ustępach nie powtarza końcowej granicy 14 lat. [Instrukcja ZUS](https://bip.zus.pl/pl/web/guest/swiadczenia/zasilki/zasilek-macierzynski/prawo-do-zasilku-i-okres-przyslugiwania/za-okres-dodatkowego-urlopu-rodzicielskiego), aktualizacja 25.07.2025, ogólnie ogranicza rodzicielski po przyjęciu do 7/10/14 lat. Do wyjaśnienia z mentorami, bez automatycznego przyznawania po granicy. Koniec roku 6 lat dotyczy urodzenia; nie przenosimy go mechanicznie na pieczę.
+2. **Dni hospitalizacji:** potwierdzić na jednoznacznym przykładzie ZUS wliczanie dnia porodu i granic okna 8/15 tygodni. Kod po przeglądzie przyjmuje dzień porodu jako 0 i dla wcześniaka liczy od kolejnego dnia (do +56/+105), a dla dziecka donoszonego od +5 do +56. Pokrewne [wyjaśnienie MRPiPS o świadczeniu rodzicielskim](https://www.gov.pl/web/rodzina/informacja-w-sprawie-ustawy-z-dnia-6-grudnia-2024-r-o-zmianie-ustawy---kodeks-pracy-oraz-niektorych-innych-ustaw-dz-2024-poz-1871--nowelizacja-przepisow-ustawy-o-swiadczeniach-rodzinnych-dotyczaca-swiadczenia-rodzicielskiego) wyłącza dzień porodu, lecz dotyczy innego świadczenia; nie jest samo w sobie potwierdzeniem reguły zasiłku macierzyńskiego.
+3. **Kwoty:** poprosić o czytelny wynik kontrolny: ustalona podstawa, stawka, kwota dzienna, okres i informacja brutto/netto. Sama tabela wynagrodzeń albo zdanie o przyznaniu nie wystarczą.
+4. **Materiały chronione:** potwierdzić dopuszczalność pokazywania jurorowi szyfrowanego opracowania odblokowanego jego oryginalnym plikiem. Dokumentów źródłowych nie publikujemy.
+
+## Priorytety przed deklaracją kompletności
+
+- Dokończyć 29 nieustalonych rozstrzygnięć i osobno zweryfikować kwoty wybranych spraw z czytelnym wynikiem oczekiwanym.
+- Zweryfikować z mentorem powyższe granice i dopisać testy konkretnego rozstrzygnięcia.
+- Uzupełniać historię wcześniejszego wykorzystania, przejęcia, przerwy, ojcowski oraz podstawy z dokumentów dopiero z oddzielnymi dowodami.
+- Opis dla jury i prezentacja mają mówić „86 rozpoznawanych plików, 0 zweryfikowanych kwot”, a nie „86 poprawnie policzonych spraw”. [Przygotowanie do rozmowy](ROZMOWA-Z-JURY.md).
+
+## Historia — co sprawdzono we wcześniejszych etapach
+
+**Poniższe sekcje są zapisem wcześniejszych etapów z 21.11.2026. Ich liczby 4/10 spraw i listy otwartych poprawek nie opisują obecnej wersji. Aktualny stan podano powyżej. Zachowano je dla śladu przeglądu.**
 
 Archiwum przekazane przez właścicielkę zawiera sześć ogólnych materiałów: wyciąg Kodeksu pracy, wyciąg ustawy zasiłkowej, dwa rozporządzenia dotyczące dokumentowania uprawnień, tabelę okresów/stawek/podstaw oraz poradnik ZUS dla rodziców z 2026 r. Odczytano tekst lokalnie, z pamięci archiwum. Dokumentów nie dodano do repozytorium, strony ani bazy asystenta; nie wysłano ich do API OpenRouter ani do asystenta działającego w aplikacji.
 
@@ -10,7 +58,7 @@ W drugim archiwum dostarczono następnie **87 skanowanych plików PDF z przykła
 
 Poniżej zapisano wyłącznie własne wnioski, zakres implementacji i odwołania. Numer strony oznacza stronę pliku PDF liczoną od 1, która może różnić się od numeru drukowanego. Tabela DOCX nie ma stabilnej paginacji; odwołujemy się do jej tematów.
 
-## Wynik przeglądu
+## Historia — Wynik przeglądu
 
 Podstawowe parametry standardowej ścieżki są zgodne z dostarczonymi materiałami. Aplikacja pozostaje **częściowym kalkulatorem scenariuszy z gotową podstawą**, a nie kompletnym silnikiem ustalania uprawnień i podstaw ze wszystkich dokumentów. Interfejs ma oznaczać symulację i pokazywać granice obliczenia przed interpretacją wyniku. Wykrycie sytuacji szczególnej i wstrzymanie kwoty ogranicza ryzyko błędu, lecz samo w sobie nie realizuje wymagania obliczenia tej sytuacji.
 
@@ -33,7 +81,7 @@ Podstawowe parametry standardowej ścieżki są zgodne z dostarczonymi materiał
 | Chronologia opieki | Kodeks, s. 6–9; ustawa, s. 8–9 | Suma tygodni, bez osi rzeczywistych dat obojga rodziców, maksymalnej liczby części i kontroli wcześniejszego wykorzystania. Stawka 81,5% zakłada co najmniej jeden dzień rodzicielskiego w pierwszym roku. |
 | Dokumenty | Rozporządzenie o dokumentach zasiłkowych, s. 3–9, zwłaszcza § 13–31 | Linki i ogólne listy. Do pełności potrzebna lista dopasowana m.in. do przejęć, historii drugiego rodzica, podwyższenia oraz właściwego płatnika. |
 
-## Mapa wymagań briefu
+## Historia — Mapa wymagań briefu
 
 | Wymaganie | Ocena i dowód |
 | --- | --- |
@@ -48,11 +96,11 @@ Podstawowe parametry standardowej ścieżki są zgodne z dostarczonymi materiał
 | Repozytorium, demo, zrzuty, wskazanie AI | Elementy istnieją. Trzeba zapewnić jury dostęp i wskazać, że reguły kalkulatora nie są odpowiedzią modelu. |
 | Prezentacja do 10 slajdów i film do 3 minut | Warunek formalny do sprawdzenia na finalnych plikach. Film ma być publicznie dostępny; dostęp do prywatnego repozytorium nie zastępuje otwartego linku do filmu. Aktualizacja materiałów pozostaje odrębnym etapem. |
 
-## Konflikt wersji źródeł
+## Historia — Konflikt wersji źródeł
 
 Poradnik z archiwum na stronach PDF 27 i 36 opisuje użycie Z-3b. Fragment briefu na stronie 12 wskazuje likwidację tego formularza od 24.10.2026, wraz ze zmianami ZUR i ZAO. Aplikacja odsyła do nowszych komunikatów ZUS, w tym szczególnego komunikatu dla pełnomocników. Nie należy przywracać starej listy formularzy wyłącznie dlatego, że występuje w poradniku z oznaczeniem 2026. Przy każdym formularzu potrzebna jest data instrukcji i właściwa rola użytkownika.
 
-## Próba czterech dostarczonych spraw
+## Historia — Próba czterech dostarczonych spraw
 
 Poniższe identyfikatory są roboczymi oznaczeniami zespołu, a nie identyfikatorami osób. Nie zamieszczamy dat rodzin, danych płacowych ani kopii dokumentów. Mapowanie do lokalnego archiwum pozostaje u zespołu. Odróżniamy okres **wnioskowany**, przyznany i rzeczywiście wypłacony; ich różnica sama w sobie nie oznacza błędu.
 
@@ -65,7 +113,7 @@ Poniższe identyfikatory są roboczymi oznaczeniami zespołu, a nie identyfikato
 
 Odtworzono niezależnie w funkcji `zusCalculation` strukturę okresów 364 i 532 dni oraz blokadę dodatniej kwoty przy braku ubezpieczenia. Użyto własnych dat i technicznej podstawy przykładowej, bez przepisywania danych rodzin do testów. To kontrola struktury reguły, nie pełne porównanie świadczenia należnego konkretnej osobie. Pozostałych 83 plików nie poddano w tej próbie analizie indywidualnej.
 
-## Niezależny przegląd poprawki dla ojca
+## Historia — Niezależny przegląd poprawki dla ojca
 
 Po przeglądzie materiałów poprawiono wcześniejsze blokowanie całego wyliczenia, gdy matka nie ma ubezpieczenia, a ojciec ma potwierdzone własne uprawnienie. Kontrola kodu i 49 dodatkowych sprawdzeń w pamięci objęły wszystkie liczby dzieci (1–5+) z Za życiem i bez, warianty 1 i 9 tygodni, maksymalne pule oraz przekroczenie limitu. Osobno sprawdzono pół etatu i treść wyniku. To autorskie testy reguł, nie nowe sprawy ZUS.
 
@@ -77,7 +125,7 @@ Po przeglądzie materiałów poprawiono wcześniejsze blokowanie całego wylicze
 
 Pozostają ograniczenia całego kalkulatora: gotowa podstawa, pełne tygodnie zamiast dowolnych dni, brak kalendarza części opieki i indywidualnej kwalifikacji szczególnych przypadków. Przegląd nie wykazał błędu w podziale 9 tygodni ani w standardowej stawce nowej ścieżki.
 
-## Kolejność dalszych prac
+## Historia — Kolejność dalszych prac
 
 1. **P0 — dowód poprawności:** dokończyć lokalną walidację indywidualnych spraw z oczekiwanym rozstrzygnięciem. Zachować je poza GitHubem, serwerem AI i publicznym demo; nie przepisywać danych osób do dokumentacji. Ustalić z organizatorem dozwolony sposób demonstracji materiałów.
 2. **P0 — granice wyniku:** żaden wynik orientacyjny, puste ubezpieczenie ani blokada wariantu nie mogą udawać decyzji urzędowej. Osobno pokazywać „brak danych”, „wariant poza zakresem” i potwierdzoną przesłankę do odmowy.
@@ -86,7 +134,7 @@ Pozostają ograniczenia całego kalkulatora: gotowa podstawa, pełne tygodnie za
 5. **P1 — rzeczywisty podział w czasie:** okresy obojga rodziców, wcześniejsze wykorzystanie, równoczesność, części, termin wniosku i łączenie z pracą w odcinkach. Nie wystarczy porównać sumy tygodni.
 6. **P2 — produkcja i prezentacja:** trwałe wersjonowanie reguł, kontrola dostępu administratora, audyt bezpieczeństwa, niezależny przegląd merytoryczny i finalne materiały z rzeczywistych ekranów.
 
-## Jak zapisywać testy
+## Historia — Jak zapisywać testy
 
 Testy w `otula/tests/zus.test.cjs` są **autorskimi scenariuszami syntetycznymi**. Po poprawce ścieżki ojca przeszły 52 przypadki oraz kontrola izolacji szkiców dzieci. Sprawdzają m.in. standardowe okresy, stawki, mnożniki pracy, granicę 21 dni, brak danych i wieloraczki. Pozytywny wynik tych testów nie oznacza pokrycia prawa. Wynik przeglądu dostarczonych spraw opisano osobno powyżej.
 
@@ -94,7 +142,7 @@ Dla otrzymanych spraw ZUS prowadzić lokalną, niepublikowaną kartę: anonimowy
 
 Za zweryfikowany uznajemy tylko konkretny scenariusz z porównanym wynikiem. Brak wymaganej informacji oznacza „nie można zweryfikować”, a nie wynik pozytywny.
 
-## Przegląd reguł względem materiałów ZUS — 21.11.2026, wieczór
+## Historia — Przegląd reguł względem materiałów ZUS — 21.11.2026, wieczór
 
 Drugi, niezależny przegląd porównał około 70 wartości ilościowych z wyciągów ustawy zasiłkowej, Kodeksu pracy, rozporządzeń i tabeli okresów z kodem `zus.js` i `catalog.js`. **Standardowa ścieżka jest poprawna**: wymiary 20/31/33/35/37 i 41/43, Za życiem 65/67, 9 tygodni drugiego rodzica po 70%, 81,5% dla matki i dla części ojca ponad 9 tygodni, łączenie z pracą przy stałym etacie, limity wieku 7/10/14 oraz próg płatnika „ponad 20 ubezpieczonych”.
 

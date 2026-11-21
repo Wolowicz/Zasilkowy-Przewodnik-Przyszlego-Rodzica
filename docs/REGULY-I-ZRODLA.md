@@ -16,25 +16,55 @@ Podstawa jest już ustaloną wartością wejściową. Kalkulator nie przelicza w
 | Rodzicielski, jedno / więcej dzieci | 41/43 tygodnie |
 | Wariant Za życiem | 65/67 tygodni |
 | Część zastrzeżona rodzicowi | 9 tygodni |
+| Przyjęcie blisko granicy wieku | Minimum 9 tygodni macierzyńskiego na warunkach; pule rodzicielskiego 38/62 w tym wariancie |
+| Uzupełniający po hospitalizacji | Do 8 lub 15 tygodni, zależnie od masy, tygodnia ciąży i kwalifikujących się pobytów; 100% |
 | Stawki | 100%, 70%, wariant 81,5%; własne 9 tygodni drugiego rodzica: 70% |
 
 Źródła użyte przy przygotowaniu reguł: [wysokość zasiłku ZUS](https://www.zus.pl/pl/swiadczenia/zasilki/zasilek-macierzynski/wysokosc), [okresy macierzyńskiego i przyjęcie na wychowanie](https://www.zus.pl/swiadczenia/zasilki/zasilek-macierzynski/prawo-do-zasilku-i-okres-przyslugiwania/za-okres-urlopu-macierzynskiego-albo-urlopu-na-warunkach-urlopu-macierzynskiego), [rodzicielski — Ministerstwo Rodziny](https://www.gov.pl/web/rodzina/urlop-rodzicielski). Oryginały opisują warunki i wyjątki; sama tabela parametrów ich nie zastępuje.
 
 ## Algorytm i zaokrąglenia
 
-Dla segmentu o `weeks`, podstawie `base`, stawce `rate` i stałym ułamku pracy `fraction` kod liczy:
+Dla segmentu o `weeks`, podstawie `base`, stawce `rate`, stałym ułamku pracy `fraction` i wymiarze umowy `contractFraction` kod liczy (`round2` oznacza zaokrąglenie do grosza):
 
 ```text
-days  = floor(weeks × 7 / (1 − fraction) + 1e−8)
-daily = round(base / 30 × rate / 100 × (1 − fraction), do 2 miejsc)
-total = round(days × daily, do 2 miejsc)
+baseDays  = weeks × 7
+extension = floor(baseDays × fraction)
+days      = baseDays + floor(extension / (1 − fraction))
+fullDaily = round2(round2(base / 30) × rate / 100)
+reduction = round2(fullDaily × fraction / contractFraction)
+daily     = round2(fullDaily − reduction)
+total     = round2(days × daily)
 ```
 
-To założenie stałej pracy przez całą część rodzicielskiego, również podczas wydłużenia. Nie obejmuje zmiennych odcinków etatu ani wcześniejszego zakończenia wypłaty na wniosek. Wynik sumuje segmenty, nie symuluje rzeczywistych miesięcznych przelewów. W próbie czterech dostarczonych spraw ZUS potwierdzono częściowo struktury okresów i jedną blokadę, ale **nie potwierdzono żadnej kwoty co do grosza**. [Zakres walidacji](WALIDACJA-ZUS.md).
+To założenie stałej pracy przez całą część rodzicielskiego, również podczas wydłużenia. Nie obejmuje zmiennych odcinków etatu ani wcześniejszego zakończenia wypłaty na wniosek. Wydłużenie zależy od ułamka pełnego etatu; redukcja kwoty od jego proporcji do umowy. Dwa pominięcia niepełnego dnia mają znaczenie: dla 9 tygodni i pracy na 1/4 etatu model daje 83 dni. [Komentarz ZUS z sierpnia 2023 r.](https://www.zus.pl/documents/10182/24202/Komentarz%2Bdo%2Bustawy%2Bo%2B%C5%9Bwiadczeniach%2Bpieni%C4%99%C5%BCnych%2Bz%2Bubezpieczenia%2Bspo%C5%82ecznego%2Bw%2Brazie%2Bchoroby%2Bi%2Bmacierzy%C5%84stwa%2B2023.pdf/7a31a278-8c06-cee4-3542-1d5bb8b36ad6), pkt 144–147 i 182, s. 38–40 i 48, odczyt 21.11.2026, opisuje te etapy. Przykład z pkt 182 ma niespójne sumy i zaokrąglenie połowy grosza; nie traktujemy jego liczby końcowej jako wzorca kwoty.
 
-Wariant 81,5% wymaga daty zdarzenia i wniosku w obsługiwanym przedziale 0–21 dni. Kod sprawdza liczbę dzieci, podstawy, podział tygodni, ubezpieczenie, zakres etatu i sygnały sytuacji szczególnych. Wybrana szczególna sytuacja, nieustalone ubezpieczenie lub zadłużenie przy działalności może blokować kwotę i wyświetlać kwestie do wyjaśnienia.
+Macierzyński po przyjęciu może mieć skrócony wymiar w dniach. Oś dat wyznacza okresy obojga rodziców; segmenty pracownika są w razie potrzeby dzielone na granicy roku dla minimalnej podstawy. Zestawienie miesięczne pokazuje kwoty obliczeniowe, nie rzeczywiste przelewy netto. **Nie potwierdzono żadnej kwoty na indywidualnym zestawie ZUS co do grosza**. [Zakres walidacji](WALIDACJA-ZUS.md).
 
-Adopcja i piecza wymagają dodatkowych dat i sprawdzenia granicy wieku. Przy zbliżeniu do limitu kod kieruje do indywidualnego wyliczenia; nie modeluje wszystkich skróconych okresów ani przejęć uprawnień.
+Wariant 81,5% wymaga daty zdarzenia i wniosku złożonego nie później niż 21 dni po zdarzeniu; wniosek wcześniejszy nie jest automatycznie odrzucany. Przy porodzie osobno potwierdza się wykorzystanie choć jednego dnia rodzicielskiego w pierwszym roku. Wariant bez takiego dnia pokazuje 100% za macierzyński, późniejszy rodzicielski 70% oraz obliczeniowe wyrównanie. Kod sprawdza liczbę dzieci, podstawy, niezależny podział tygodni, daty, ubezpieczenie i zakres etatu. Brak danych lub wariant poza modelem wstrzymuje kwotę, nie jest decyzją odmowną ZUS.
+
+Adopcja i piecza wymagają dat urodzenia oraz przyjęcia. Macierzyński na warunkach jest skracany do właściwego limitu wieku, z gwarancją minimum 63 dni, jeżeli przyjęcie nastąpiło przed granicą. Dla minimum stosowane są pule rodzicielskiego 38/62. Kalendarz rodzicielskiego przekraczający 7/10/14 lat pozostaje do indywidualnego ustalenia — bez kwoty i bez deklarowania odmowy.
+
+**Granica interpretacji wieku, odczyt 21.11.2026:** art. 183 § 3, § 4² i § 4⁵ w lokalnym wyciągu Kodeksu pracy (s. 8–9) ustanawia minimum i pule 38/62, natomiast nie powtarza w tych ustępach końcowej granicy 14 lat. Ogólna [instrukcja ZUS o rodzicielskim](https://bip.zus.pl/pl/web/guest/swiadczenia/zasilki/zasilek-macierzynski/prawo-do-zasilku-i-okres-przyslugiwania/za-okres-dodatkowego-urlopu-rodzicielskiego), aktualizacja 25.07.2025, wskazuje przy przyjęciu granice 7/10/14 lat. Zespół nie rozstrzyga tej rozbieżności na korzyść automatycznej wypłaty po granicy. Nie stosujemy też do pieczy mechanicznie końca roku, w którym dziecko kończy 6 lat; ZUS wskazuje go dla urodzenia.
+
+## Minimalna podstawa i osobne podwyższenie
+
+Gotową podstawę pracownika porównuje się z minimum właściwym dla roku i wymiaru zatrudnienia, po odliczeniu składek. To nie jest odtworzenie podstawy z wynagrodzeń. Nieznane minimum dla roku wymaga potwierdzenia u płatnika. Dla działalności i zlecenia nie stosuje się automatycznie pracowniczego minimum.
+
+Osobny pomocnik miesięczny podwyższenia przyjmuje wyliczone brutto, rzeczywistą zaliczkę PIT i inne zasiłki netto oraz potwierdzenie danych. Nie zgaduje podatku i nie dodaje podwyższenia bez tych informacji. Przy niepełnym miesiącu cel proporcjonalny jest liczony w tym pomocniku. Źródło: lokalny wyciąg ustawy zasiłkowej, art. 31 ust. 3a–3c oraz art. 45 i 47; [wysokość zasiłku ZUS](https://www.zus.pl/pl/swiadczenia/zasilki/zasilek-macierzynski/wysokosc).
+
+## Uzupełniający po hospitalizacji
+
+Pomocnik wymaga masy i ukończonych tygodni ciąży, dat pobytów oraz potwierdzenia zaświadczenia. Łączy nakładające się pobyty tego samego dziecka, sumuje kwalifikujące się dni i raz zaokrągla do pełnego tygodnia. Dla dziecka donoszonego sprawdza warunek dwóch kolejnych dni, z pierwszym między 5. a 28. dniem po porodzie. Przy porodzie mnogim użytkownik potwierdza najniższą masę oraz pobyty dziecka najdłużej hospitalizowanego; pobytów różnych dzieci nie dodaje się. Przy przyjęciu na wychowanie uwzględnia się pobyty od przyjęcia.
+
+Obsługiwana jest nieprzerwana ścieżka pierwszego rodzica: macierzyński → uzupełniający 100% → rodzicielski. 81,5% nie zastępuje 100% części uzupełniającej. Przejęcie przez drugiego rodzica, przerwy i indywidualne warunki przejściowe wymagają osobnego ustalenia. Kod oznacza poród jako dzień 0; dla wcześniaka liczy od kolejnego dnia do dnia 56/105, dla dziecka donoszonego od dnia 5 do 56. Konwencja jest jawna i wymaga potwierdzenia granic pobytu z płatnikiem; nie ma jeszcze porównania z kontrolną kwotą sprawy ZUS.
+
+Źródła, odczyt 21.11.2026: lokalny Kodeks pracy s. 5–6, art. 180², oraz [zasady i odpowiedzi MRPiPS](https://www.gov.pl/web/rodzina/pytania-i-odpowiedzi3), [warunki ZUS](https://bip.zus.pl/pl/web/guest/swiadczenia/zasilki/zasilek-macierzynski/prawo-do-zasilku-i-okres-przyslugiwania/za-okres-uzupelniajacego-urlopu-macierzynskiego).
+
+## Zadłużenie i parametry
+
+W ścieżce działalności można podać kwotę długu osobno dla każdego rodzica. Próg 1% odnosi się do minimalnego wynagrodzenia właściwego dla roku początku prawa danego rodzica. Nieznana kwota nie oznacza zera; przekroczenie progu lub brak potrzebnych danych wymaga ustalenia z ZUS. Nie jest to pełny model późniejszej spłaty, terminu przedawnienia czy osób współpracujących. Źródło: lokalna ustawa zasiłkowa, art. 2a; poradnik ZUS s. 25 i 37.
+
+Panel parametrów zapisuje lokalnie zwalidowaną konfigurację, z datami i etykietą parametrów własnych. Nie tworzy centralnej historii zatwierdzeń. Dostępność kwot minimalnych dla wybranych lat nie oznacza obsługi całego prawa historycznego; dla nieznanego roku wynik wymaga potwierdzenia podstawy przez płatnika.
 
 ## Odrębny wariant ojca
 
@@ -42,9 +72,9 @@ Osobny wariant porodu pozwala policzyć rodzicielski ubezpieczonego ojca przy po
 
 ## Poza zakresem wyliczenia
 
-- Podstawa z historii płac; PIT i kwota netto; podwyższenie do świadczenia rodzicielskiego.
+- Podstawa z historii płac i automatyczne obliczenie PIT/netto; pomocnik podwyższenia wymaga osobnych danych miesięcznych.
 - Wynagrodzenie za pracę i osobny zasiłek ojcowski w sumie kalkulatora.
-- Pełna obsługa przejęcia macierzyńskiego, hospitalizacji, utraty dziecka, zbiegu ubezpieczeń i indywidualnego długu.
+- Pełna obsługa przejęcia macierzyńskiego, przerw, utraty dziecka, zbiegu ubezpieczeń, wcześniejszego wykorzystania puli i indywidualnych skutków długu; hospitalizacja ma tylko opisaną wyżej ścieżkę.
 - Automatyczny OCR, weryfikacja danych płatnika, orzeczenie uprawnienia.
 
 ## Karty, terminy i dokumenty
@@ -61,13 +91,13 @@ Podręcznik odsyła m.in. do NFZ, WHO, AAP/HealthyChildren, Medycyny Praktycznej
 2. Sprawdź grupę uprawnionych, warunki, wyjątki, początek terminu, właściwy organ i dokumenty.
 3. Zmień kartę lub regułę bez zmiany stabilnego ID. Dodaj test granicy, jeśli zmiana dotyczy obliczeń.
 4. Uzyskaj niezależny przegląd merytoryczny przed produkcyjnym użyciem.
-5. Zsynchronizuj backend i odśwież rejestr źródeł oraz raporty aplikacji. Prezentację i film aktualizuj w uzgodnionym zakresie; obecne pliki pokazują poprzednią wersję i pozostają bez zmian do osobnego potwierdzenia właścicielki.
+5. Zsynchronizuj backend i odśwież rejestr źródeł oraz raporty aplikacji. Prezentację i film aktualizuj w zakresie zatwierdzonym przez właścicielkę; nie traktuj starego materiału jako dowodu obecnego działania.
 6. Zapisz zmianę i nierozwiązane pytania. Nie aktualizuj globalnej daty sprawdzenia bez przejrzenia całego oznaczonego zakresu.
 
 ## Załączniki konkursowe
 
 [Brief ZUS](https://mudnibfuppwadjkynscc.supabase.co/storage/v1/object/public/task-files/057d36b5-cb92-4062-9393-983cb8a96088/files/d02b6603-486b-474e-837f-3ada06d12bee.pdf) wskazuje przykładowe sprawy, tabelę okresów i wyciąg przepisów. **21.11.2026 materiały otrzymano:** sześć dokumentów ogólnych oraz 87 skanowanych PDF ze sprawami. Ogólne materiały odczytano lokalnie. Próba czterech spraw obejmowała lokalny OCR 74 stron i wizualne sprawdzenie 18 stron kluczowych.
 
-Wynik: trzy częściowe zgodności okresu lub blokady, jedna sprawa poza modelem, zero zakończonych walidacji kwoty; pozostałych 83 plików nie analizowano indywidualnie. [WALIDACJA-ZUS.md](WALIDACJA-ZUS.md) mapuje wymagania i reguły na dostarczone materiały oraz opisuje każdą granicę dowodu. Przypadek pracy na część etatu pokazał potrzebę modelowania rzeczywistych odcinków i podwyższenia świadczenia, a przypadki podstaw — zmian etatu i krótkiego ubezpieczenia.
+Historyczna próba czterech spraw dała trzy częściowe zgodności okresu lub blokady, jedną sprawę poza modelem i zero walidacji kwoty. Późniejszy przegląd objął lokalne OCR wszystkich 87 plików, z których dwa są identyczne bajtowo. Katalog rozpoznaje **86 unikalnych spraw**, zachowuje wcześniejsze 10 i dodaje 76. W 57 odczytano decyzję lub adnotację o wyniku, w 29 nie potwierdzono rozstrzygnięcia. **Zweryfikowane kwoty: 0.** [WALIDACJA-ZUS.md](WALIDACJA-ZUS.md) odróżnia te poziomy dowodu.
 
-Skany, odczyty OCR, dane płacowe, daty rodzin i mapowanie osób pozostają poza repozytorium, stroną i bazą AI. Lokalna karta dalszej walidacji powinna zawierać anonimowy identyfikator, dane, wynik oczekiwany, wynik Otuli, różnicę, wyjaśnienie i status. Agregat w repozytorium nie jest dowodem kompletnego odtworzenia decyzji ZUS.
+Skany, odczyty OCR, jawne opisy i mapowanie osób pozostają poza repozytorium, stroną i bazą AI. Do frontendu trafia katalog zaszyfrowany wyłącznie przez `scripts/sprawy-zus/zaszyfruj.mjs`, otwierany kluczem wyprowadzonym z oryginalnego PDF. Każdy opis wskazuje strony i stan odczytu; lokalny audyt wiąże go ze skrótami PDF i OCR. Rozpoznanie pliku, częściowy odczyt decyzji i walidacja kwoty są oddzielnymi miarami. Testy techniczne tego mechanizmu nie dowodzą kompletnego odtworzenia decyzji ZUS.
