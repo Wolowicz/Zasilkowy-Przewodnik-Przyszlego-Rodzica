@@ -120,7 +120,7 @@ Na szerokim ekranie trzy karty mieszczą się w jednym rzędzie; na telefonie uk
 
 ## 14. Wywiad o świadczeniach
 
-`#moja-sprawa` prowadzi przez jedno pytanie naraz, w czterech grupach: rodzina, ubezpieczenie, okresy i kwota. Używa istniejących kart `.zus-result`, przycisków `.button`, opcji `.filter` i statusów `.chip`; `wywiad.css` określa jedynie układ i rozmiary w tych samych tokenach. Pytanie ma krótkie objaśnienie, wyraźne opcje, „Wróć” i „Nie wiem — pomiń”. Nie zaznaczamy odpowiedzi domyślnie. Daty zatwierdza przycisk, bez przebudowy pola podczas wpisywania roku.
+`#moja-sprawa` prowadzi przez jedno pytanie naraz, w czterech grupach: rodzina, ubezpieczenie, okresy i kwota. Używa istniejących kart `.zus-result`, przycisków `.button`, opcji `.filter` i statusów `.chip`; `wywiad.css` określa jedynie układ i rozmiary w tych samych tokenach. Pytanie ma krótkie objaśnienie, wyraźne opcje, „Wróć” i „Nie wiem jeszcze”. Nie zaznaczamy odpowiedzi domyślnie. Daty zatwierdza przycisk, bez przebudowy pola podczas wpisywania roku.
 
 Wynik pokazuje oddzielnie świadczenia, kwotę lub brak danych do kwoty oraz dokumenty z osobą odpowiedzialną. Szczegóły można rozwinąć; podstawowe informacje i następny krok pozostają widoczne. Zmiana odpowiedzi usuwa niepasujące odpowiedzi zależne. Trasy pytań, wyniku i przygotowania dokumentu zachowują systemowe cofanie. Dane osobowe wniosku nie należą do zapisu odpowiedzi; zapis na urządzeniu wymaga świadomego działania użytkownika.
 
@@ -128,6 +128,6 @@ Powitanie wywiadu ma jedną brzoskwiniową kartę i jedno główne działanie; n
 
 ## 15. Kafelki sytuacji, powtarzane okresy i status sprawy
 
-Główne wejście „Co się u Was dzieje?” używa równych kart `.wywiad-tile` z ikoną w istniejącym `.tile-icon`, kolorowym paskiem i krótką etykietą. Karty mają promień 22 px i znane kolory tematu; na telefonie jedną kolumnę, na komputerze trzy lub cztery. Wyszukiwarka korzysta z `.search-box`; wyniki biblioteki pozostają oddzielone od wyboru sytuacji. Rola jest widoczna i edytowalna nad kafelkami.
+Główne wejście „Co się u Was dzieje?” używa równych kart `.wywiad-tile` z ikoną w istniejącym `.tile-icon`, kolorowym paskiem i krótką etykietą. Karty mają promień 22 px i znane kolory tematu; na telefonie jedną kolumnę z poziomym układem ikona–etykieta–strzałka i wysokością 76 px, na komputerze trzy lub cztery kolumny. Ikona mobilna ma 48 px, a etykieta najwyżej dwa wiersze. Wyszukiwarka korzysta z `.search-box`; wyniki biblioteki pozostają oddzielone od wyboru sytuacji. Rola jest widoczna i edytowalna nad kafelkami.
 
 Pytania o wiele okresów używają powtarzanych kart z numerem, oznaczonymi polami i przyciskami „Dodaj”/„Usuń”, bez ciasnej tabeli na telefonie. Wyniki mają główną kolumnę kart i prawą kolumnę sumy oraz terminów; mobilnie suma poprzedza karty. Ręczny status sprawy ma opis „Status podany przez Ciebie” i nie zastępuje oceny warunków ani potwierdzenia wypłaty. Wszystkie nowe kontrolki zachowują minimum 44 px i widoczny fokus.
