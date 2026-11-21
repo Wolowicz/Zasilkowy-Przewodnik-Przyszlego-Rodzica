@@ -10,6 +10,7 @@ CROPS={
     'web-calculator-result-detail.png': {'source':'web-calculator-result.jpg','box':[313,293,1224,838]},
     'phone-daily-detail-crop.png': {'source':'phone-daily-detail.jpg','box':[15,354,345,735]},
     'web-documents-detail.png': {'source':'web-documents.jpg','box':[592,455,1320,867]},
+    'web-ai-answer-detail.png': {'source':'web-ai-panel.jpg','box':[974,349,1342,748]},
 }
 for name,entry in CROPS.items():
     source=SHOTS/entry['source']

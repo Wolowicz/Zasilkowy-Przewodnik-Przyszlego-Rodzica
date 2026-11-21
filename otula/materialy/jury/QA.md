@@ -4,11 +4,11 @@ Wyniki dotyczą plików w `otula/dist/`. Pokazują aplikację webową na kompute
 
 | Kontrola | Wynik |
 | --- | --- |
-| Prezentacja | 10 stron, 16:9, 960 × 540 pt; 2 800 409 bajtów |
+| Prezentacja | 10 stron, 16:9, 960 × 540 pt; 2 820 000 bajtów |
 | Tekst PDF | Tekst wyszukiwalny, polskie znaki, bez napisu roboczego; klikalny link do demonstracji |
 | Układ PDF | 0 ostrzeżeń przepełnienia; wyrenderowano i obejrzano wszystkie slajdy, w tym duże detale Karty wsparcia i codziennej czynności z telefonu |
 | Film | 102,000 s, 1920 × 1080, 60 kl./s, 6120 klatek, H.264 High / YUV 4:2:0, BT.709 |
-| Rozmiar filmu | 20 946 445 bajtów |
+| Rozmiar filmu | 20 924 281 bajtów |
 | Dźwięk | AAC, stereo, 48 kHz; pomiar po końcowym kodowaniu: −18,01 LUFS, −7,22 dBTP, zakres 3,7 LU |
 | Dekodowanie | Cały MP4 zdekodowano bez błędu; nie wykryto czarnych odcinków ≥ 0,15 s |
 | Kontrola obrazu | Przejrzano końcowe kadry wszystkich 10 scen oraz duże detale. Kompozycja nie rozciąga zrzutów; obrazy nie zasłaniają podpisów |
@@ -18,7 +18,7 @@ Wyniki dotyczą plików w `otula/dist/`. Pokazują aplikację webową na kompute
 
 ## Zakres przedstawienia AI
 
-Na zrzucie asystenta widoczny jest **tryb źródeł przy niedostępności modelu**. Slajd, podpis filmu i notatki mówią o tym wprost. Nie przedstawiamy tego ekranu jako odpowiedzi wygenerowanej przez model ani nie obiecujemy nieprzerwanej dostępności usługi. Ewentualna wymiana na potwierdzoną odpowiedź wymaga odświeżenia zrzutu, slajdu, sceny AI oraz tego raportu.
+Na zrzucie asystenta widoczna jest **rzeczywista odpowiedź AI uzyskana w opublikowanej aplikacji**, wraz z odnośnikiem gov.pl i rozwiniętym cytatem. Weryfikacja wdrożenia objęła dwie udane odpowiedzi modelu Gemini 2.5 Flash Lite przez OpenRouter. W materiałach powiększono rzeczywisty fragment odpowiedzi; nie przepisano ani nie poprawiono wypowiedzi modelu. Cytat umożliwia porównanie ze źródłem, lecz nie dowodzi zgodności znaczenia całej odpowiedzi. Nie obiecujemy nieprzerwanej dostępności modelu; oddzielny tryb źródeł pozostaje rozwiązaniem zapasowym.
 
 ## Raporty techniczne
 

@@ -22,6 +22,7 @@ FALLBACK = {
     'web-documents.png':'dane-zus.png', 'web-support-detail.png':'karta.png',
     'web-documents-detail.png':'dane-zus.png',
     'web-calendar.png':'kalendarz.png', 'web-ai-panel.png':'dane-zus.png',
+    'web-ai-answer-detail.png':'dane-zus.png',
     'phone-start.png':'start.png', 'phone-support.png':'karta.png',
     'phone-daily.png':'poradnik.png',
     'phone-daily-detail-crop.png':'poradnik.png',
@@ -99,10 +100,13 @@ def build(draft=False):
         shot('web-calendar.png',alt='Moje terminy i widok kalendarza na komputerze')+'</div>',
         '<p>Otula eksportuje wydarzenie ICS z ustawieniem przypomnienia. Alarm uruchamia kalendarz użytkownika po imporcie. Nie obiecujemy powiadomień w tle ani synchronizacji późniejszych zmian. Terminy urzędowe i własny plan przygotowań są różnymi typami informacji. Raport powstaje z lokalnie zapisanych danych rodziny.</p>')
 
-    add('Asystent przy aktualnej sprawie', '<div class="wide-copy"><p>Pomoc pozostaje dostępna także wtedy, gdy model ma limit: karta sprawy i źródło urzędowe.</p></div>'+
-        shot('web-ai-panel.png','wide-evidence','Panel asystenta AI otwarty obok aktualnej sprawy')+
-        '<p class="caption">Na zrzucie: tryb źródeł. Odpowiedź modelu zależy od dostępności usługi OpenRouter.</p>',
-        '<p>Asystent działa przez osobny serwer. Do OpenRouter trafia pytanie i dobrany kontekst źródeł, a nie pełny lokalny profil rodziny. Pytania należy wpisywać bez danych osobowych. Na komputerze panel zachowuje kontekst sprawy, a telefon otwiera osobny ekran. Model nie ustala urzędowego uprawnienia i nie stawia diagnozy. Odnośnik oraz cytat umożliwiają sprawdzenie źródła, nie są gwarancją poprawnego znaczenia całej odpowiedzi. Zrzut przedstawia rzeczywisty stan interfejsu. Gdy widoczny jest tryb źródeł, nie przedstawiamy go jako odpowiedzi modelu.</p>','wide')
+    add('Asystent przy aktualnej sprawie', '<div class="split"><div class="copy">'
+        '<p class="lead">Rodzic pyta.<br>Otula odpowiada<br>i pokazuje źródło.</p>'
+        '<p>Odnośnik i rozwinięty cytat pomagają porównać odpowiedź z oryginałem.</p>'
+        '<p>Kwoty świadczeń liczy odrębny moduł reguł.</p>'
+        '<p class="small">AI może się mylić. Sam cytat nie gwarantuje poprawności całej odpowiedzi.</p></div>'+
+        shot('web-ai-answer-detail.png',alt='Rzeczywista odpowiedź AI o dokumentach do becikowego, z odnośnikiem gov.pl i rozwiniętym cytatem')+'</div>',
+        '<p>Na zrzucie jest rzeczywista odpowiedź otrzymana w opublikowanej aplikacji po uruchomieniu modelu Gemini 2.5 Flash Lite przez OpenRouter. Asystent działa przez osobny serwer. Do OpenRouter trafia pytanie i dobrany kontekst źródeł, a nie pełny lokalny profil rodziny. Pytania należy wpisywać bez danych osobowych. Na komputerze panel zachowuje kontekst sprawy, a telefon otwiera osobny ekran. Model nie ustala urzędowego uprawnienia i nie stawia diagnozy. Odnośnik oraz cytat umożliwiają sprawdzenie źródła, nie są gwarancją poprawnego znaczenia całej odpowiedzi. Przy niedostępności modelu aplikacja może pokazać osobno oznaczony tryb źródeł; nie jest on przedstawiany jako odpowiedź AI.</p>')
 
     add('Technologia z jawnym zakresem', '<div class="technology"><div>'
         '<h3>Warstwa aplikacji</h3><p>HTML, CSS i JavaScript<br>Responsywny interfejs webowy<br>Dane rodziny na urządzeniu</p>'

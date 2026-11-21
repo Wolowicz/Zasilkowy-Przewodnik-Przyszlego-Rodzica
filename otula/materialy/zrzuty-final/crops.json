@@ -43,5 +43,14 @@
       1320,
       867
     ]
+  },
+  "web-ai-answer-detail.png": {
+    "source": "web-ai-panel.jpg",
+    "box": [
+      974,
+      349,
+      1342,
+      748
+    ]
   }
 }
