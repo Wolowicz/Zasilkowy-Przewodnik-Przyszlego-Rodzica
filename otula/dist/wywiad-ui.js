@@ -143,54 +143,92 @@
     };
     draw();return{read};
   }
+  function plain(q) { return root.OtulaProsto ? root.OtulaProsto.get(q) : { title: q.title || q.label, help: q.help || q.hint || '', co: '', gdzie: '', nie: '' }; }
   function renderQuestion(q, questions) {
     const position = questions.findIndex(item => item.id === q.id);
     const value = state.answers[q.id];
     const choices = q.type === 'choice';
     const records = q.type === 'records';
     const options = (q.options || []).filter(option => option.value !== 'unknown');
-    const input = records ? '<div id="wywiad-records"></div>' : choices ? `<div class="wywiad-choices" role="group" aria-labelledby="wywiad-title">${options.map((option, i) => `<button type="button" class="filter wywiad-choice${String(value) === String(option.value) ? ' active' : ''}" aria-pressed="${String(value) === String(option.value)}" data-option="${i}"><span>${esc(option.label)}</span><span class="wywiad-choice-mark" aria-hidden="true">${String(value) === String(option.value) ? '✓' : ''}</span></button>`).join('')}</div>` : `<label class="field wywiad-input" for="wywiad-value"><span>${esc(q.inputLabel || (q.type === 'date' ? 'Data' : 'Wpisz wartość'))}${q.unit ? ` (${esc(q.unit)})` : ''}</span><input id="wywiad-value" name="answer" type="${q.type === 'date' ? 'date' : 'number'}" value="${value === 'unknown' || value === undefined ? '' : esc(value)}"${q.min !== undefined ? ` min="${esc(q.min)}"` : ''}${q.max !== undefined ? ` max="${esc(q.max)}"` : ''}${q.type !== 'date' ? ` step="${esc(q.step || 'any')}" inputmode="decimal"` : ''} aria-describedby="wywiad-help wywiad-error" autocomplete="off" required></label>`;
+    const picks = !choices && !records && root.OtulaProsto ? root.OtulaProsto.picks(q.id) : null;
+    const pq = plain(q);
+    const total = questions.length;
+    const answeredCount = questions.filter(item => state.answers[item.id] !== undefined).length;
+    const next = questions[position + 1];
+    const canForward = value !== undefined && !!next;
+    const mark = active => `<span class="wywiad-choice-mark" aria-hidden="true">${active ? '✓' : ''}</span>`;
+    const same = v => String(value) === String(v);
+    const pickButtons = picks ? `<div class="wywiad-choices wywiad-picks" role="group" aria-label="Szybki wybór">${picks.map(v => `<button type="button" class="filter wywiad-choice${same(v) ? ' active' : ''}" aria-pressed="${same(v)}" data-pick="${v}"><span>${v}</span>${mark(same(v))}</button>`).join('')}</div>` : '';
+    const field = `<label class="field wywiad-input" for="wywiad-value"><span>${picks ? 'Albo wpisz inną liczbę' : esc(q.inputLabel || (q.type === 'date' ? 'Wybierz datę' : 'Wpisz liczbę'))}${q.unit ? ` (${esc(q.unit)})` : ''}</span><input id="wywiad-value" name="answer" type="${q.type === 'date' ? 'date' : 'number'}" value="${value === 'unknown' || value === undefined ? '' : esc(value)}"${q.min !== undefined ? ` min="${esc(q.min)}"` : ''}${q.max !== undefined ? ` max="${esc(q.max)}"` : ''}${q.type !== 'date' ? ` step="${esc(q.step || 'any')}" inputmode="decimal"` : ''} aria-describedby="wywiad-help wywiad-error" autocomplete="off" required></label>`;
+    const input = records ? '<div id="wywiad-records"></div>'
+      : choices ? `<div class="wywiad-choices" role="group" aria-labelledby="wywiad-title">${options.map((option, i) => `<button type="button" class="filter wywiad-choice${same(option.value) ? ' active' : ''}" aria-pressed="${same(option.value)}" data-option="${i}"><span>${esc(option.label)}</span>${mark(same(option.value))}</button>`).join('')}</div>`
+      : pickButtons + field;
     const canImport = position === 0 && state.defaults && Object.keys(state.answers).length === 0;
-    state.container.innerHTML = `<section class="zus-page wywiad-page">${crumbs('Twoje odpowiedzi')}<button type="button" class="back-link text-button" data-wywiad="back"><span aria-hidden="true">←</span> ${position > 0 ? 'Wróć do: poprzednie pytanie' : 'Wróć do: sytuacje'}</button>${progress(q, questions)}<form class="zus-result wywiad-question" novalidate><p class="small-label">Twoja sytuacja, krok po kroku</p><h1 id="wywiad-title" tabindex="-1">${esc(q.title || q.label)}</h1><p id="wywiad-help" class="wywiad-help">${esc(q.help || q.hint || 'Wybierz odpowiedź, która pasuje do Twojej sytuacji.')}</p>${glossary(q)}${input}<p id="wywiad-error" class="wywiad-error" role="alert"></p>${value === 'unknown' ? '<p class="wywiad-help">To pytanie zostało pominięte — możesz je teraz uzupełnić.</p>' : ''}<div class="wywiad-actions"><button type="submit" class="button primary">Dalej <span aria-hidden="true">→</span></button><button type="button" class="button secondary" data-wywiad="skip">Nie wiem jeszcze</button></div></form>${canImport ? '<div class="zus-notice"><p>Masz już zapisaną rolę i sytuację rodziny w Otuli.</p><button type="button" class="text-button" data-wywiad="import">Użyj tych odpowiedzi</button></div>' : ''}<button type="button" class="text-button" data-wywiad="results">Zobacz, co już wiadomo</button>${notice()}${storageControls()}</section>`;
+    const groupTitle = (GROUPS.find(([id]) => id === (q.group || 'rodzina')) || GROUPS[0])[1];
+    const why = pq.co ? `<details class="wywiad-why"><summary>Co to znaczy?</summary><p>${esc(pq.co)}</p>${pq.gdzie ? `<p><strong>Gdzie to sprawdzić:</strong> ${esc(pq.gdzie)}</p>` : ''}</details>` : '';
+    const pct = Math.round(100 * Math.max(position, 0) / Math.max(total, 1));
+    state.container.innerHTML = `<section class="zus-page wywiad-page">
+      <div class="wywiad-stepper"><button type="button" class="button secondary wywiad-nav-btn" data-wywiad="back"><span aria-hidden="true">←</span> ${position > 0 ? 'Poprzednie' : 'Sytuacje'}</button><div class="wywiad-progressbar" role="progressbar" aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${position + 1}" aria-label="Pytanie ${position + 1} z ${total}"><span>Pytanie ${position + 1} z ${total} · ${esc(groupTitle)}</span><i style="width:${pct}%"></i></div><button type="button" class="button secondary wywiad-nav-btn" data-wywiad="forward"${canForward ? '' : ' disabled'}>Następne <span aria-hidden="true">→</span></button></div>
+      <form class="zus-result wywiad-question" novalidate><h1 id="wywiad-title" tabindex="-1">${esc(pq.title)}</h1>${pq.help ? `<p id="wywiad-help" class="wywiad-help">${esc(pq.help)}</p>` : '<p id="wywiad-help" class="sr-only"></p>'}${why}${glossary(q)}${input}<p id="wywiad-error" class="wywiad-error" role="alert"></p>${value === 'unknown' ? '<p class="wywiad-help wywiad-skipped">Na razie pominięte — możesz odpowiedzieć teraz.</p>' : ''}<div id="wywiad-unknown" hidden></div><div class="wywiad-actions">${choices ? '' : '<button type="submit" class="button primary">Dalej <span aria-hidden="true">→</span></button>'}<button type="button" class="button secondary" data-wywiad="skip">Nie wiem</button></div>${choices ? '<p class="wywiad-help wywiad-auto">Po wybraniu odpowiedzi przejdziemy dalej automatycznie.</p>' : ''}</form>
+      ${canImport ? '<div class="zus-notice"><p>Masz już zapisaną rolę i sytuację rodziny w Otuli.</p><button type="button" class="text-button" data-wywiad="import">Użyj tych odpowiedzi</button></div>' : ''}
+      <div class="wywiad-foot"><span>${answeredCount} z ${total} odpowiedzi</span><button type="button" class="text-button" data-wywiad="results">Pokaż, co już wiadomo →</button></div>${notice()}${storageControls()}</section>`;
     let selected = value;
     const recordEditor = records ? mountRecords(state.container.querySelector('#wywiad-records'), q, value) : null;
-    state.container.querySelectorAll('[data-option]').forEach(button => button.addEventListener('click', () => {
-      selected = options[Number(button.dataset.option)].value;
-      state.container.querySelectorAll('[data-option]').forEach(b => {
-        const active = b === button; b.setAttribute('aria-pressed', String(active)); b.classList.toggle('active', active); b.querySelector('.wywiad-choice-mark').textContent = active ? '✓' : '';
-      });
-      state.container.querySelector('#wywiad-error').textContent = '';
-    }));
     const advance = answer => {
       commitAnswer(q.id, answer);
       const nextQuestions = questionList();
       const nextPos = nextQuestions.findIndex(item => item.id === q.id) + 1;
-      const next = nextQuestions[nextPos];
-      go(next ? ['pytanie', next.id] : ['wynik']);
+      const following = nextQuestions[nextPos];
+      go(following ? ['pytanie', following.id] : ['wynik']);
     };
+    const markActive = (attr, button) => state.container.querySelectorAll(`[${attr}]`).forEach(b => {
+      const active = b === button; b.setAttribute('aria-pressed', String(active)); b.classList.toggle('active', active); b.querySelector('.wywiad-choice-mark').textContent = active ? '✓' : '';
+    });
+    let moving = false;
+    const later = fn => { if (moving) return; moving = true; setTimeout(fn, 280); };
+    state.container.querySelectorAll('[data-option]').forEach(button => button.addEventListener('click', () => {
+      selected = options[Number(button.dataset.option)].value;
+      markActive('data-option', button);
+      state.container.querySelector('#wywiad-error').textContent = '';
+      later(() => advance(selected));
+    }));
+    state.container.querySelectorAll('[data-pick]').forEach(button => button.addEventListener('click', () => {
+      markActive('data-pick', button);
+      later(() => advance(Number(button.dataset.pick)));
+    }));
     state.container.querySelector('form').addEventListener('submit', event => {
       event.preventDefault();
       const error = state.container.querySelector('#wywiad-error');
       if (records) {
         const data = recordEditor.read(true);
-        if (!data) { error.textContent = 'Uzupełnij każdy wpis albo wybierz „Nie wiem jeszcze”.'; return; }
+        if (!data) { error.textContent = 'Uzupełnij każdy wpis albo wybierz „Nie wiem”.'; return; }
         advance(data);
       } else if (choices) {
-        if (selected === undefined || selected === 'unknown') { error.textContent = 'Wybierz odpowiedź albo „Nie wiem jeszcze”.'; return; }
+        if (selected === undefined || selected === 'unknown') { error.textContent = 'Wybierz odpowiedź albo „Nie wiem”.'; return; }
         advance(selected);
       } else {
-        const field = state.container.querySelector('#wywiad-value');
-        if (!field.value || !field.checkValidity()) { error.textContent = q.type === 'date' ? 'Wpisz pełną, poprawną datę albo pomiń pytanie.' : 'Sprawdź wpisaną wartość albo pomiń pytanie.'; field.focus(); return; }
-        advance(q.type === 'date' ? field.value : Number(field.value));
+        const el = state.container.querySelector('#wywiad-value');
+        if (!el.value || !el.checkValidity()) { error.textContent = q.type === 'date' ? 'Wybierz pełną datę albo kliknij „Nie wiem”.' : 'Sprawdź wpisaną liczbę albo kliknij „Nie wiem”.'; el.focus(); return; }
+        advance(q.type === 'date' ? el.value : Number(el.value));
       }
     });
-    bind({ back: () => go(position > 0 ? ['pytanie', questions[position - 1].id] : []), skip: () => advance('unknown'), results: () => {
+    const showUnknown = () => {
+      const box = state.container.querySelector('#wywiad-unknown');
+      box.hidden = false;
+      box.innerHTML = `<div class="wywiad-unknown-card"><h2 tabindex="-1">Nie szkodzi — wiele osób tego nie wie</h2>${pq.co ? `<p><strong>Co to znaczy:</strong> ${esc(pq.co)}</p>` : ''}${pq.gdzie ? `<p><strong>Gdzie to sprawdzić:</strong> ${esc(pq.gdzie)}</p>` : ''}${pq.nie ? `<p><strong>Jeśli pominiesz:</strong> ${esc(pq.nie)}</p>` : ''}<div class="case-actions"><button type="button" class="button primary" data-wywiad="skip-confirm">Pomiń i wróć do tego później</button><button type="button" class="button secondary" data-wywiad="skip-cancel">Odpowiem teraz</button></div></div>`;
+      box.querySelectorAll('[data-wywiad]').forEach(b => b.addEventListener('click', () => {
+        if (b.dataset.wywiad === 'skip-confirm') advance('unknown');
+        else { box.hidden = true; state.container.querySelector('[data-option],[data-pick],#wywiad-value')?.focus(); }
+      }));
+      box.querySelector('h2').focus();
+    };
+    bind({ back: () => go(position > 0 ? ['pytanie', questions[position - 1].id] : []), forward: () => { if (canForward) go(['pytanie', next.id]); }, skip: showUnknown, results: () => {
       if (choices && selected !== undefined) commitAnswer(q.id, selected);
-      if (records) { const data = recordEditor.read(true); if (data) commitAnswer(q.id, data); else { state.container.querySelector('#wywiad-error').textContent = 'Sprawdź wpisy przed pokazaniem wyniku albo pomiń pytanie.'; return; } }
+      if (records) { const data = recordEditor.read(true); if (data) commitAnswer(q.id, data); else { state.container.querySelector('#wywiad-error').textContent = 'Sprawdź wpisy przed pokazaniem wyniku albo kliknij „Nie wiem”.'; return; } }
       if (!choices && !records) {
-        const field = state.container.querySelector('#wywiad-value');
-        if (field.value && field.checkValidity()) commitAnswer(q.id, q.type === 'date' ? field.value : Number(field.value));
-        else { delete state.answers[q.id]; changed(); }
+        const el = state.container.querySelector('#wywiad-value');
+        if (el.value && el.checkValidity()) commitAnswer(q.id, q.type === 'date' ? el.value : Number(el.value));
+        else if (state.answers[q.id] === undefined) { delete state.answers[q.id]; changed(); }
       }
       go(['wynik']);
     } });
@@ -236,6 +274,10 @@
     const employment = ['employee', 'contract'].includes(state.answers.work);
     return `<section class="zus-result wywiad-handoff"><p class="small-label">Złożenie dokumentów</p><h2>Gdzie załatwić Twoją sprawę</h2><div class="zus-segments">${municipal ? `<section><h3>Świadczenie z gminy</h3><p>Złóż wniosek przez Emp@tię albo w gminie lub OPS właściwym dla miejsca zamieszkania.</p>${link('https://empatia.gov.pl/', 'Przejdź do Emp@tii', 'button secondary')}${link('https://www.gov.pl/web/gov/uzyskaj-swiadczenie-rodzicielskie', 'Sprawdź dokumenty i właściwy urząd')}</section>` : ''}${employment ? `<section><h3>${state.answers.work === 'employee' ? 'Urlop i dokumenty od pracodawcy' : 'Dokumenty od zleceniodawcy'}</h3><p>${state.answers.work === 'employee' ? 'Wniosek o urlop przekaż pracodawcy, a z kadrami ustal płatnika zasiłku i potrzebne zaświadczenie.' : 'Poproś zleceniodawcę o właściwe zaświadczenie płatnika do Twojej sprawy.'}</p><p class="wywiad-help">Skorzystaj z kanału przyjmowania dokumentów wskazanego przez płatnika.</p></section>` : ''}${krus ? `<section><h3>Sprawa w KRUS</h3><p>Dokumenty i sposób złożenia sprawdź w usłudze KRUS.</p>${link('https://www.gov.pl/web/krus/zasilek-macierzynski', 'Przejdź do informacji KRUS', 'button secondary')}</section>` : ''}<section><h3>Dokument kierowany do ZUS</h3><p>Jeśli adresatem Twojego wniosku jest ZUS, przejdź do eZUS i wybierz właściwy formularz.</p>${link(LOGIN, 'Przejdź do eZUS', 'button secondary')}<p class="wywiad-help">Przez login.gov.pl możesz użyć mObywatela, jeśli ta metoda jest dostępna.</p></section><section><h3>Dokument na papierze</h3><p>Przygotuj formularz przy świadczeniu, sprawdź go, wydrukuj i podpisz przed przekazaniem właściwemu adresatowi.</p><p class="wywiad-help">Zaświadczenia pracodawcy lub lekarza przygotowuje wskazana osoba.</p></section></div><p class="wywiad-help wywiad-handoff-note">Wniosek elektroniczny podpisujesz i wysyłasz w serwisie instytucji; Otula przygotowuje dokumenty, ale ich nie składa.</p></section>`;
   }
+  function missingPanel(list) {
+    if (!list.length) return '';
+    return `<section class="zus-result wywiad-missing"><div class="wywiad-missing-head"><span class="tile-icon gold">${symbol('help',24)}</span><div><h2>Brakuje jeszcze ${list.length} ${list.length === 1 ? 'informacji' : 'informacji'}</h2><p>Pokazujemy tylko to, czego nie wiemy. Po uzupełnieniu wynik będzie dokładniejszy.</p></div></div><ol class="wywiad-missing-list">${list.slice(0, 8).map(q => { const pq = plain(q); return `<li><div><strong>${esc(pq.title)}</strong>${pq.gdzie ? `<p><b>Gdzie to sprawdzić:</b> ${esc(pq.gdzie)}</p>` : ''}${pq.nie ? `<p class="wywiad-help">${esc(pq.nie)}</p>` : ''}</div><button type="button" class="button secondary" data-edit="${esc(q.id)}">Uzupełnij</button></li>`; }).join('')}</ol>${list.length > 8 ? `<p class="wywiad-help">I jeszcze ${list.length - 8} — pojawią się po uzupełnieniu powyższych.</p>` : ''}</section>`;
+  }
   function renderResults() {
     const results = state.answers.event ? engine().assess(state.answers)||[] : [];
     const questions = questionList();
@@ -243,7 +285,7 @@
     const answered = questions.filter(q=>state.answers[q.id]!==undefined);
     const next=unknown[0]||questions[0];
     const hasLetter = state.answers.situation==='zus-letter'||(state.answers.extraSituations||[]).includes('zus-letter')||Object.keys(state.letter).length>0;
-    state.container.innerHTML=`<section class="wywiad-page">${crumbs('Świadczenia i dokumenty')}<a class="back-link text-button" href="${PREFIX}">← Wróć do: sytuacje</a><header class="page-intro"><h1 id="wywiad-title" tabindex="-1">Twoje świadczenia i dokumenty</h1><p>Sprawdź okres, kwotę i to, kto przygotowuje dokumenty.</p></header>${hasLetter?`<section class="zus-result wywiad-case-letter"><h2>Pismo z ZUS</h2><p>${state.letter.deadline&&state.letter.deadline!=='unknown'?`Termin wpisany z pisma: ${esc(state.letter.deadline)}`:'Uzupełnij rodzaj pisma i termin wskazany przez urząd.'}</p><a class="button secondary" href="${PREFIX}/pismo/${Object.keys(state.letter).length?'result':'kind'}">Otwórz pismo i następny krok</a></section>`:''}<div class="wywiad-results-layout"><div class="wywiad-results-main">${results.length?results.map(resultCard).join(''):'<div class="zus-result"><h2>Dobierz świadczenie do sytuacji</h2><a class="button primary" href="#moja-sprawa">Wybierz sytuację</a></div>'}</div>${summaryMarkup(results)}</div>${handoff(results)}<details><summary>Sprawdź lub zmień odpowiedzi (${answered.length})</summary><dl class="wywiad-answers">${answered.map(q=>`<div><dt>${esc(q.title||q.label)}</dt><dd><span>${esc(answerLabel(q,state.answers[q.id]))}</span><button type="button" class="text-button" data-edit="${esc(q.id)}" aria-label="Zmień: ${esc(q.title||q.label)}">Zmień</button></dd></div>`).join('')}</dl></details><a class="text-button" href="${PREFIX}/dodaj">Dodaj drugą sytuację</a><div id="wywiad-loss-support"></div>${notice()}${storageControls()}</section>`;
+    state.container.innerHTML=`<section class="wywiad-page">${crumbs('Świadczenia i dokumenty')}<a class="back-link text-button" href="${PREFIX}">← Wróć do: sytuacje</a><header class="page-intro"><h1 id="wywiad-title" tabindex="-1">Twoje świadczenia i dokumenty</h1><p>Sprawdź okres, kwotę i to, kto przygotowuje dokumenty.</p></header>${missingPanel(unknown)}${hasLetter?`<section class="zus-result wywiad-case-letter"><h2>Pismo z ZUS</h2><p>${state.letter.deadline&&state.letter.deadline!=='unknown'?`Termin wpisany z pisma: ${esc(state.letter.deadline)}`:'Uzupełnij rodzaj pisma i termin wskazany przez urząd.'}</p><a class="button secondary" href="${PREFIX}/pismo/${Object.keys(state.letter).length?'result':'kind'}">Otwórz pismo i następny krok</a></section>`:''}<div class="wywiad-results-layout"><div class="wywiad-results-main">${results.length?results.map(resultCard).join(''):'<div class="zus-result"><h2>Dobierz świadczenie do sytuacji</h2><a class="button primary" href="#moja-sprawa">Wybierz sytuację</a></div>'}</div>${summaryMarkup(results)}</div>${handoff(results)}<details><summary>Sprawdź lub zmień odpowiedzi (${answered.length})</summary><dl class="wywiad-answers">${answered.map(q=>`<div><dt>${esc(q.title||q.label)}</dt><dd><span>${esc(answerLabel(q,state.answers[q.id]))}</span><button type="button" class="text-button" data-edit="${esc(q.id)}" aria-label="Zmień: ${esc(q.title||q.label)}">Zmień</button></dd></div>`).join('')}</dl></details><a class="text-button" href="${PREFIX}/dodaj">Dodaj drugą sytuację</a><div id="wywiad-loss-support"></div>${notice()}${storageControls()}</section>`;
     bind({continue:()=>go(next?['pytanie',next.id]:[])});
     state.container.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>go(['pytanie',b.dataset.edit]));
     state.container.querySelectorAll('[data-document]').forEach(b=>b.onclick=()=>{const[i,j]=b.dataset.document.split(':').map(Number);go(['dokument',results[i].id,results[i].documents[j].code]);});

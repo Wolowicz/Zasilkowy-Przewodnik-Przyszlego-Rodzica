@@ -10,7 +10,7 @@ const tabs = {
   wsparcie: ['Karta wsparcia', 'Wsparcie', 'mail']
 };
 const titles = {
-  'moja-sprawa':'Moja sprawa',
+  'moja-sprawa':'Moja sytuacja',
   termin:'Termin', formularze:'Formularze ZUS',
   kalkulator:'Kalkulator zasiłków', 'konto-demo':'Centrum e-usług', 'e-uslugi':'Centrum e-usług', 'sprawdz-sprawe':'Sprawdź sprawę ZUS', parametry:'Parametry kalkulatora', uprawnienia:'Jakie świadczenia?',
   narzedzia:'Więcej możliwości', rodzina:'Moja rodzina', raport:'Raport rodzinny', poradnik:'Podręcznik rodzica', pomoc:'Zapytaj AI', slowniczek:'Słowniczek urzędowy',
@@ -225,10 +225,10 @@ function navLinks(active, cls, short = false) {
     `<a href="#${id}" class="${cls} ${active === id ? 'selected' : ''}" ${active === id ? 'aria-current="page"' : ''}>${icon(glyph,20)}<span>${short ? shortLabel : label}</span></a>`).join('');
 }
 const parentNavigation = [
-  ['start','Start','home'], ['e-uslugi','Centrum e-usług','shield'],
-  ['uprawnienia','Jakie świadczenia?','heart'], ['kalkulator','Ile mogę otrzymać?','wallet'],
-  ['formularze','Dokumenty i wnioski','files'],
-  ['terminy','Moje terminy','calendar']
+  ['start','Moja sytuacja','home'], ['uprawnienia','Co mi przysługuje?','heart'],
+  ['kalkulator','Ile mogę otrzymać?','wallet'], ['formularze','Dokumenty i wnioski','files'],
+  ['terminy','Moje terminy','calendar'], ['biblioteka','Wszystkie świadczenia','book'],
+  ['e-uslugi','Centrum e-usług','shield']
 ];
 function parentNavLinks(active) {
   return parentNavigation.map(([id,label,glyph])=>`<a href="${id==='kalkulator'?ownCalculatorRoute():'#'+id}" class="nav-item ${active===id?'selected':''}" ${active===id?'aria-current="page"':''}>${icon(glyph,20)}<span>${label}</span></a>`).join('');
@@ -238,14 +238,14 @@ function extraNavLinks(active) {
     `<a href="#${id}" class="nav-item ${active===id?'selected':''}" ${active===id?'aria-current="page"':''}>${icon(glyph,20)}<span>${label}</span></a>`).join('');
 }
 function frame(r) {
-  const active = ({sprawa:'plan',slowniczek:'biblioteka',sytuacja:'e-uslugi',rodzina:'e-uslugi'})[r.page] || r.page;
+  const active = ({sprawa:'biblioteka',slowniczek:'biblioteka',sytuacja:'e-uslugi',rodzina:'e-uslugi','moja-sprawa':'start'})[r.page] || r.page;
   sidebar.innerHTML = `<div class="brand-block">${brand()}<div class="brand-subtitle">Twój plan rodzicielstwa</div></div>
     <nav aria-label="Nawigacja główna"><div class="nav-label">Świadczenia i formalności</div>${parentNavLinks(active)}
     <div class="nav-label nav-section">Plan i wsparcie</div>${extraNavLinks(active)}</nav>`;
   document.querySelector('.footer').innerHTML = `<a href="#o-przewodniku">${icon('help',18)} O przewodniku</a><a href="#dane">${icon('lock',18)} Dane i usuwanie profilu</a><button class="text-button" data-action="invite">${icon('share',18)} Zaproś znajomych</button><span id="invite-link"></span>`;
-  const crumbs = [['start', 'Start']];
+  const crumbs = [['start', 'Moja sytuacja']];
   if (r.page === 'sprawa') crumbs.push(['plan', 'Mój plan'], ['', byId(r.id).title]);
-  else if (r.page !== 'start') crumbs.push(['', titles[r.page]]);
+  else if (!['start','moja-sprawa'].includes(r.page)) crumbs.push(['', titles[r.page]]);
   document.querySelector('#topbar').innerHTML = `<nav class="crumb" aria-label="Jesteś tutaj">${crumbs.map(([href, label], i) =>
       i < crumbs.length - 1 ? `<a href="#${href}">${esc(label)}</a><i aria-hidden="true">/</i>` : `<strong>${esc(label)}</strong>`).join(' ')}</nav>
     <div class="mobile-brand">${brand()}<span class="brand-subtitle">Twój plan rodzicielstwa</span></div>
@@ -600,13 +600,9 @@ function legacyInterviewDefaults() {
 }
 
 function renderInterview(r) {
-  document.body.classList.add('arriving');
-  sidebar.replaceChildren();
-  mobileNavigation.hidden = true;
-  mobileNavigation.replaceChildren();
-  document.querySelector('#topbar').replaceChildren();
-  document.querySelector('.footer').replaceChildren();
-  main.innerHTML = `<div class="arrival-brand"><div class="arrival-signature">${brand()}<span class="brand-subtitle">Świadczenia dla rodziców</span></div></div><div id="interview-content"></div>`;
+  document.body.classList.remove('arriving');
+  frame(r);
+  main.innerHTML = `<div id="interview-content"></div>`;
   document.title = titles[r.page] + ' · Otula';
   window.OtulaWywiad.render(main.querySelector('#interview-content'), legacyInterviewDefaults());
 }
