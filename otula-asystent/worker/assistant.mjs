@@ -19,6 +19,41 @@ function assistantModels(env){
   const fallback=typeof env.OPENROUTER_FALLBACK_MODEL==='string'?env.OPENROUTER_FALLBACK_MODEL.trim():'';
   return [...new Set([preferred||'openrouter/free',fallback||'google/gemma-4-26b-a4b-it:free'])].filter(v=>/^[a-zA-Z0-9_./:-]{1,150}$/.test(v)).slice(0,2);
 }
+// OpenRouter Chat Completions structured outputs. Schema support is required at the selected endpoint.
+// https://openrouter.ai/docs/guides/features/structured-outputs (checked 2026-11-21)
+function assistantRequest(model,messages,sources){
+  return {model,max_tokens:2400,temperature:0,stream:false,provider:{require_parameters:true},
+    response_format:{type:'json_schema',json_schema:{name:'otula_cited_answer',strict:true,schema:{
+      type:'object',additionalProperties:false,required:['facts'],properties:{facts:{type:'array',maxItems:4,items:{
+        type:'object',additionalProperties:false,required:['text','ref','line'],properties:{
+          text:{type:'string',minLength:1,maxLength:850,description:'Krótka odpowiedź po polsku, oparta wyłącznie na wskazanym fragmencie.'},
+          ref:{type:'integer',minimum:1,maximum:sources.length,description:'Numer przekazanego źródła, od 1.'},
+          line:{type:'integer',minimum:1,maximum:Math.max(1,...sources.map(s=>s.lines.length)),description:'Numer fragmentu w wybranym źródle, od 1.'}
+        }
+      }}}
+    }}},messages};
+}
+function assistantCompletion(payload,sources){
+  const choice=payload?.choices?.[0],content=choice?.message?.content;
+  const reason=choice?.finish_reason;
+  // Diagnostics contain categories and counts only, never prompts, model text, refusal text or raw provider errors.
+  const diagnostic={finish_reason:['stop','length','content_filter','tool_calls','error'].includes(reason)?reason:'unknown',
+    content_chars:typeof content==='string'?content.length:0};
+  const tokens=payload?.usage?.completion_tokens;
+  if(Number.isSafeInteger(tokens)&&tokens>=0)diagnostic.completion_tokens=tokens;
+  const reject=issue=>({issue,diagnostic});
+  if(payload?.error||choice?.error)return reject('provider_error');
+  if(choice?.message?.refusal)return reject('refused');
+  if(reason!=='stop')return reject(reason==='length'?'truncated':'incomplete');
+  if(typeof content!=='string'||!content.trim())return reject('empty_content');
+  if(content.length>10000)return reject('oversized_content');
+  let value;try{value=JSON.parse(content);}catch{return reject('invalid_json');}
+  // Do not repair fenced/truncated JSON or guess missing citation references.
+  if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).length!==1||!Object.hasOwn(value,'facts'))return reject('invalid_schema');
+  if(!Array.isArray(value.facts)||value.facts.some(f=>!f||typeof f!=='object'||Array.isArray(f)||Object.keys(f).length!==3||!['text','ref','line'].every(k=>Object.hasOwn(f,k))))return reject('invalid_schema');
+  const facts=citationFacts(value.facts,sources);
+  return facts?{facts,diagnostic}:reject('invalid_citations');
+}
 const norm = s => s.toLowerCase().replace(/ł/g,'l').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 const hints = {
   'urlop-rodzicielski':'bliźnięta bliźniaki trojaczki urlop rodzicielski ile tygodni',
@@ -172,7 +207,7 @@ export default {async fetch(req,env){
     const remaining=now+50000-Date.now();
     if(remaining<1500)break;
     try{
-      const r=await timedFetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer '+env.OPENROUTER_API_KEY},body:JSON.stringify({model,max_tokens:1400,temperature:0,response_format:{type:'json_object'},messages})},Math.min(22000,remaining));
+      const r=await timedFetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer '+env.OPENROUTER_API_KEY},body:JSON.stringify(assistantRequest(model,messages,sources))},Math.min(22000,remaining));
       if(!r.ok){
         console.warn('OpenRouter HTTP',r.status,'model',model);
         if(r.status===429){
@@ -185,13 +220,14 @@ export default {async fetch(req,env){
         if([401,402,403].includes(r.status))break;
         continue;
       }
-      const content=(await r.json())?.choices?.[0]?.message?.content;
-      if(typeof content!=='string'||!content.trim())continue;
-      const {facts}=JSON.parse(content.replace(/^\s*```(?:json)?|\s*```\s*$/gi,'').trim());
-      if(Array.isArray(facts)&&!facts.length)return fail('Brakuje potwierdzenia odpowiedzi w odczytanych źródłach.');
-      const checkedFacts=citationFacts(facts,sources);
-      if(!checkedFacts)continue;
-      return reply({mode:'ai',model,facts:checkedFacts,...sourceInfo});
+      const completed=assistantCompletion(await r.json(),sources);
+      if(completed.issue){
+        console.warn('OpenRouter response rejected',model,completed.issue,completed.diagnostic);
+        if(completed.issue==='truncated')unavailable='Model przerwał odpowiedź przed jej ukończeniem. Nie pokazujemy niepełnych twierdzeń.';
+        continue;
+      }
+      if(!completed.facts.length)return fail('Brakuje potwierdzenia odpowiedzi w odczytanych źródłach.');
+      return reply({mode:'ai',model,facts:completed.facts,...sourceInfo});
     }catch(err){console.warn('OpenRouter attempt',err.name);}
   }
   if(clinical)return fail(unavailable+(topic?' Możesz skorzystać z podręcznika i dobranych publikacji.':' Poniżej znajdziesz publikacje dobrane do Twojego pytania.'));
