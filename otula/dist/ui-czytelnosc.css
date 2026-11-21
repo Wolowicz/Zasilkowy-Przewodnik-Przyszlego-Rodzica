@@ -9,7 +9,7 @@ details > summary::marker { content: ''; }
 
 details:has(> summary:not(:has(> .icon))) {
   background: #fff;
-  border: 1px solid var(--line, #eadfda);
+  border: 1px solid var(--line, var(--line));
   border-radius: 16px;
   padding: 0 18px;
   margin: 14px 0;
@@ -25,7 +25,7 @@ details > summary:not(:has(> .icon)) {
   font-weight: 650;
   font-size: 16px;
   line-height: 1.3;
-  color: var(--ink, #45293a);
+  color: var(--ink, var(--ink));
 }
 details > summary:not(:has(> .icon))::after {
   content: '';
@@ -33,21 +33,21 @@ details > summary:not(:has(> .icon))::after {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: #f6e5e9 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a3d57' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center / 16px no-repeat;
+  background: var(--rose) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23783e51' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center / 16px no-repeat;
   transition: background-color .15s;
 }
 details[open] > summary:not(:has(> .icon))::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a3d57' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23783e51' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E");
 }
-details > summary:not(:has(> .icon)):hover::after { background-color: #f0d6dd; }
-details > summary:not(:has(> .icon)):focus-visible { outline: 3px solid #97496c; outline-offset: 4px; border-radius: 10px; }
+details > summary:not(:has(> .icon)):hover::after { background-color: var(--error); }
+details > summary:not(:has(> .icon)):focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; border-radius: 10px; }
 details[open]:has(> summary:not(:has(> .icon))) { padding-bottom: 16px; }
-details[open] > summary:not(:has(> .icon)) { border-bottom: 1px solid var(--line, #eadfda); margin-bottom: 12px; }
+details[open] > summary:not(:has(> .icon)) { border-bottom: 1px solid var(--line, var(--line)); margin-bottom: 12px; }
 
 /* sekcje zagnieżdżone w kartach – lżejsze, bez podwójnej ramki */
 .answer-list details:has(> summary:not(:has(> .icon))),
 details details:has(> summary:not(:has(> .icon))) {
-  border: 0; border-bottom: 1px solid var(--line, #eadfda); border-radius: 0; padding: 0; margin: 0; background: transparent;
+  border: 0; border-bottom: 1px solid var(--line, var(--line)); border-radius: 0; padding: 0; margin: 0; background: transparent;
 }
 
 @media (max-width: 679px) {
@@ -59,8 +59,8 @@ details details:has(> summary:not(:has(> .icon))) {
 }
 
 /* Czytelność na telefonie (audyt 21.11): minimalne rozmiary krojów i cele dotyku */
-.small-label { font-size: 12px; }
-.institution { font-size: 12px; }
+.small-label { font-size: 14px; }
+.institution { font-size: 14px; }
 .filter { font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; }
 .text-button { font-size: 14px; }
 @media (max-width: 679px) {
@@ -76,7 +76,7 @@ details details:has(> summary:not(:has(> .icon))) {
 
 /* Teczka sprawy: kroki jako spokojna lista etykiet, nie klikalny stepper */
 .zus-steps { display: flex !important; flex-wrap: wrap; gap: 8px !important; margin: 14px 0 !important; counter-reset: none; }
-.zus-steps li { counter-increment: none; padding: 6px 14px; border-radius: 999px; background: #fbf1ea; color: #6d4b3d; font-size: 14px; font-weight: 650; }
+.zus-steps li { counter-increment: none; padding: 6px 14px; border-radius: 999px; background: var(--rose); color: var(--berry); font-size: 14px; font-weight: 650; }
 .zus-steps li:before { content: none !important; }
 
 /* Przycisk asystenta nie zasłania treści na komputerze */
@@ -88,3 +88,61 @@ details details:has(> summary:not(:has(> .icon))) {
 /* Spójne karty i cienie na wszystkich ekranach */
 .zus-notice { border-radius: 16px; }
 .zus-result, .zus-dossier { border-radius: 22px; }
+/* Wspólna warstwa spójności — STYL-I-DESIGN, rozdział 12. */
+:root { --card-radius:22px; }
+body { line-height:1.5; }
+button, a { -webkit-tap-highlight-color:transparent; }
+.button,.filter,.text-button,.profile-button,.chip,.eu-sym,.sprawa-status,.zus-simulation-badge { font-size:14px; border-radius:999px; }
+.button,.filter,.text-button,.profile-button,.icon-button,.eu-menu a,.eu-menu button { min-height:44px; }
+#sidebar .nav-item { min-height:44px; }
+.small-label,.nav-label,.hero-label,.institution { font-size:12px; text-transform:uppercase; }
+.crumb,.frame-date,.brand-subtitle,.home-family label,.home-family a,.home-shortcuts a,.benefit-launch small,.home-kicker,.home-date-icon small,.home-date p,.dashboard-link,.progress span,.case-sub,.path-status,.plan-note,.plan-note a,.stage-label,.stats small,.stats p,.date-form p,.calendar-weekdays,.calendar-legend,.back-link span,.eu-profile small,.source-box a,.segmented span,.segmented small,.handbook-hero p,.handbook-tabs a,.shelf-choice { font-size:14px; }
+input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea { font-size:16px; font-family:'DM Sans','Segoe UI',sans-serif; line-height:1.5; min-height:48px; max-width:100%; color:var(--ink); background-color:#fff; border:1px solid var(--line); border-radius:15px; padding:10px 12px; }
+select { appearance:none; padding-right:36px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23783e51' stroke-width='1.65' stroke-linecap='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E"); background-position:right 10px center; background-repeat:no-repeat; background-size:18px; }
+input[type=checkbox],input[type=radio] { accent-color:var(--berry); width:22px; height:22px; flex:none; }
+label:has(> input[type=checkbox]),label:has(> input[type=radio]) { min-height:44px; }
+input[type=file]::file-selector-button { border:1px solid var(--line); background:var(--rose); color:var(--berry); min-height:44px; border-radius:999px; padding:8px 16px; font:600 14px 'DM Sans',sans-serif; margin-right:12px; }
+:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
+.zus-wizard-progress button,.zus-segment-control button { border-radius:999px; font-size:14px; min-height:48px; }
+.zus-guide-cards article,.zus-guide-help,.month-card,.eu-card,.eu-login,.sprawa-drop,.zus-dossier,.zus-result { border-radius:var(--card-radius); }
+.zus-guide-cards article { background:var(--peach); }
+.zus-guide-cards article:nth-child(3n+2) { background:var(--rose); }
+.zus-guide-cards article:nth-child(3n+3) { background:var(--gold); }
+.zus-guide-help { background:var(--sage); }
+.back-link { display:inline-flex; align-items:center; min-height:44px; font-size:14px; margin-bottom:16px; }
+.zus-steps li { background:var(--peach); color:var(--peach-ink); }
+@media(max-width:700px) {
+ .zus-wizard-progress { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+ .zus-wizard-progress button { flex-direction:row; align-items:center; padding:10px; gap:8px; }
+ .zus-wizard-progress button strong { overflow-wrap:normal; font-size:14px; }
+ .zus-wizard-progress button span { font-size:14px; }
+ .brand-subtitle { font-size:14px; }
+ #main { padding-left:16px; padding-right:16px; }
+ .page-heading h1 { font-size:clamp(38px,7vw,48px); }
+}
+@media(prefers-reduced-motion:reduce) {
+ *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
+}
+/* Domknięcie pomiaru 320 px: podpis marki i etykiety pomocnicze. */
+.mobile-brand .brand-subtitle,.home-progress h3,.ring small,#main label small { font-size:14px; }
+#main h1 { font-size:clamp(38px,4.6vw,64px); }
+#main h2 { font-size:clamp(25px,2.5vw,36px); }
+.starter-list button { min-height:44px; border-radius:999px; }
+.back-link > span { overflow:visible; text-overflow:clip; white-space:normal; text-align:left; }
+.zus-hospital-fields { grid-column:1/-1; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; padding:20px; border:1px solid var(--line); border-radius:22px; background:var(--gold); }
+.zus-hospital-fields > :is(legend,p,.zus-notice,.zus-checkbox) { grid-column:1/-1; }
+.sprawa-decyzja.nieustalona { background:var(--gold); color:var(--gold-ink); border-color:var(--gold-ink); }
+.cal-done { background:var(--sage); color:var(--sage-ink); border-color:var(--sage-ink); }
+.calendar-leaf small { font-size:12px; }
+@media(max-width:700px) { .zus-hospital-fields { grid-template-columns:minmax(0,1fr); padding:16px; } }
+@media(max-width:400px) {
+ .home-feature { display:flex; flex-direction:column; align-items:stretch; }
+ .home-feature .feature-art { display:none; }
+ .home-feature .mobile-feature-art { display:block; width:100%; height:150px; object-fit:contain; background:var(--peach); }
+ .home-feature .feature-copy { width:100%; padding:20px; }
+ .home-feature .feature-copy h2 { overflow-wrap:normal; }
+ .ask-hero,.reader-hero,.daily-hero { grid-template-columns:minmax(0,1fr); }
+ .ask-hero .ask-art,.reader-hero .reader-art,.daily-hero .daily-art { grid-row:1; width:100%; height:110px; min-height:110px; margin:0; background-size:contain; }
+ .ask-hero>div:first-child,.reader-hero>div:first-child { padding:16px; }
+ .reader-hero .small-label { font-size:12px; }
+}

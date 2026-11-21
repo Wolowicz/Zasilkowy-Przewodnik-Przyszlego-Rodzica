@@ -96,3 +96,15 @@ Subtelny: 150–200 ms, `ease`, tylko przejścia koloru, cienia i przesunięć o
 | `otula/dist/zus.css`, `calendar.css`, `e-uslugi.css`, `sprawy-zus.css` | style modułów (używają tych samych tokenów) |
 | `otula/dist/icons.js` | zestaw ikon |
 | `otula/dist/assets/` | logo, ilustracje, czcionki |
+
+## 12. Kreator i wspólne zasady modułów
+
+- Kreator kalkulatora ma cztery kroki: Zdarzenie, Ubezpieczenie i podstawa, Podział, Wynik. `.zus-wizard-progress` używa pigułek i numerów; aktywny krok ma różowe tło i `aria-current="step"`. Na telefonie kroki układają się w siatkę 2 × 2, a nie w pomniejszony pasek.
+- `.zus-segment-control` to grupa nazwanych przycisków radiowych z obsługą strzałek; korzysta z tych samych kolorów i pełnego promienia co `.filter`. Niewybrana opcja jest biała, wybrana różowa z jagodowym obramowaniem.
+- `.zus-guide-cards` pokazuje jeden kluczowy fakt na kartę, a warunki i dokumenty w istniejącym `<details>`. Karty mają promień 22 px, tło brzoskwiniowe, różowe lub żółte.
+- Dodatkowe tokeny `--peach`, `--gold`, `--rose`, `--sage` oraz odpowiadające im `--…-ink` są aliasami dokładnych kolorów z rozdziału 2, nie nową paletą. `--focus`, `--error`, `--error-ink` również wskazują istniejące wartości.
+- Wszystkie teksty pomocnicze i zwykłe etykiety mają co najmniej 14 px; wyjątkiem są wersaliki (12 px). Pola mają co najmniej 16 px. `ui-czytelnosc.css` jest ładowany jako ostatni arkusz wspólnych reguł.
+- Na ekranach podrzędnych zawsze pokazujemy „Wróć”. Start pokazuje powrót, gdy istnieje poprzedni ekran; przy pierwszym wejściu główny ekran nie odsyła do samego siebie. Powitanie korzysta z własnej nawigacji kroków.
+- Jedna pigułka „Symulacja” identyfikuje ekran pokazowy; ważne założenia obliczeń pozostają dostępne w rozwijanych szczegółach. Oznaczenie nie może sugerować prawdziwego logowania lub wysyłania do urzędu.
+
+- Przy szerokości do 400 px ilustracja nagłówka i treść zajmują osobne wiersze; pełna szerokość tekstu ma pierwszeństwo przed dekoracją. Dla strony głównej wykorzystujemy istniejący obraz `.mobile-feature-art` z zachowaniem proporcji.
