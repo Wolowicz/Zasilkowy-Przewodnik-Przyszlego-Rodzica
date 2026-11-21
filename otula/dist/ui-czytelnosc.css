@@ -69,3 +69,22 @@ details details:has(> summary:not(:has(> .icon))) {
   .assistant-launcher span:not(.icon) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   #main { padding-bottom: 96px; }
 }
+
+/* Menu boczne: grupy z nagłówkami, krótsze pozycje */
+#sidebar nav .nav-section { margin-top: 18px; }
+#sidebar .nav-item { min-height: 42px; padding-top: 8px; padding-bottom: 8px; line-height: 1.25; }
+
+/* Teczka sprawy: kroki jako spokojna lista etykiet, nie klikalny stepper */
+.zus-steps { display: flex !important; flex-wrap: wrap; gap: 8px !important; margin: 14px 0 !important; counter-reset: none; }
+.zus-steps li { counter-increment: none; padding: 6px 14px; border-radius: 999px; background: #fbf1ea; color: #6d4b3d; font-size: 14px; font-weight: 650; }
+.zus-steps li:before { content: none !important; }
+
+/* Przycisk asystenta nie zasłania treści na komputerze */
+@media (min-width: 1000px) {
+  .assistant-launcher { padding: 0; width: 56px; min-height: 56px; justify-content: center; border-radius: 50%; }
+  .assistant-launcher span:not(.icon) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+
+/* Spójne karty i cienie na wszystkich ekranach */
+.zus-notice { border-radius: 16px; }
+.zus-result, .zus-dossier { border-radius: 22px; }

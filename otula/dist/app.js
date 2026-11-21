@@ -224,6 +224,7 @@ function frame(r) {
   sidebar.innerHTML = `<div class="brand-block">${brand()}<div class="brand-subtitle">Twój plan rodzicielstwa</div></div>
     <nav aria-label="Nawigacja główna"><div class="nav-label">Twoja przestrzeń</div>${navLinks(active, 'nav-item')}
     <a href="#sytuacja" class="nav-item ${active === 'sytuacja' ? 'selected' : ''}">${icon('person', 20)}<span>Moja sytuacja</span></a>
+    <div class="nav-label nav-section">Zasiłki ZUS</div>
     <a href="#kalkulator" class="nav-item ${active==='kalkulator'?'selected':''}">${icon('wallet',20)}<span>Kalkulator zasiłków</span></a>
     <a href="#sprawdz-sprawe" class="nav-item ${active==='sprawdz-sprawe'?'selected':''}">${icon('file',20)}<span>Sprawdź sprawę ZUS</span></a>
     <a href="#e-uslugi" class="nav-item ${active==='e-uslugi'?'selected':''}">${icon('shield',20)}<span>Centrum e-usług</span></a>
