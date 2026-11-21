@@ -146,3 +146,19 @@ input[type=file]::file-selector-button { border:1px solid var(--line); backgroun
  .ask-hero>div:first-child,.reader-hero>div:first-child { padding:16px; }
  .reader-hero .small-label { font-size:12px; }
 }
+
+/* Start: jedna kolorowa karta główna, reszta spokojna (biała, z cienkim akcentem) */
+main:has(.home-dashboard) > .back-link { display: none; }
+.home-dashboard .home-shortcuts { display: none; }
+.home-dashboard .benefit-launch { background: #fff; border: 1px solid var(--line, #e9e1dd); box-shadow: none; }
+.home-dashboard .benefit-launch:hover { border-color: #d8b5bf; background: #fffaf8; }
+.home-dashboard .home-calendar { background: #fff; border: 1px solid var(--line, #e9e1dd); border-left: 5px solid #f2d98a; }
+.home-dashboard .home-reading { background: #fff; border: 1px solid var(--line, #e9e1dd); border-left: 5px solid #b9d3a8; }
+.home-dashboard .home-progress { border: 1px solid var(--line, #e9e1dd); box-shadow: none; }
+.home-dashboard .home-kicker { font-size: 12px; }
+.home-dashboard .dashboard-panels { gap: 16px; }
+@media (max-width: 999px) {
+  /* telefon: jeden rząd skrótów, wszystkie w tym samym stylu */
+  .home-dashboard .home-shortcuts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+  .home-dashboard .home-shortcuts a, .home-dashboard .home-shortcuts a:nth-child(n) { background: #fff; border: 1px solid var(--line, #e9e1dd); border-radius: 14px; min-height: 52px; font-size: 13.5px; }
+}
