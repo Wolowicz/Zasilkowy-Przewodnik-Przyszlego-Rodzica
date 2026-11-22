@@ -50,7 +50,7 @@ Zasady: kolor nigdy nie jest jedynym nośnikiem znaczenia (zawsze etykieta lub i
 | Działanie dodatkowe | `.button.secondary` | białe tło, jagodowy tekst, cienka ramka |
 | Wybór / filtr | `.filter` (chip) | `aria-pressed`, aktywny: różowe tło |
 | Nawigacja | zakładki/menu, **zawsze** z „Wróć do: …” na podekranach | każdy ekran ma adres `#…` |
-| Rozwijana treść | `<details>` | w `ui-czytelnosc.css` dostaje kartę i okrągły przycisk +/–; **nigdy** trójkąt ▶ |
+| Rozwijana treść | `<details>` | w `ui-czytelnosc.css` dostaje kartę, 16–20 px odstępu po bokach i okrągły przycisk +/–. Zagnieżdżona sekcja korzysta z odstępu karty nadrzędnej. |
 | Wgrywanie pliku | strefa `.sprawa-drop` | nigdy surowe `<input type=file>` |
 | Status | pigułka (`.chip`, `.sprawa-status`) | zielona = zgodne/gotowe, żółta = uwaga, czerwona = odmowa |
 | Symulacja | jedna pigułka „Symulacja · dane fikcyjne” (`.eu-sym`) | zamiast powtarzanych akapitów |
@@ -123,6 +123,8 @@ Na szerokim ekranie trzy karty mieszczą się w jednym rzędzie; na telefonie uk
 `#moja-sprawa` prowadzi przez jedno pytanie naraz, w czterech grupach: rodzina, ubezpieczenie, okresy i kwota. Używa istniejących kart `.zus-result`, przycisków `.button`, opcji `.filter` i statusów `.chip`; `wywiad.css` określa jedynie układ i rozmiary w tych samych tokenach. Pytanie ma krótkie objaśnienie, wyraźne opcje, „Wróć” i „Nie wiem jeszcze”. Nie zaznaczamy odpowiedzi domyślnie. Daty zatwierdza przycisk, bez przebudowy pola podczas wpisywania roku.
 
 Wynik pokazuje oddzielnie świadczenia, kwotę lub brak danych do kwoty oraz dokumenty z osobą odpowiedzialną. Szczegóły można rozwinąć; podstawowe informacje i następny krok pozostają widoczne. Zmiana odpowiedzi usuwa niepasujące odpowiedzi zależne. Trasy pytań, wyniku i przygotowania dokumentu zachowują systemowe cofanie. Dane osobowe wniosku nie należą do zapisu odpowiedzi; zapis na urządzeniu wymaga świadomego działania użytkownika.
+
+Karty kwoty i terminów mają 16–24 px odstępu od krawędzi i 12 px między elementami. Na wąskim telefonie przyciski karty kwoty układają się jeden pod drugim. Oś urlopów pokazuje długości na pasku, a pełne nazwy i okresy w legendzie poniżej.
 
 Powitanie wywiadu ma jedną brzoskwiniową kartę i jedno główne działanie; na komputerze istniejąca ilustracja ciężarnej pozostaje dekoracją obok tekstu, na małym telefonie pierwszeństwo ma tekst i przycisk. Ukończony wywiad otwiera wynik; rozpoczęty pozwala kontynuować od brakującej odpowiedzi.
 

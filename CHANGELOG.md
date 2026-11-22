@@ -1,5 +1,11 @@
 # Historia zmian
 
+## 2026-11-22 — odstępy i czytelność interfejsu
+
+- Przywrócono wewnętrzne odstępy w sekcjach rozwijanych we wszystkich modułach. Karta kwoty rozdziela opis, listę braków i przyciski, które na wąskim ekranie układają się pionowo.
+- Skrócono podpowiedzi w wyszukiwarkach spraw i sytuacji. Dodano miejsce przed filtrami biblioteki oraz przy nagłówku i legendzie kalendarza na małym ekranie.
+- Oś urlopów pokazuje pełne nazwy i okresy pod kolorowym paskiem.
+
 ## 2026-11-21 — sytuacje rodziny, sprawy urzędowe i pisma do podpisu
 
 - Ekran „Co się u Was dzieje?” dobiera kafelki do roli. Wyszukiwanie obejmuje synonimy i bibliotekę spraw. Druga powiązana sytuacja uzupełnia ten sam wywiad.

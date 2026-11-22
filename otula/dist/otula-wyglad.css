@@ -29,7 +29,7 @@ body, .app-shell, main, #main { background: var(--page) !important; }
 @media (max-width: 999px) { .top-tools { display: none; } }
 
 /* ---------- karty ---------- */
-main .zus-result, main .catalog-card, main .home-progress, main .wywiad-question, main .wywiad-missing, main .wywiad-summary section, main .otula-timeline, main .tool-entry, main details:not(.wywiad-why) {
+main .zus-result, main .catalog-card, main .home-progress, main .wywiad-question, main .wywiad-missing, main .wywiad-summary section, main .otula-timeline, main .tool-entry {
   background: var(--card); border: 1px solid var(--soft-line) !important; border-radius: 24px; box-shadow: var(--shadow);
 }
 .button.primary, button.primary { background: var(--berry); border-color: var(--berry); box-shadow: 0 4px 14px rgba(120, 62, 81, .22); }
@@ -47,7 +47,6 @@ main .zus-result, main .catalog-card, main .home-progress, main .wywiad-question
 
 /* ---------- kafelki sytuacji ---------- */
 .wywiad-tiles { gap: 14px !important; }
-.wywiad-tile { border-radius: 22px !important; padding: 18px !important; min-height: 96px; text-align: left; }
 .wywiad-tile:hover { transform: translateY(-2px); }
 
 /* ---------- pytanie (kreator) ---------- */
@@ -79,18 +78,18 @@ main .zus-result, main .catalog-card, main .home-progress, main .wywiad-question
 
 /* ---------- oś czasu urlopów ---------- */
 .otula-timeline { padding: 22px 24px; margin: 18px 0; }
-.otula-timeline-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+.otula-timeline-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
 .otula-timeline-head h2 { margin: 0; font-size: 21px; }
 .otula-bar { display: flex; gap: 6px; padding: 6px; border-radius: 99px; background: #fff0f2; overflow: hidden; }
-.otula-bar .seg { min-width: 0; padding: 10px 12px; border-radius: 99px; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
-.seg.m, .otula-legend i.m { background: var(--berry); color: #fff; }
-.seg.u, .otula-legend i.u { background: #a9cbe6; color: #22405e; }
-.seg.r, .otula-legend i.r { background: #f4b99a; color: #5e2e22; }
-.seg.o, .otula-legend i.o { background: #b9d3a8; color: #2f4a29; }
-.seg.c, .otula-legend i.c { background: #cdb9e6; color: #3e2a5a; }
-.otula-legend { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: var(--muted); }
+.otula-bar .seg { min-width: 0; min-height: 16px; border-radius: 99px; }
+.seg.m, .otula-legend i.m { background: var(--berry); }
+.seg.u, .otula-legend i.u { background: #a9cbe6; }
+.seg.r, .otula-legend i.r { background: #f4b99a; }
+.seg.o, .otula-legend i.o { background: #b9d3a8; }
+.seg.c, .otula-legend i.c { background: #cdb9e6; }
+.otula-timeline .otula-legend { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: var(--muted); }
+.otula-legend li { margin: 0; }
 .otula-legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 7px; vertical-align: -1px; }
-@media (max-width: 640px) { .otula-bar { border-radius: 18px; flex-direction: column; } .otula-bar .seg { flex: none !important; text-align: left; } }
 .wywiad-why summary > span:not(.wywiad-why-icon) { text-align: left; flex: 1; }
 .wywiad-missing-list .button { white-space: nowrap; flex: none; }
 @media (max-width: 640px) { #interview-content .wywiad-question { padding: 4px 0 !important; border: 0 !important; } }

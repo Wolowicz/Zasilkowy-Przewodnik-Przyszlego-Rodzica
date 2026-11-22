@@ -510,7 +510,7 @@ function libraryResults() {
 }
 function library() {
   return `${pageHeading('Przewodnik rodzica', 'Biblioteka spraw', 'Znajdź świadczenie lub formalność wraz z instrukcją i źródłem.')}
-    <label class="search-box">${icon('search')}<input id="query" type="search" autocomplete="off" aria-label="Szukaj sprawy" placeholder="Szukaj sprawy, dokumentu lub instytucji…"></label>
+    <label class="search-box library-search">${icon('search')}<input id="query" type="search" autocomplete="off" aria-label="Szukaj sprawy" placeholder="Szukaj w bibliotece"></label>
     <strong>Etap</strong><div class="filters" role="group" aria-label="Etap">${Object.entries({all:'Wszystkie', ...GUIDE.stages}).map(([key,label]) => filterButton('library-stage',key,label,libraryStage)).join('')}</div>
     <strong>Kategoria</strong><div class="filters" role="group" aria-label="Kategoria">${filterButton('filter-library', 'all', 'Wszystkie', category)}${Object.entries(GUIDE.categories).map(([key, cat]) => filterButton('filter-library', key, cat.name, category)).join('')}</div>
     <div id="results">${libraryResults()}</div>

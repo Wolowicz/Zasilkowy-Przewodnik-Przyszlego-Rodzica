@@ -99,7 +99,7 @@
     if (!state.answers.role && role) state.answers.role = role;
     const primary = model().situations.find(s => s.id === state.answers.situation);
     const roles = [['mother','Mama','heart','rose'],['father','Tata','person','gold'],['guardian','Opiekun','family','sage'],['supporter','Pomagam komuś','flower','peach']];
-    state.container.innerHTML = `<section class="wywiad-page wywiad-dashboard">${additional ? `${crumbs('Dodatkowa sytuacja')}<a class="back-link text-button" href="${PREFIX}">← Wróć do: sytuacje</a>` : ''}${additional ? `<header class="page-intro"><h1 id="wywiad-title" tabindex="-1">Co jeszcze Was dotyczy?</h1></header>` : `<header class="otula-hello"><span class="tile-icon rose">${symbol('flower',26)}</span><div><h1 id="wywiad-title" tabindex="-1">Co się u Was dzieje?</h1><p>Wybierz sytuację — Otula dobierze świadczenia, policzy kwoty i przygotuje dokumenty.</p></div><a class="button secondary otula-demo" href="#kalkulator">${symbol('sun',18)} Pokaż przykład dla jury</a></header>`}<div class="wywiad-role"><span>${role ? 'Sprawdzamy dla:' : 'Dla kogo sprawdzamy wsparcie?'}</span><div class="filters">${roles.map(([id,label,ico,color])=>`<button type="button" class="filter ${role===id?'active':''}" aria-pressed="${role===id}" data-role="${id}">${symbol(ico,18)} ${label}</button>`).join('')}</div></div>${primary ? `<div class="wywiad-current"><p><strong>Główna sytuacja:</strong> ${esc(model().title(primary,role))}</p>${(state.answers.extraSituations||[]).map(id=>{const extra=model().situations.find(s=>s.id===id);return `<span class="chip rose">${esc(extra?model().title(extra,role):id)}</span>`;}).join('')}<div class="case-actions"><button type="button" class="button primary" data-wywiad="continue-case">${nextQuestion()?'Kontynuuj odpowiedzi':'Pokaż moje świadczenia'}</button><button type="button" class="button secondary" data-wywiad="results">Zobacz, co już wiadomo</button></div></div>` : ''}<label class="search-box wywiad-search">${symbol('search',22)}<span class="sr-only">Wyszukaj sytuację lub sprawę</span><input id="wywiad-search" type="search" placeholder="np. poronienie, dług składkowy, wezwanie z ZUS" value="${esc(state.search)}" autocomplete="off"></label><div id="wywiad-search-results"></div><div id="wywiad-conflict" role="status"></div>${primary&&!additional?`<a class="text-button" href="${PREFIX}/dodaj">Dodaj drugą sytuację</a>`:''}${notice()}${storageControls()}</section>`;
+    state.container.innerHTML = `<section class="wywiad-page wywiad-dashboard">${additional ? `${crumbs('Dodatkowa sytuacja')}<a class="back-link text-button" href="${PREFIX}">← Wróć do: sytuacje</a>` : ''}${additional ? `<header class="page-intro"><h1 id="wywiad-title" tabindex="-1">Co jeszcze Was dotyczy?</h1></header>` : `<header class="otula-hello"><span class="tile-icon rose">${symbol('flower',26)}</span><div><h1 id="wywiad-title" tabindex="-1">Co się u Was dzieje?</h1><p>Wybierz sytuację — Otula dobierze świadczenia, policzy kwoty i przygotuje dokumenty.</p></div><a class="button secondary otula-demo" href="#kalkulator">${symbol('sun',18)} Pokaż przykład dla jury</a></header>`}<div class="wywiad-role"><span>${role ? 'Sprawdzamy dla:' : 'Dla kogo sprawdzamy wsparcie?'}</span><div class="filters">${roles.map(([id,label,ico,color])=>`<button type="button" class="filter ${role===id?'active':''}" aria-pressed="${role===id}" data-role="${id}">${symbol(ico,18)} ${label}</button>`).join('')}</div></div>${primary ? `<div class="wywiad-current"><p><strong>Główna sytuacja:</strong> ${esc(model().title(primary,role))}</p>${(state.answers.extraSituations||[]).map(id=>{const extra=model().situations.find(s=>s.id===id);return `<span class="chip rose">${esc(extra?model().title(extra,role):id)}</span>`;}).join('')}<div class="case-actions"><button type="button" class="button primary" data-wywiad="continue-case">${nextQuestion()?'Kontynuuj odpowiedzi':'Pokaż moje świadczenia'}</button><button type="button" class="button secondary" data-wywiad="results">Zobacz, co już wiadomo</button></div></div>` : ''}<label class="search-box wywiad-search">${symbol('search',22)}<span class="sr-only">Wyszukaj sytuację lub sprawę</span><input id="wywiad-search" type="search" placeholder="Np. dług składkowy" value="${esc(state.search)}" autocomplete="off"></label><div id="wywiad-search-results"></div><div id="wywiad-conflict" role="status"></div>${primary&&!additional?`<a class="text-button" href="${PREFIX}/dodaj">Dodaj drugą sytuację</a>`:''}${notice()}${storageControls()}</section>`;
     const drawTiles = () => {
       const list = role ? model().tiles(role,state.search,additional).filter(s=>!additional||s.id!==state.answers.situation) : [];
       const catalog = typeof GUIDE !== 'undefined' ? GUIDE.cases : [];
@@ -267,7 +267,35 @@
     const summary = engine().summarize ? engine().summarize(state.answers,results) : {total:null,byParent:{},missing:[],partial:true};
     const names={mother:'Mama',father:'Tata',guardian:'Opiekun',supporter:'Bliska osoba'};
     const periods=results.flatMap(r=>(r.pdfContext?.periods||[]).map(p=>({title:r.title,...p})));
-    return `<aside class="wywiad-summary"><section class="zus-result"><h2>${summary.total!==null?(summary.partial?'Policzona część wsparcia':'Razem możesz otrzymać'):'Uzupełnijmy kwotę'}</h2>${summary.total!==null?`<strong class="wywiad-summary-total">ok. ${money(summary.total)}</strong>`:'<p>Brakuje danych do wspólnej kwoty.</p>'}<span class="chip gold">Orientacyjnie, brutto, bez PIT</span>${Object.entries(summary.byParent||{}).map(([parent,total])=>`<p><strong>${esc(names[parent]||'Ta osoba')}:</strong> ${money(total)}</p>`).join('')}${summary.partial?'<p class="wywiad-help">Nie dodajemy świadczeń bez ustalonych kwot ani nakładających się okresów.</p>':''}${summary.missing?.length?`<details><summary>Brakuje: ${summary.missing.length} informacji</summary><ul>${summary.missing.slice(0,8).map(text=>`<li>${esc(text)}</li>`).join('')}</ul></details><button type="button" class="button secondary" data-wywiad="continue">Uzupełnij</button>`:''}${['birth','adoption','foster'].includes(state.answers.event)?'<a class="button secondary" href="#kalkulator/wywiad">Zobacz podział w kalkulatorze</a>':''}</section><section class="zus-result"><h2>Daty do zapamiętania</h2>${state.letter.deadline&&state.letter.deadline!=='unknown'?`<p><strong>Termin z pisma:</strong> ${esc(state.letter.deadline)}</p><a class="text-button" href="${PREFIX}/pismo/result">Pokaż pismo i przypomnienie</a>`:''}${periods.length?`<ul>${periods.map(p=>`<li><strong>${esc(p.title)}</strong><br>${esc(p.from)} – ${esc(p.to)}</li>`).join('')}</ul>`:'<p>Daty pojawią się po ustaleniu okresów lub terminu z pisma.</p>'}</section></aside>`;
+    const missing = summary.missing?.length;
+    const showCalculator = ['birth', 'adoption', 'foster'].includes(state.answers.event);
+    const title = summary.total === null ? 'Uzupełnijmy kwotę'
+      : summary.partial ? 'Policzona część wsparcia' : 'Razem możesz otrzymać';
+    return `<aside class="wywiad-summary">
+      <section class="zus-result">
+        <h2>${title}</h2>
+        ${summary.total !== null
+          ? `<strong class="wywiad-summary-total">ok. ${money(summary.total)}</strong>`
+          : '<p>Brakuje danych do wspólnej kwoty.</p>'}
+        <span class="chip gold">Orientacyjnie, brutto, bez PIT</span>
+        ${Object.entries(summary.byParent || {}).map(([parent, total]) => `<p><strong>${esc(names[parent] || 'Ta osoba')}:</strong> ${money(total)}</p>`).join('')}
+        ${summary.partial ? '<p class="wywiad-help">Nie dodajemy świadczeń bez ustalonych kwot ani nakładających się okresów.</p>' : ''}
+        ${missing ? `<details><summary>Brakuje: ${missing} informacji</summary>
+          <ul>${summary.missing.slice(0, 8).map(text => `<li>${esc(text)}</li>`).join('')}</ul>
+        </details>` : ''}
+        ${missing || showCalculator ? `<div class="case-actions">
+          ${missing ? '<button type="button" class="button secondary" data-wywiad="continue">Uzupełnij</button>' : ''}
+          ${showCalculator ? '<a class="button secondary" href="#kalkulator/wywiad">Zobacz podział w kalkulatorze</a>' : ''}
+        </div>` : ''}
+      </section>
+      <section class="zus-result">
+        <h2>Daty do zapamiętania</h2>
+        ${state.letter.deadline && state.letter.deadline !== 'unknown' ? `<p><strong>Termin z pisma:</strong> ${esc(state.letter.deadline)}</p>
+          <a class="text-button" href="${PREFIX}/pismo/result">Pokaż pismo i przypomnienie</a>` : ''}
+        ${periods.length ? `<ul>${periods.map(p => `<li><strong>${esc(p.title)}</strong><br>${esc(p.from)} – ${esc(p.to)}</li>`).join('')}</ul>`
+          : '<p>Daty pojawią się po ustaleniu okresów lub terminu z pisma.</p>'}
+      </section>
+    </aside>`;
   }
   function handoff(results) {
     const municipal = results.some(r => ['municipal', 'za-zyciem-payment'].includes(r.id));
@@ -289,7 +317,14 @@
     }
     if (!segs.length) return '';
     const total = segs.reduce((s, x) => s + x.len, 0);
-    return `<section class="zus-result otula-timeline"><div class="otula-timeline-head"><h2>Wasz plan urlopów</h2><span class="chip sage">${Math.round(total / 7)} tyg. łącznie</span></div><div class="otula-bar">${segs.map(s => `<span class="seg ${s.cls}" style="flex:${s.len}" title="${esc(s.label)}: ${Math.round(s.len / 7)} tyg."><b>${Math.round(s.len / 7)} tyg.</b> ${esc(s.label)}</span>`).join('')}</div><ul class="otula-legend">${segs.map(s => `<li><i class="${s.cls}"></i>${esc(s.who)} · ${esc(s.label)} · ${Math.round(s.len / 7)} tyg.${s.amount ? ` · <strong>${esc(s.amount)}</strong>` : ''}</li>`).join('')}</ul></section>`;
+    return `<section class="zus-result otula-timeline">
+      <div class="otula-timeline-head">
+        <h2>Wasz plan urlopów</h2>
+        <span class="chip sage">${Math.round(total / 7)} tyg. łącznie</span>
+      </div>
+      <div class="otula-bar" aria-hidden="true">${segs.map(s => `<span class="seg ${s.cls}" style="flex:${s.len}"></span>`).join('')}</div>
+      <ul class="otula-legend" role="list">${segs.map(s => `<li><i class="${s.cls}" aria-hidden="true"></i>${esc(s.who)} · ${esc(s.label)} · ${Math.round(s.len / 7)} tyg.${s.amount ? ` · <strong>${esc(s.amount)}</strong>` : ''}</li>`).join('')}</ul>
+    </section>`;
   }
   function missingPanel(list) {
     if (!list.length) return '';

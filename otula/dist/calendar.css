@@ -29,7 +29,7 @@
     padding-inline:1px;
   }
   .month-card .month-grid { gap:0; }
-  .month-card :is(.month-heading,.month-tools,.month-legend) { margin-inline:8px; }
+  .month-card :is(.month-heading,.month-tools,.month-legend) { margin-inline:12px; }
 }
 .month-legend { display:flex;flex-wrap:wrap;gap:14px;font-size: 14px;color:var(--muted);margin:14px 0 0; }
 .cal-agenda h2 { font:400 29px/1.2 var(--serif); }
