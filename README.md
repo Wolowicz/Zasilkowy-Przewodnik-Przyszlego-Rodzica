@@ -37,7 +37,10 @@ Silnik reguł: `shared/engine.js` — wspólny dla serwera i trybu offline przeg
 
 - OCR skanów (Tesseract LSTM, model polski) — w przeglądarce. Model językowy pobierany z CDN przy pierwszym użyciu (wymaga internetu).
 - Kalkulator i weryfikacja uprawnień — deterministyczne reguły, bez AI.
-- Asystent „Zapytaj Otulę” — dopasowanie do bazy wiedzy z podstawą prawną (punkt integracji LLM: `/api/ask`).
+- Asystent „Zapytaj Otulę” — baza wiedzy z podstawą prawną + model przez **OpenRouter** (`server/llm.js`, endpoint `/api/ask`). Bez klucza lub przy błędzie sieci działa dopasowanie reguł.
+
+### Konfiguracja OpenRouter
+Skopiuj `.env.example` do `.env` i wpisz `OPENROUTER_API_KEY` (opcjonalnie `OPENROUTER_MODEL`). Plik `.env` jest w `.gitignore` — nie commituj klucza. `GET /api/health` zwraca `llm: true`, gdy klucz jest wczytany.
 - Kod i treści przygotowano ze wsparciem asystentów AI.
 
 Dane w scenariuszach są fikcyjne. Wyniki mają charakter informacyjny.

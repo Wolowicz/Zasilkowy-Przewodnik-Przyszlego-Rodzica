@@ -167,6 +167,7 @@ export function AskPanel() {
   const { aiOpen, setAiOpen } = useApp();
   const [msgs, setMsgs] = useState([{ from: 'otula', text: 'Cześć! Odpowiadam na pytania o zasiłki i urlopy na podstawie ustawy zasiłkowej i Kodeksu pracy. Każdą odpowiedź opatruję podstawą prawną.' }]);
   const [q, setQ] = useState('');
+  const [llm, setLlm] = useState(false);
   const end = useRef();
   useEffect(() => { end.current?.scrollIntoView({ behavior: 'smooth' }); }, [msgs]);
   const ask = async (text) => {
@@ -174,7 +175,8 @@ export function AskPanel() {
     setMsgs((m) => [...m, { from: 'me', text }]);
     setQ('');
     const r = await api.ask(text);
-    setMsgs((m) => [...m, { from: 'otula', text: r.answer, law: r.law }]);
+    setMsgs((m) => [...m, { from: 'otula', text: r.answer, law: r.law, source: r.source }]);
+    if (r.source) setLlm(r.source === 'llm');
   };
   if (!aiOpen) return null;
   return (
@@ -183,7 +185,7 @@ export function AskPanel() {
         <div className="p-space-md flex items-center justify-between bg-gradient-to-b from-surface-container-high to-surface">
           <div className="flex items-center gap-space-xs">
             <div className="w-10 h-10 rounded-2xl bg-primary text-on-primary flex items-center justify-center"><Icon name="temp_preferences_custom" className="text-[20px]" /></div>
-            <div><span className="font-label-uppercase text-label-uppercase text-primary block">Wirtualny asystent</span><h3 className="font-headline-sm text-headline-sm text-primary flex items-center gap-2">Zapytaj Otulę <AIBadge>baza reguł</AIBadge></h3></div>
+            <div><span className="font-label-uppercase text-label-uppercase text-primary block">Wirtualny asystent</span><h3 className="font-headline-sm text-headline-sm text-primary flex items-center gap-2">Zapytaj Otulę <AIBadge>{llm ? 'model AI + przepisy' : 'baza reguł'}</AIBadge></h3></div>
           </div>
           <button type="button" onClick={() => setAiOpen(false)} className="w-9 h-9 rounded-full bg-surface-container-high/80 flex items-center justify-center" aria-label="Zamknij"><Icon name="close" /></button>
         </div>
@@ -204,7 +206,7 @@ export function AskPanel() {
             <input value={q} onChange={(e) => setQ(e.target.value)} className="flex-1 h-12 px-4 rounded-full bg-surface-container-lowest shadow-sm focus:outline-none" placeholder="Zadaj pytanie…" aria-label="Pytanie" />
             <button className="w-12 h-12 rounded-full bg-primary-container text-on-primary flex items-center justify-center" aria-label="Wyślij"><Icon name="send" /></button>
           </form>
-          <p className="text-[12px] text-on-surface-variant">Asystent dopasowuje pytanie do bazy przepisów (bez wysyłania danych na zewnątrz). Nie zastępuje decyzji ZUS.</p>
+          <p className="text-[12px] text-on-surface-variant">Odpowiedzi opierają się na bazie przepisów{llm ? '; treść pytania trafia do modelu AI (OpenRouter) — nie wpisuj danych osobowych' : ''}. Nie zastępuje decyzji ZUS.</p>
         </div>
       </div>
     </div>

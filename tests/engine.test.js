@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { calculate } from '../shared/engine.js';
+import { calculate, retrieve, answer } from '../shared/engine.js';
+import { askAssistant, llmEnabled } from '../server/llm.js';
 import { analyzeText } from '../shared/audit.js';
 
 test('podstawa = brutto − 13,71%; wariant A = 81,5%', () => {
@@ -46,4 +47,20 @@ test('analizator odczytuje podstawę, kod i PESEL', () => {
   assert.equal(a.base, 6428.6);
   assert.equal(a.code, '01 10 00');
   assert.equal(a.peselMasked, '940512*****');
+});
+
+test('retrieve zwraca najtrafniejsze fragmenty bazy', () => {
+  const hits = retrieve('Kto wypłaci zasiłek, pracodawca czy ZUS?', 2);
+  assert.ok(hits.length >= 1 && hits.length <= 2);
+  assert.match(hits[0].item.law, /61/);
+  assert.equal(retrieve('zzzz', 3).length, 0);
+  assert.equal(answer('zzzz').confidence, 0);
+});
+
+test('asystent bez klucza OpenRouter korzysta z reguł', async () => {
+  const saved = process.env.OPENROUTER_API_KEY;
+  delete process.env.OPENROUTER_API_KEY;
+  assert.equal(llmEnabled(), false);
+  assert.equal((await askAssistant('Kto wypłaca zasiłek?')).source, 'rules');
+  if (saved) process.env.OPENROUTER_API_KEY = saved;
 });

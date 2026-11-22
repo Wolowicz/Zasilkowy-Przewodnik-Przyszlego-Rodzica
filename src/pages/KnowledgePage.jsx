@@ -50,7 +50,7 @@ export default function KnowledgePage() {
           <ul className="space-y-space-sm text-body-sm">
             <li className="flex gap-2"><AIBadge>OCR</AIBadge><span><b>Audytor PDF</b> — rozpoznawanie tekstu ze skanów modelem sieci neuronowej Tesseract (LSTM, model polski), uruchamianym w przeglądarce.</span></li>
             <li className="flex gap-2"><Icon name="rule" className="text-primary text-[18px]" /><span><b>Kalkulator i weryfikacja uprawnień</b> — deterministyczny silnik reguł (bez AI), parametry w panelu administracyjnym.</span></li>
-            <li className="flex gap-2"><Icon name="rule" className="text-primary text-[18px]" /><span><b>Asystent „Zapytaj Otulę”</b> — dopasowanie pytań do bazy wiedzy z podstawą prawną (bez modelu generatywnego; gotowy punkt integracji LLM w REST API /api/ask).</span></li>
+            <li className="flex gap-2"><Icon name="rule" className="text-primary text-[18px]" /><span><b>Asystent „Zapytaj Otulę”</b> — dopasowanie pytań do bazy wiedzy z podstawą prawną; z kluczem OpenRouter odpowiedź formułuje model AI wyłącznie na podstawie dopasowanych przepisów (bez klucza działa sama baza reguł).</span></li>
             <li className="flex gap-2"><AIBadge>proces</AIBadge><span>Kod i treści przygotowano przy wsparciu asystentów AI (Claude), z weryfikacją przepisów w materiałach ZUS.</span></li>
           </ul>
         </div>

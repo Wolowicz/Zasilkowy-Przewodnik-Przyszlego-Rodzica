@@ -403,14 +403,20 @@ export const KNOWLEDGE = [
   { k: ['1000', 'kosiniak', 'świadczenie rodzicielskie', 'brak ubezpiecz'], a: 'Jeśli nie masz ubezpieczenia chorobowego w dniu porodu, przysługuje świadczenie rodzicielskie 1000 zł miesięcznie przez 52 tygodnie z gminy. Zasiłek macierzyński niższy niż 1000 zł jest z urzędu podwyższany do tej kwoty.', law: 'Art. 31 ust. 3a ustawy zasiłkowej' },
 ];
 
-export function answer(question = '') {
+// Pozycje bazy wiedzy dopasowane do pytania, od najlepszej.
+export function retrieve(question = '', limit = 3) {
   const q = question.toLowerCase();
-  let best = null;
-  let score = 0;
-  for (const item of KNOWLEDGE) {
-    const s = item.k.reduce((a, k) => a + (q.includes(k) ? k.length : 0), 0);
-    if (s > score) { score = s; best = item; }
-  }
+  return KNOWLEDGE
+    .map((item) => ({ item, score: item.k.reduce((a, k) => a + (q.includes(k) ? k.length : 0), 0) }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit);
+}
+
+export function answer(question = '') {
+  const [top] = retrieve(question, 1);
+  const best = top?.item;
+  const score = top?.score ?? 0;
   if (!best) return { answer: 'Nie znalazłam pewnej odpowiedzi w bazie przepisów Otuli. Sprawdź kalkulator lub zadaj pytanie przez PUE/eZUS albo infolinię ZUS (22 560 16 00).', law: null, confidence: 0 };
   return { answer: best.a, law: best.law, confidence: Math.min(1, score / 8) };
 }

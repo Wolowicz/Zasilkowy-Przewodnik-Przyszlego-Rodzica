@@ -8,6 +8,15 @@ import { calculate, DEFAULT_RULES, answer } from '../shared/engine.js';
 import { CASES, findCase } from '../shared/cases.js';
 import { analyzeText } from '../shared/audit.js';
 import { demoPerson, partnerOf, demoDebtCertificate, demoEzla } from './demo-data.js';
+import { askAssistant, llmEnabled } from './llm.js';
+
+// Minimalny loader .env (bez dodatkowych zależności).
+try {
+  for (const line of fs.readFileSync(new URL('../.env', import.meta.url), 'utf8').split(/\r?\n/)) {
+    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
+    if (m && !(m[1] in process.env)) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
+  }
+} catch {}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -35,7 +44,7 @@ app.use(express.json({ limit: '4mb' }));
 
 const api = express.Router();
 
-api.get('/health', (_req, res) => res.json({ ok: true, service: 'otula-api', rulesVersion: rules.version, time: new Date().toISOString() }));
+api.get('/health', (_req, res) => res.json({ ok: true, service: 'otula-api', rulesVersion: rules.version, llm: llmEnabled(), time: new Date().toISOString() }));
 
 // ---- Parametry ustawowe (panel administracyjny) ----
 api.get('/rules', (_req, res) => res.json({ rules, defaults: DEFAULT_RULES, audit }));
@@ -84,7 +93,7 @@ api.post('/audit', (req, res) => {
 });
 
 // ---- Asystent (baza wiedzy, dopasowanie reguł) ----
-api.post('/ask', (req, res) => res.json(answer(String(req.body?.question || ''))));
+api.post('/ask', async (req, res) => res.json(await askAssistant(String(req.body?.question || '').slice(0, 1000))));
 
 // ---- Symulacje e-usług (mObywatel, ZUS, PUE/eZUS, USC) ----
 api.post('/demo/login', (req, res) => {
