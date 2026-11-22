@@ -1,0 +1,32 @@
+{
+  "name": "otula-zasilkowy-przewodnik",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Otula — Zasiłkowy Przewodnik Przyszłego Rodzica (React + Node REST API)",
+  "scripts": {
+    "dev": "node server/index.js --dev",
+    "build": "vite build",
+    "start": "node server/index.js",
+    "test": "node --test tests/engine.test.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pdfjs-dist": "^4.10.38",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
+    "tesseract.js": "^5.1.1"
+  },
+  "devDependencies": {
+    "@fontsource-variable/inter": "^5.1.1",
+    "@fontsource-variable/nunito-sans": "^5.1.1",
+    "@fontsource-variable/plus-jakarta-sans": "^5.1.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "material-symbols": "^0.27.2",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.0.7"
+  }
+}
